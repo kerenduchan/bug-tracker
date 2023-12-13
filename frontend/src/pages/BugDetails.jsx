@@ -4,6 +4,7 @@ import { showErrorMsg } from '../services/event-bus.service.js'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
 
 export function BugDetails() {
     const [bug, setBug] = useState(null)
@@ -30,6 +31,10 @@ export function BugDetails() {
                 <Link to="/bug">Back to List</Link>
             </div>
             <div className="main">
+                <div className="created-at">
+                    Created at:{' '}
+                    {moment(Date(bug.createdAt)).format('DD/MM/YYYY [at] h:mm')}
+                </div>
                 <div className="title">{bug.title}</div>
                 <div className="severity">Severity: {bug.severity}</div>
                 <div className="description">{bug.description}</div>

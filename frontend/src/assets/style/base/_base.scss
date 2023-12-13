@@ -2,9 +2,6 @@
     box-sizing: border-box;
 }
 
-html {
-}
-
 body {
     margin: 0;
     color: var(--text);
@@ -16,10 +13,7 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-    margin: 0;
-}
-
+h6,
 p {
     margin: 0;
 }
@@ -36,11 +30,6 @@ embed,
 video,
 object {
     max-width: 100%;
-}
-
-/* Simple and useful CSS Debugging Technique */
-.debug * {
-    outline: 1px solid gold;
 }
 
 .about nav a {
