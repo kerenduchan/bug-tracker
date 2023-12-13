@@ -131,3 +131,22 @@
         line-height: 18px;
     }
 }
+
+@mixin entity-preview-grid() {
+    display: grid;
+    grid-template-rows: minmax(auto, 36px);
+    align-items: center;
+    padding-inline-start: 12px;
+}
+
+@mixin bug-preview-grid() {
+    @include entity-preview-grid();
+    grid-template-columns:
+        100px minmax(50px, 150px) minmax(100px, 300px) minmax(100px, 200px)
+        minmax(100px, 1fr) auto;
+}
+
+@mixin user-preview-grid() {
+    @include entity-preview-grid();
+    grid-template-columns: 200px 300px 1fr;
+}

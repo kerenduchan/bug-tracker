@@ -1,18 +1,13 @@
 .user-preview {
-    display: grid;
-    align-items: center;
-    grid-template-columns: 200px 300px 1fr;
-    grid-template-rows: minmax(auto, 36px);
+    @include user-preview-grid();
     @include btn-bg-3-nopress();
 
     .fullname {
         grid-area: 1 / 1;
-        padding-inline-start: 12px;
     }
 
     .username {
         grid-area: 1 / 2;
-        padding-inline-start: 12px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;

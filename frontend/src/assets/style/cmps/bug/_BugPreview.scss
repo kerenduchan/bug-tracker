@@ -1,15 +1,9 @@
 .bug-preview {
-    display: grid;
-    align-items: center;
-    grid-template-columns:
-        40px minmax(50px, 150px) minmax(100px, 300px) minmax(100px, 200px)
-        minmax(100px, 1fr) auto;
-    grid-template-rows: minmax(auto, 36px);
+    @include bug-preview-grid();
     @include btn-bg-3-nopress();
 
     .severity {
         grid-area: 1 / 1;
-        justify-self: center;
     }
 
     .created-at {
