@@ -1,6 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { Icon } from '../general/Icon'
 
-export function UserPreview({ user, onRemoveUser, onEditUser }) {
+export function UserPreview({ user, onRemoveUser }) {
+    const navigate = useNavigate()
+
+    function onEdit() {
+        navigate(`/user/edit/${user._id}`)
+    }
+
     return (
         <article className="user-preview">
             <h4 className="fullname">{user.fullname}</h4>
@@ -8,15 +15,16 @@ export function UserPreview({ user, onRemoveUser, onEditUser }) {
             <div className="score">{user.score}</div>
 
             <Link to={`/user/${user._id}`} />
+
             <div className="actions">
                 <button
-                    className="btn-delete"
+                    className="btn-icon-round"
                     onClick={() => onRemoveUser(user._id)}
                 >
-                    Delete
+                    <Icon type="delete" />
                 </button>
-                <button className="btn-edit" onClick={() => onEditUser(user)}>
-                    Edit
+                <button className="btn-icon-round" onClick={onEdit}>
+                    <Icon type="edit" />
                 </button>
             </div>
         </article>

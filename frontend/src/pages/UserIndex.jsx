@@ -51,10 +51,6 @@ export function UserIndex() {
         navigate('/user/edit/')
     }
 
-    async function onEditUser(user) {
-        navigate(`/user/edit/${user._id}`)
-    }
-
     return (
         <main className="main-layout">
             <h1>Users</h1>
@@ -67,11 +63,7 @@ export function UserIndex() {
                     options={userService.getSortByOptions()}
                 />
 
-                <UserList
-                    users={users}
-                    onRemoveUser={onRemoveUser}
-                    onEditUser={onEditUser}
-                />
+                <UserList users={users} onRemoveUser={onRemoveUser} />
                 {totalCount !== null && <p>Total: {totalCount} users</p>}
 
                 <PageNav

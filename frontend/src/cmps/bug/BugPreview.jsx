@@ -5,7 +5,7 @@ import { Icon } from '../general/Icon'
 export function BugPreview({ bug, onRemoveBug }) {
     const navigate = useNavigate()
 
-    function onEdit(e) {
+    function onEdit() {
         navigate(`/bug/edit/${bug._id}`)
     }
 

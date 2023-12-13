@@ -27,9 +27,15 @@
 
     .actions {
         grid-area: 1 / 4;
-        display: flex;
-        gap: 10px;
+        justify-self: end;
+        gap: 2px;
         padding-inline-end: 12px;
+        display: none;
+        z-index: 2;
+    }
+
+    &:hover .actions {
+        display: flex;
     }
 
     a {
