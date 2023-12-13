@@ -7,6 +7,7 @@ import { PageSizeSelect } from '../cmps/general/PageSizeSelect'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { UserFilter } from '../cmps/user/UserFilter'
 import { useNavigate } from 'react-router'
+import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar'
 
 export function UserIndex() {
     const [users, setUsers] = useState([])
@@ -55,12 +56,11 @@ export function UserIndex() {
         <main className="main-layout">
             <h1>Users</h1>
             <main>
-                <button onClick={onAddUser}>Add User</button>
-                <UserFilter filter={filter} setFilter={setFilter} />
-                <SortSelect
+                <UserIndexTopbar
+                    filter={filter}
+                    setFilter={setFilter}
                     sort={sort}
                     setSort={setSort}
-                    options={userService.getSortByOptions()}
                 />
 
                 <UserList users={users} onRemoveUser={onRemoveUser} />
