@@ -3,7 +3,7 @@
     align-items: center;
     grid-template-columns: 200px 300px 1fr;
     grid-template-rows: minmax(auto, 36px);
-    @include button-bg-3();
+    @include btn-bg-3();
 
     .fullname {
         grid-area: 1 / 1;

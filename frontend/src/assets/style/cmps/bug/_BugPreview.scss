@@ -5,7 +5,7 @@
         40px minmax(50px, 150px) minmax(100px, 300px) minmax(100px, 200px)
         minmax(100px, 1fr) auto;
     grid-template-rows: minmax(auto, 36px);
-    @include button-bg-3();
+    @include btn-bg-3();
 
     .severity {
         grid-area: 1 / 1;

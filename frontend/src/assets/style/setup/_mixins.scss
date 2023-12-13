@@ -50,7 +50,7 @@
     }
 }
 
-@mixin button-bg($normal, $hovered, $pressed) {
+@mixin btn-bg($normal, $hovered, $pressed) {
     background-color: $normal;
     &:hover {
         background-color: $hovered;
@@ -60,12 +60,12 @@
     }
 }
 
-@mixin button-bg-3() {
-    @include button-bg(var(--bg-3), var(--bg-3-hovered), var(--bg-3-pressed));
+@mixin btn-bg-3() {
+    @include btn-bg(var(--bg-3), var(--bg-3-hovered), var(--bg-3-pressed));
 }
 
 @mixin btn-primary-bg() {
-    @include button-bg(
+    @include btn-bg(
         var(--bg-btn-primary),
         var(--bg-btn-primary-hovered),
         var(--bg-btn-primary-pressed)
@@ -73,7 +73,7 @@
 }
 
 @mixin btn-icon-round-bg() {
-    @include button-bg(
+    @include btn-bg(
         var(--bg-btn-icon-round),
         var(--bg-btn-icon-round-hovered),
         var(--bg-btn-icon-round-pressed)
