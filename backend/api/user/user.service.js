@@ -81,9 +81,11 @@ function _validateUserFields(user, isNew) {
 }
 
 function _isMatchFilter(user, filterBy) {
+    filterBy.txt = filterBy.txt?.toLowerCase()
+
     if (
-        !user.username.includes(filterBy.txt) &&
-        !user.fullname.includes(filterBy.txt)
+        !user.username.toLowerCase().includes(filterBy.txt) &&
+        !user.fullname.toLowerCase().includes(filterBy.txt)
     ) {
         return false
     }

@@ -98,23 +98,20 @@ function _validateBugFields(bug, isNew) {
 
 function _isMatchFilter(bug, filterBy) {
     filterBy.txt = filterBy.txt?.toLowerCase()
+    filterBy.labels = filterBy.labels?.map((l) => l.toLowerCase())
 
-    const lowercaseBug = {
-        title: bug.title.toLowerCase(),
-        description: bug.description.toLowerCase(),
-        labels: bug.labels.map((l) => l.toLowerCase()),
-    }
+    const lowercaseLabels = bug.labels.map((l) => l.toLowerCase())
 
     if (
-        !lowercaseBug.description.includes(filterBy.txt) &&
-        !lowercaseBug.title.includes(filterBy.txt)
+        !bug.description.toLowerCase().includes(filterBy.txt) &&
+        !bug.title.toLowerCase().includes(filterBy.txt)
     ) {
         return false
     }
 
     if (
         filterBy.labels?.length > 0 &&
-        filterBy.labels?.every((l) => !lowercaseBug.labels.includes(l))
+        filterBy.labels?.every((l) => !lowercaseLabels.includes(l))
     ) {
         return false
     }
