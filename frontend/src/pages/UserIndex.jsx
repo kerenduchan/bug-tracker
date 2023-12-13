@@ -4,7 +4,6 @@ import { UserList } from '../cmps/user/UserList'
 import { PageNav } from '../cmps/general/PageNav'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
-import { useNavigate } from 'react-router'
 import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar'
 
 export function UserIndex() {
@@ -15,7 +14,6 @@ export function UserIndex() {
     const [curPageIdx, setCurPageIdx] = useState(0)
     const [maxPageIdx, setMaxPageIdx] = useState(0)
     const [pageSize, setPageSize] = useState(5)
-    const navigate = useNavigate()
 
     useEffect(() => {
         loadUsers(curPageIdx)
