@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { bugService } from '../../services/bug.service'
@@ -6,6 +6,7 @@ import { useForm } from '../../customHooks/useForm'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 
 export function BugEdit() {
+    const [bug, setBug] = useState(null)
     const [draft, handleChange, setDraft] = useForm(null)
     const { bugId } = useParams()
     const navigate = useNavigate()
@@ -16,22 +17,41 @@ export function BugEdit() {
 
     async function loadBug() {
         if (!bugId) {
-            setDraft(bugService.getEmptyBug())
+            const emptyBug = bugService.getEmptyBug()
+            setBug(emptyBug)
+            setDraft({ ...emptyBug, labels: '' })
             return
         }
         try {
-            const bug = await bugService.getById(bugId)
-            setDraft(bug)
+            const bugToEdit = await bugService.getById(bugId)
+            setBug(bugToEdit)
+            setDraft({ ...bugToEdit, labels: bugToEdit.labels.join(',') })
         } catch (err) {
-            console.log(err)
+            console.error(err)
             showErrorMsg(err.response.data)
         }
     }
 
     async function onSubmit(e) {
         e.preventDefault()
+
+        const bugToSave = {
+            ...draft,
+            severity: +draft.severity,
+            labels: draft.labels.split(','),
+        }
+        if (
+            !bugToSave.severity ||
+            bugToSave.severity < 1 ||
+            bugToSave.severity > 5
+        ) {
+            showErrorMsg('Severity must be between 1-5')
+            setDraft((prev) => ({ ...prev, severity: bug.severity }))
+            return
+        }
+
         try {
-            await bugService.save(draft)
+            await bugService.save(bugToSave)
             showSuccessMsg(`Bug ${bugId ? 'updated' : 'created'}`)
         } catch (err) {
             showErrorMsg(`Failed to ${bugId ? 'update' : 'create'} bug`)
@@ -74,6 +94,14 @@ export function BugEdit() {
                         id="severity"
                         name="severity"
                         value={draft.severity}
+                        onChange={handleChange}
+                    />
+
+                    <label htmlFor="labels">Labels (comma separated):</label>
+                    <input
+                        id="labels"
+                        name="labels"
+                        value={draft.labels}
                         onChange={handleChange}
                     />
 

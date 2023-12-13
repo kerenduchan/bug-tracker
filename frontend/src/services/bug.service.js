@@ -14,7 +14,7 @@ export const bugService = {
 }
 
 function getEmptyBug(title = '', severity = 5, description = '') {
-    return { title, severity, description, createdAt: null }
+    return { title, severity, description, labels: [], createdAt: null }
 }
 
 function getDefaultFilter() {
