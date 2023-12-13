@@ -82,7 +82,7 @@ export function BugIndex() {
 
     return (
         <main className="main-layout">
-            <h3>Bugs</h3>
+            <h1>Bugs</h1>
             <main>
                 <button onClick={onAddBug}>Add Bug</button>
                 <BugFilter filter={filter} setFilter={setFilter} />

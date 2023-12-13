@@ -82,7 +82,7 @@ export function UserIndex() {
 
     return (
         <main className="main-layout">
-            <h3>Users</h3>
+            <h1>Users</h1>
             <main>
                 <button onClick={onAddUser}>Add User</button>
                 <UserFilter filter={filter} setFilter={setFilter} />

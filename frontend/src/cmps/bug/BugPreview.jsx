@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 export function BugPreview({ bug, onRemoveBug, onEditBug }) {
     return (
         <article className="bug-preview">
-            <h4 className="title">{bug.title}</h4>
+            <div className="title">{bug.title}</div>
             <div className="severity">{bug.severity}</div>
             <div className="description">{bug.description}</div>
             <div className="labels">
