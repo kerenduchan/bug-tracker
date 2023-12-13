@@ -52,9 +52,10 @@ async function update(user) {
 function _validateUserFields(user, isNew) {
     const res = {}
 
+    const mandatoryFields = ['username', 'fullname', 'password']
+
     // if is new, some fields are mandatory
     if (isNew) {
-        const mandatoryFields = ['username', 'fullname', 'password']
         const missingFields = mandatoryFields.filter((field) => !user[field])
         if (missingFields.length) {
             throw `Missing mandatory field${
@@ -62,11 +63,11 @@ function _validateUserFields(user, isNew) {
             }: ${missingFields.join(', ')}`
         }
 
-        mandatoryFields.forEach((field) => (res[field] = user[field]))
-
         // default values for optional fields
         res.score = 100
     }
+
+    mandatoryFields.forEach((field) => (res[field] = user[field]))
 
     if (user.score !== undefined) {
         const score = +user.score
