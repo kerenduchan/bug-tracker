@@ -6,7 +6,6 @@ import { useForm } from '../../customHooks/useForm'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 
 export function BugEdit() {
-    const [bug, setBug] = useState(null)
     const [draft, handleChange, setDraft] = useForm(null)
     const { bugId } = useParams()
     const navigate = useNavigate()
@@ -18,13 +17,11 @@ export function BugEdit() {
     async function loadBug() {
         if (!bugId) {
             const emptyBug = bugService.getEmptyBug()
-            setBug(emptyBug)
             setDraft({ ...emptyBug, labels: '' })
             return
         }
         try {
             const bugToEdit = await bugService.getById(bugId)
-            setBug(bugToEdit)
             setDraft({ ...bugToEdit, labels: bugToEdit.labels.join(',') })
         } catch (err) {
             console.error(err)
@@ -46,13 +43,11 @@ export function BugEdit() {
             bugToSave.severity > 5
         ) {
             showErrorMsg('Severity must be between 1-5')
-            setDraft((prev) => ({ ...prev, severity: bug.severity }))
             return
         }
 
         if (bugToSave.title.length === 0) {
             showErrorMsg('Title must not be empty')
-            setDraft((prev) => ({ ...prev, title: bug.title }))
             return
         }
 
