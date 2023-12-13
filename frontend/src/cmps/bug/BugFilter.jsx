@@ -39,7 +39,7 @@ export function BugFilter({ filter, setFilter }) {
                 </div>
 
                 <div className="field">
-                    <label htmlFor="txt">Labels (comma separated)</label>
+                    <label htmlFor="txt">Labels (comma-separated)</label>
                     <input
                         type="text"
                         name="labels"

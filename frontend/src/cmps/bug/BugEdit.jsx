@@ -98,7 +98,7 @@ export function BugEdit() {
                         onChange={handleChange}
                     />
 
-                    <label htmlFor="labels">Labels (comma separated):</label>
+                    <label htmlFor="labels">Labels (comma-separated):</label>
                     <input
                         id="labels"
                         name="labels"
