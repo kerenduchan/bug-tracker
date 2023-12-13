@@ -1,0 +1,18 @@
+.page-nav {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-idx {
+    padding: 5px 10px;
+    background-color: var(--bg-3);
+    cursor: pointer;
+    user-select: none;
+}
+
+.page-idx.current {
+    background-color: var(--bg-2);
+    color: var(--text-inverse);
+}

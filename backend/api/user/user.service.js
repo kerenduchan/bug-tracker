@@ -1,0 +1,94 @@
+import { utilService } from '../../services/util.service.js'
+
+export const userService = {
+    query,
+    getById,
+    remove,
+    create,
+    update,
+}
+
+const FILENAME = './data/user.json'
+
+var users = utilService.readJsonFile(FILENAME)
+
+async function query(
+    filterBy,
+    sortBy,
+    sortDir,
+    pageIdx = undefined,
+    pageSize = 5
+) {
+    return utilService.query(
+        users,
+        _isMatchFilter,
+        filterBy,
+        sortBy,
+        sortDir,
+        pageIdx,
+        pageSize
+    )
+}
+
+async function getById(userId) {
+    return utilService.getById(userId, users)
+}
+
+async function remove(userId) {
+    utilService.remove(userId, users, FILENAME)
+}
+
+// Create a new user
+async function create(user) {
+    return utilService.create(user, _validateUserFields, users, FILENAME)
+}
+
+// Update an existing bug
+async function update(user) {
+    return utilService.update(user, _validateUserFields, users, FILENAME)
+}
+
+// Ignore any unknown fields and validate the known fields
+function _validateUserFields(user, isNew) {
+    const res = {}
+
+    // if is new, some fields are mandatory
+    if (isNew) {
+        const mandatoryFields = ['username', 'fullname', 'password']
+        const missingFields = mandatoryFields.filter((field) => !user[field])
+        if (missingFields.length) {
+            throw `Missing mandatory field${
+                missingFields.length > 1 ? 's' : ''
+            }: ${missingFields.join(', ')}`
+        }
+
+        mandatoryFields.forEach((field) => (res[field] = user[field]))
+
+        // default values for optional fields
+        res.score = 100
+    }
+
+    if (user.score !== undefined) {
+        const score = +user.score
+        if (score < 0 || score > 100) {
+            throw 'User score must be between 0-100'
+        }
+        res.score = score
+    }
+
+    return res
+}
+
+function _isMatchFilter(user, filterBy) {
+    if (
+        !user.username.includes(filterBy.txt) &&
+        !user.fullname.includes(filterBy.txt)
+    ) {
+        return false
+    }
+
+    if (filterBy.minScore > user.score) {
+        return false
+    }
+    return true
+}

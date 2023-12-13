@@ -1,0 +1,35 @@
+.app-header {
+    background-color: var(--bg-2);
+    position: fixed;
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+}
+
+.app-nav {
+    display: flex;
+}
+
+.navlink {
+    padding: 16px;
+    color: var(--text-inverse);
+}
+
+.navlink:hover {
+    background-color: var(--overlay-light-1);
+}
+
+.navlink.active {
+    background-color: var(--overlay-light-2);
+    font-weight: 700;
+    color: var(--text);
+}
+
+@media (max-width: 720px) {
+    .app-header {
+        color: var(--clr2bg-light);
+    }
+}
