@@ -72,6 +72,14 @@
     );
 }
 
+@mixin btn-icon-round-bg() {
+    @include button-bg(
+        var(--bg-btn-icon-round),
+        var(--bg-btn-icon-round-hovered),
+        var(--bg-btn-icon-round-pressed)
+    );
+}
+
 @mixin ellipsis() {
     overflow: hidden;
     white-space: nowrap;
@@ -98,4 +106,19 @@
     @include btn();
     @include btn-primary-bg();
     color: var(--text-inverse);
+}
+
+@mixin btn-icon-round() {
+    @include btn-icon-round-bg();
+    border: none;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+        font-size: 18px;
+        line-height: 18px;
+    }
 }
