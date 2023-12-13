@@ -12,7 +12,7 @@ export function App() {
         <Router>
             <div className="app">
                 <AppHeader />
-                <main>
+                <main className="app-main">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/bug" element={<BugIndex />} />

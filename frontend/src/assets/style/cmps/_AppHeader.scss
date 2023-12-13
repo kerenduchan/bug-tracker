@@ -5,6 +5,7 @@
 }
 
 .header-container {
+    max-height: var(--app-header-height);
     display: flex;
     align-items: center;
 }

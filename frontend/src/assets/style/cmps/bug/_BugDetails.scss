@@ -1,14 +1,24 @@
-.bug-details h3 {
-    color: var(--clr1);
-    font-size: 2em;
-}
+.bug-details {
+    .header {
+        @include main-padding-x();
+        padding-top: 10px;
+        padding-bottom: 10px;
+        background-color: var(--bg-3);
+        font-size: 14px;
+    }
 
-.bug-details h4 {
-    color: var(--clr2);
-}
+    .main {
+        @include main-padding-x();
+        padding-top: 20px;
+        display: grid;
+        row-gap: 10px;
 
-.bug-details img {
-    max-width: 200px;
-    display: block;
-    margin: auto;
+        .title {
+            font-size: 24px;
+        }
+
+        .severity {
+            color: var(--text-subtle);
+        }
+    }
 }

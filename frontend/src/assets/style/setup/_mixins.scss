@@ -1,0 +1,8 @@
+@mixin padding-x($size) {
+    padding-inline-start: $size;
+    padding-inline-end: $size;
+}
+
+@mixin main-padding-x() {
+    @include padding-x(20px);
+}
