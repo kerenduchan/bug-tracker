@@ -4,6 +4,7 @@ import { AppFooter } from './cmps/AppFooter.jsx'
 import { Home } from './pages/Home.jsx'
 import { BugIndex } from './pages/BugIndex.jsx'
 import { BugDetails } from './pages/BugDetails.jsx'
+import { BugEdit } from './cmps/bug/BugEdit.jsx'
 import { UserIndex } from './pages/UserIndex.jsx'
 import { UserDetails } from './pages/UserDetails.jsx'
 
@@ -17,6 +18,7 @@ export function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/bug" element={<BugIndex />} />
                         <Route path="/bug/:bugId" element={<BugDetails />} />
+                        <Route path="/bug/edit/:bugId?" element={<BugEdit />} />
                         <Route path="/user" element={<UserIndex />} />
                         <Route path="/user/:userId" element={<UserDetails />} />
                     </Routes>

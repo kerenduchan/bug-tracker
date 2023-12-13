@@ -62,24 +62,6 @@ export function BugIndex() {
         }
     }
 
-    async function onEditBug(bug) {
-        const severity = +prompt('New severity?')
-        const bugToSave = { ...bug, severity }
-        try {
-            const savedBug = await bugService.save(bugToSave)
-            console.log('Updated Bug:', savedBug)
-            setBugs((prevBugs) =>
-                prevBugs.map((currBug) =>
-                    currBug._id === savedBug._id ? savedBug : currBug
-                )
-            )
-            showSuccessMsg('Bug updated')
-        } catch (err) {
-            console.log('Error from onEditBug ->', err)
-            showErrorMsg('Cannot update bug')
-        }
-    }
-
     return (
         <main className="main-layout">
             <h1>Bugs</h1>
@@ -92,11 +74,7 @@ export function BugIndex() {
                     options={bugService.getSortByOptions()}
                 />
 
-                <BugList
-                    bugs={bugs}
-                    onRemoveBug={onRemoveBug}
-                    onEditBug={onEditBug}
-                />
+                <BugList bugs={bugs} onRemoveBug={onRemoveBug} />
                 {totalCount !== null && <p>Total: {totalCount} bugs</p>}
 
                 <PageNav
