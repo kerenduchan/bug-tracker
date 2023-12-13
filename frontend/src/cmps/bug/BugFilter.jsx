@@ -25,31 +25,39 @@ export function BugFilter({ filter, setFilter }) {
 
     return (
         <div className="bug-filter">
+            <div className="title">Filter</div>
             <form onSubmit={onSubmit}>
-                <label htmlFor="txt">Text search</label>
-                <input
-                    type="text"
-                    name="txt"
-                    id="txt"
-                    onChange={onChange}
-                    value={draft.txt}
-                />
-                <label htmlFor="txt">Labels (comma separated)</label>
-                <input
-                    type="text"
-                    name="labels"
-                    id="labels"
-                    onChange={onChange}
-                    value={draft.labels}
-                />
+                <div className="field">
+                    <input
+                        type="text"
+                        name="txt"
+                        id="txt"
+                        onChange={onChange}
+                        value={draft.txt}
+                        placeholder="Search for a bug..."
+                    />
+                </div>
 
-                <FormSelect
-                    name="minSeverity"
-                    title="Min Severity"
-                    value={draft.minSeverity}
-                    onChange={onChange}
-                    options={severityOptions}
-                />
+                <div className="field">
+                    <label htmlFor="txt">Labels (comma separated)</label>
+                    <input
+                        type="text"
+                        name="labels"
+                        id="labels"
+                        onChange={onChange}
+                        value={draft.labels}
+                    />
+                </div>
+
+                <div className="field">
+                    <FormSelect
+                        name="minSeverity"
+                        title="Min Severity"
+                        value={draft.minSeverity}
+                        onChange={onChange}
+                        options={severityOptions}
+                    />
+                </div>
             </form>
         </div>
     )

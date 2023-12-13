@@ -3,11 +3,10 @@ import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/bug/BugList.jsx'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import { BugFilter } from '../cmps/bug/BugFilter.jsx'
-import { SortSelect } from '../cmps/general/SortSelect.jsx'
 import { PageNav } from '../cmps/general/PageNav.jsx'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
 import { useNavigate } from 'react-router'
+import { BugIndexTopbar } from '../cmps/bug/BugIndexTopbar.jsx'
 
 export function BugIndex() {
     const [bugs, setBugs] = useState([])
@@ -48,20 +47,15 @@ export function BugIndex() {
         }
     }
 
-    function onAddBug() {
-        navigate('/bug/edit/')
-    }
-
     return (
         <main className="main-layout">
             <h1>Bugs</h1>
             <main>
-                <button onClick={onAddBug}>Add Bug</button>
-                <BugFilter filter={filter} setFilter={setFilter} />
-                <SortSelect
+                <BugIndexTopbar
+                    filter={filter}
+                    setFilter={setFilter}
                     sort={sort}
                     setSort={setSort}
-                    options={bugService.getSortByOptions()}
                 />
 
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} />
