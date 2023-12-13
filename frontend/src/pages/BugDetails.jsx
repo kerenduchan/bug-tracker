@@ -33,7 +33,7 @@ export function BugDetails() {
             <div className="main">
                 <div className="created-at">
                     Created at:{' '}
-                    {moment(Date(bug.createdAt)).format('DD/MM/YYYY [at] h:mm')}
+                    {moment(bug.createdAt).format('DD/MM/YYYY [at] h:mm')}
                 </div>
                 <div className="title">{bug.title}</div>
                 <div className="severity">Severity: {bug.severity}</div>
