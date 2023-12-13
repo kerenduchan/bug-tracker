@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-import { SortSelect } from '../cmps/general/SortSelect'
 import { userService } from '../services/user.service'
 import { UserList } from '../cmps/user/UserList'
 import { PageNav } from '../cmps/general/PageNav'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
-import { UserFilter } from '../cmps/user/UserFilter'
 import { useNavigate } from 'react-router'
 import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar'
 
@@ -46,10 +44,6 @@ export function UserIndex() {
             console.error('Error from onRemoveUser ->', err)
             showErrorMsg('Cannot remove user')
         }
-    }
-
-    async function onAddUser() {
-        navigate('/user/edit/')
     }
 
     return (
