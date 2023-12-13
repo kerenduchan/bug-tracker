@@ -97,16 +97,24 @@ function _validateBugFields(bug, isNew) {
 }
 
 function _isMatchFilter(bug, filterBy) {
+    filterBy.txt = filterBy.txt?.toLowerCase()
+
+    const lowercaseBug = {
+        title: bug.title.toLowerCase(),
+        description: bug.description.toLowerCase(),
+        labels: bug.labels.map((l) => l.toLowerCase()),
+    }
+
     if (
-        !bug.description.includes(filterBy.txt) &&
-        !bug.title.includes(filterBy.txt)
+        !lowercaseBug.description.includes(filterBy.txt) &&
+        !lowercaseBug.title.includes(filterBy.txt)
     ) {
         return false
     }
 
     if (
         filterBy.labels?.length > 0 &&
-        filterBy.labels?.every((l) => !bug.labels.includes(l))
+        filterBy.labels?.every((l) => !lowercaseBug.labels.includes(l))
     ) {
         return false
     }
