@@ -49,3 +49,17 @@
         }
     }
 }
+
+@mixin button-bg($normal, $hovered, $pressed) {
+    background-color: $normal;
+    &:hover {
+        background-color: $hovered;
+    }
+    &:active {
+        background-color: $pressed;
+    }
+}
+
+@mixin button-bg-3() {
+    @include button-bg(var(--bg-3), var(--bg-3-hovered), var(--bg-3-pressed));
+}

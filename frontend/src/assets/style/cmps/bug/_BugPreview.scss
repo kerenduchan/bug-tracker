@@ -3,7 +3,7 @@
     align-items: center;
     grid-template-columns: 40px 300px 200px 1fr auto;
     grid-template-rows: minmax(auto, 36px);
-    background-color: var(--bg-3);
+    @include button-bg-3();
 
     .severity {
         grid-area: 1 / 1;
