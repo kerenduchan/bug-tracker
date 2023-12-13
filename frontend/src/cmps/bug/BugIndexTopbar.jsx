@@ -6,7 +6,7 @@ import { bugService } from '../../services/bug.service.js'
 export function BugIndexTopbar({ filter, setFilter, sort, setSort }) {
     const navigate = useNavigate()
 
-    function onAddBug() {
+    function onCreateBug() {
         navigate('/bug/edit/')
     }
 
@@ -18,8 +18,8 @@ export function BugIndexTopbar({ filter, setFilter, sort, setSort }) {
                 setSort={setSort}
                 options={bugService.getSortByOptions()}
             />
-            <button className="btn-primary" onClick={onAddBug}>
-                Add Bug
+            <button className="btn-primary" onClick={onCreateBug}>
+                Create Bug
             </button>
         </div>
     )

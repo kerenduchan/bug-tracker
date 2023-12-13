@@ -1,0 +1,18 @@
+.sort-select {
+    background-color: var(--bg-5);
+    padding: 6px;
+
+    .title {
+        @include title-1();
+    }
+
+    form {
+        display: flex;
+        gap: 12px;
+
+        label {
+            font-size: 14px;
+            margin-inline-end: 6px;
+        }
+    }
+}

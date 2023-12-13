@@ -15,22 +15,29 @@ export function SortSelect({ sort, setSort, options }) {
     }
 
     return (
-        <form onSubmit={onSubmit} className="sort-select">
-            <FormSelect
-                name="sortBy"
-                title="Sort By"
-                value={draft.sortBy}
-                onChange={handleChange}
-                options={options}
-            />
+        <div className="sort-select">
+            <div className="title">Sort</div>
+            <form onSubmit={onSubmit}>
+                <div className="field">
+                    <FormSelect
+                        name="sortBy"
+                        title="Sort By"
+                        value={draft.sortBy}
+                        onChange={handleChange}
+                        options={options}
+                    />
+                </div>
 
-            <FormSelect
-                name="sortDir"
-                title="Sort Direction"
-                value={draft.sortDir}
-                onChange={handleChange}
-                options={utilService.getSortDirOptions()}
-            />
-        </form>
+                <div className="field">
+                    <FormSelect
+                        name="sortDir"
+                        title="Sort Direction"
+                        value={draft.sortDir}
+                        onChange={handleChange}
+                        options={utilService.getSortDirOptions()}
+                    />
+                </div>
+            </form>
+        </div>
     )
 }

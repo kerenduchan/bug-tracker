@@ -12,16 +12,10 @@ a {
     cursor: pointer;
 }
 
-/* Dont stretch my Media */
-img,
-embed,
-video,
-object {
-    max-width: 100%;
-}
-
-.about nav a {
-    margin-right: 10px;
+ul,
+ol {
+    margin: 0;
+    padding: 0;
 }
 
 footer {
