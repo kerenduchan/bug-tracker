@@ -7,6 +7,7 @@ import { BugFilter } from '../cmps/bug/BugFilter.jsx'
 import { SortSelect } from '../cmps/general/SortSelect.jsx'
 import { PageNav } from '../cmps/general/PageNav.jsx'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
+import { useNavigate } from 'react-router'
 
 export function BugIndex() {
     const [bugs, setBugs] = useState([])
@@ -16,6 +17,7 @@ export function BugIndex() {
     const [curPageIdx, setCurPageIdx] = useState(0)
     const [maxPageIdx, setMaxPageIdx] = useState(0)
     const [pageSize, setPageSize] = useState(5)
+    const navigate = useNavigate()
 
     useEffect(() => {
         loadBugs(curPageIdx)
@@ -46,20 +48,8 @@ export function BugIndex() {
         }
     }
 
-    async function onAddBug() {
-        const bug = {
-            title: prompt('Bug title?'),
-            description: prompt('Bug description?'),
-            severity: +prompt('Bug severity?'),
-        }
-        try {
-            await bugService.save(bug)
-            loadBugs(0)
-            showSuccessMsg('Bug added')
-        } catch (err) {
-            console.error('Error from onAddBug ->', err)
-            showErrorMsg('Cannot add bug')
-        }
+    function onAddBug() {
+        navigate('/bug/edit/')
     }
 
     return (

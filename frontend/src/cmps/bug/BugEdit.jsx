@@ -50,6 +50,12 @@ export function BugEdit() {
             return
         }
 
+        if (bugToSave.title.length === 0) {
+            showErrorMsg('Title must not be empty')
+            setDraft((prev) => ({ ...prev, title: bug.title }))
+            return
+        }
+
         try {
             await bugService.save(bugToSave)
             showSuccessMsg(`Bug ${bugId ? 'updated' : 'created'}`)
