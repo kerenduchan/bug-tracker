@@ -14,3 +14,38 @@
     background-color: var(--bg-3);
     font-size: 14px;
 }
+
+@mixin form-page() {
+    .header {
+        @include sub-header();
+    }
+
+    .main {
+        @include main-padding-x();
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 800px;
+
+            label {
+                padding-top: 10px;
+            }
+
+            textarea {
+                height: 200px;
+                resize: none;
+            }
+
+            .actions {
+                padding-top: 16px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            button {
+                width: 70px;
+            }
+        }
+    }
+}

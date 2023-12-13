@@ -6,6 +6,7 @@ import { PageNav } from '../cmps/general/PageNav'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { UserFilter } from '../cmps/user/UserFilter'
+import { useNavigate } from 'react-router'
 
 export function UserIndex() {
     const [users, setUsers] = useState([])
@@ -15,6 +16,7 @@ export function UserIndex() {
     const [curPageIdx, setCurPageIdx] = useState(0)
     const [maxPageIdx, setMaxPageIdx] = useState(0)
     const [pageSize, setPageSize] = useState(5)
+    const navigate = useNavigate()
 
     useEffect(() => {
         loadUsers(curPageIdx)
@@ -46,38 +48,11 @@ export function UserIndex() {
     }
 
     async function onAddUser() {
-        const user = {
-            fullname: prompt('User full name?'),
-            username: prompt('Username?'),
-            password: prompt('Password?'),
-            score: +prompt('User score?'),
-        }
-        try {
-            await userService.save(user)
-            loadUsers(0)
-            showSuccessMsg('User added')
-        } catch (err) {
-            console.error('Error from onAddUser ->', err)
-            showErrorMsg('Cannot add user')
-        }
+        navigate('/user/edit/')
     }
 
     async function onEditUser(user) {
-        const score = +prompt('New score?')
-        const userToSave = { ...user, score }
-        try {
-            const savedUser = await userService.save(userToSave)
-            console.log('Updated User:', savedUser)
-            setUsers((prevUsers) =>
-                prevUsers.map((currUser) =>
-                    currUser._id === savedUser._id ? savedUser : currUser
-                )
-            )
-            showSuccessMsg('User updated')
-        } catch (err) {
-            console.log('Error from onEditUser ->', err)
-            showErrorMsg('Cannot update user')
-        }
+        navigate(`/user/edit/${user._id}`)
     }
 
     return (

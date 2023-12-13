@@ -7,6 +7,7 @@ import { BugDetails } from './pages/BugDetails.jsx'
 import { BugEdit } from './cmps/bug/BugEdit.jsx'
 import { UserIndex } from './pages/UserIndex.jsx'
 import { UserDetails } from './pages/UserDetails.jsx'
+import { UserEdit } from './cmps/user/UserEdit.jsx'
 
 export function App() {
     return (
@@ -16,11 +17,17 @@ export function App() {
                 <main className="app-main">
                     <Routes>
                         <Route path="/" element={<Home />} />
+
                         <Route path="/bug" element={<BugIndex />} />
                         <Route path="/bug/:bugId" element={<BugDetails />} />
                         <Route path="/bug/edit/:bugId?" element={<BugEdit />} />
+
                         <Route path="/user" element={<UserIndex />} />
                         <Route path="/user/:userId" element={<UserDetails />} />
+                        <Route
+                            path="/user/edit/:userId?"
+                            element={<UserEdit />}
+                        />
                     </Routes>
                 </main>
                 <AppFooter />
