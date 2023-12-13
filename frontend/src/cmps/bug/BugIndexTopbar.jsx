@@ -18,7 +18,9 @@ export function BugIndexTopbar({ filter, setFilter, sort, setSort }) {
                 setSort={setSort}
                 options={bugService.getSortByOptions()}
             />
-            <button onClick={onAddBug}>Add Bug</button>
+            <button className="btn-primary" onClick={onAddBug}>
+                Add Bug
+            </button>
         </div>
     )
 }

@@ -64,6 +64,14 @@
     @include button-bg(var(--bg-3), var(--bg-3-hovered), var(--bg-3-pressed));
 }
 
+@mixin btn-primary-bg() {
+    @include button-bg(
+        var(--bg-btn-primary),
+        var(--bg-btn-primary-hovered),
+        var(--bg-btn-primary-pressed)
+    );
+}
+
 @mixin ellipsis() {
     overflow: hidden;
     white-space: nowrap;
@@ -76,4 +84,18 @@
     font-size: 13px;
     margin-bottom: 6px;
     color: var(--text-subtle);
+}
+
+@mixin btn() {
+    border: none;
+    padding: 8px;
+    border-radius: 2px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+@mixin btn-primary() {
+    @include btn();
+    @include btn-primary-bg();
+    color: var(--text-inverse);
 }
