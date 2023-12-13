@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { PageNav } from '../cmps/general/PageNav.jsx'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
-import { useNavigate } from 'react-router'
 import { BugIndexTopbar } from '../cmps/bug/BugIndexTopbar.jsx'
 
 export function BugIndex() {
@@ -16,7 +15,6 @@ export function BugIndex() {
     const [curPageIdx, setCurPageIdx] = useState(0)
     const [maxPageIdx, setMaxPageIdx] = useState(0)
     const [pageSize, setPageSize] = useState(5)
-    const navigate = useNavigate()
 
     useEffect(() => {
         loadBugs(curPageIdx)
