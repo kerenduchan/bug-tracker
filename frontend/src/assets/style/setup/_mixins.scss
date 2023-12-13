@@ -6,3 +6,11 @@
 @mixin main-padding-x() {
     @include padding-x(20px);
 }
+
+@mixin sub-header() {
+    @include main-padding-x();
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: var(--bg-3);
+    font-size: 14px;
+}

@@ -21,9 +21,10 @@
 @import 'cmps/Home';
 
 /* bug */
+@import 'cmps/bug/BugDetails';
+@import 'cmps/bug/BugEdit';
 @import 'cmps/bug/BugList';
 @import 'cmps/bug/BugPreview';
-@import 'cmps/bug/BugDetails';
 
 /* user */
 @import 'cmps/user/UserList';

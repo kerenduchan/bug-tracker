@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { bugService } from '../../services/bug.service'
 import { useForm } from '../../customHooks/useForm'
+import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
 
 export function BugEdit() {
     const [draft, handleChange, setDraft] = useForm(null)
     const { bugId } = useParams()
+    const navigate = useNavigate()
 
     useEffect(() => {
         loadBug()
@@ -26,6 +28,21 @@ export function BugEdit() {
         }
     }
 
+    async function onSubmit(e) {
+        e.preventDefault()
+        try {
+            await bugService.save(draft)
+            showSuccessMsg(`Bug ${bugId ? 'updated' : 'created'}`)
+        } catch (err) {
+            showErrorMsg(`Failed to ${bugId ? 'update' : 'create'} bug`)
+        }
+        navigate('/bug')
+    }
+
+    function onCancel() {
+        navigate('/bug')
+    }
+
     if (!draft) return <h1>loading....</h1>
     return (
         <div className="bug-edit">
@@ -33,7 +50,9 @@ export function BugEdit() {
                 <Link to="/bug">Back to List</Link>
             </div>
             <div className="main">
-                <form>
+                <h1>{bugId ? 'Edit' : 'Create'} Bug</h1>
+
+                <form onSubmit={onSubmit}>
                     <label htmlFor="title">Title:</label>
                     <input
                         id="title"
@@ -57,6 +76,13 @@ export function BugEdit() {
                         value={draft.severity}
                         onChange={handleChange}
                     />
+
+                    <div className="actions">
+                        <button>Save</button>
+                        <button type="button" onClick={onCancel}>
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
