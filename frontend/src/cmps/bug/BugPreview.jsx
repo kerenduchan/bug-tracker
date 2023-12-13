@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { utilService } from '../../services/util.service'
 
 export function BugPreview({ bug, onRemoveBug }) {
     const navigate = useNavigate()
@@ -9,8 +10,11 @@ export function BugPreview({ bug, onRemoveBug }) {
 
     return (
         <article className="bug-preview">
-            <div className="title">{bug.title}</div>
+            <div className="created-at">
+                {utilService.formatDateTime(bug.createdAt)}
+            </div>
             <div className="severity">{bug.severity}</div>
+            <div className="title">{bug.title}</div>
             <div className="description">{bug.description}</div>
             <div className="labels">
                 {bug.labels.map((l) => (

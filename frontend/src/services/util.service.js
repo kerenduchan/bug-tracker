@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export const utilService = {
     makeId,
     makeLorem,
@@ -5,6 +7,7 @@ export const utilService = {
     getSortDirOptions,
     saveToStorage,
     loadFromStorage,
+    formatDateTime,
 }
 
 function makeId(length = 6) {
@@ -83,4 +86,8 @@ function saveToStorage(key, value) {
 function loadFromStorage(key) {
     const data = localStorage.getItem(key)
     return data ? JSON.parse(data) : undefined
+}
+
+function formatDateTime(timestamp) {
+    return moment(timestamp).format('DD/MM/YYYY hh:mm')
 }

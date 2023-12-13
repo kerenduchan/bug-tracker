@@ -63,3 +63,9 @@
 @mixin button-bg-3() {
     @include button-bg(var(--bg-3), var(--bg-3-hovered), var(--bg-3-pressed));
 }
+
+@mixin ellipsis() {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
