@@ -10,6 +10,10 @@
 @import 'base/helpers';
 @import 'base/layout';
 
+/* Pages */
+
+@import 'pages/Home';
+
 /* Components */
 
 /* general */
@@ -18,8 +22,7 @@
 @import 'cmps/general/UserMsg';
 
 /* app */
-@import 'cmps/AppHeader';
-@import 'cmps/Home';
+@import 'cmps/app/AppHeader';
 @import 'cmps/app/LoginSignup';
 
 /* bug */

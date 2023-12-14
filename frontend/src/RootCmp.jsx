@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import { AppHeader } from './cmps/AppHeader.jsx'
-import { AppFooter } from './cmps/AppFooter.jsx'
+import { AppHeader } from './cmps/app/AppHeader.jsx'
+import { AppFooter } from './cmps/app/AppFooter.jsx'
 import { Home } from './pages/Home.jsx'
 import { BugIndex } from './pages/BugIndex.jsx'
 import { BugDetails } from './pages/BugDetails.jsx'
@@ -10,7 +10,7 @@ import { UserIndex } from './pages/UserIndex.jsx'
 import { UserDetails } from './pages/UserDetails.jsx'
 import { UserEdit } from './cmps/user/UserEdit.jsx'
 import { LoginContext } from './contexts/LoginContext'
-import { LoginSignup } from './cmps/LoginSignup.jsx'
+import { LoginSignup } from './cmps/app/LoginSignup.jsx'
 
 export function App() {
     const [loggedinUser, setLoggedinUser] = useState(null)

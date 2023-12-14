@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
-import { LoginContext } from '../contexts/LoginContext'
-import { UserMsg } from './general/UserMsg'
+import { LoginContext } from '../../contexts/LoginContext'
+import { UserMsg } from '../general/UserMsg'
 
 export function AppHeader() {
     const { loggedinUser, setLoggedinUser } = useContext(LoginContext)

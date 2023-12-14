@@ -1,4 +1,4 @@
-import { useForm } from '../customHooks/useForm'
+import { useForm } from '../../customHooks/useForm'
 
 export function LoginSignup({ isLogin }) {
     const [draft, handleChange] = useForm(getInitialDraft())
