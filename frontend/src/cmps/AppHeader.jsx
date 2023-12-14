@@ -32,10 +32,10 @@ export function AppHeader() {
                     <div>Welcome</div>
                 ) : (
                     <div className="login-signup-container">
-                        <NavLink className="login-link" to="/login">
+                        <NavLink className="navlink" to="/login">
                             Log in
                         </NavLink>
-                        <NavLink className="signup-link" to="/signup">
+                        <NavLink className="navlink signup-link" to="/signup">
                             Sign up
                         </NavLink>
                     </div>

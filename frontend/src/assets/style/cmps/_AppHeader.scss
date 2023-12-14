@@ -11,42 +11,30 @@
 
     .app-nav {
         display: flex;
+    }
 
-        .navlink {
-            @include padding-x(16px);
-            color: var(--text-inverse);
-            text-decoration: none;
-            @include flex-center-center();
+    .navlink {
+        @include padding-x(16px);
+        color: var(--text-inverse);
+        text-decoration: none;
+        @include flex-center-center();
 
-            &:hover {
-                background-color: var(--overlay-light-1);
-            }
+        &:hover {
+            background-color: var(--overlay-light-1);
+        }
 
-            &.active {
-                background-color: var(--overlay-light-2);
-                font-weight: 700;
-                color: var(--text);
-            }
+        &.active {
+            background-color: var(--overlay-light-2);
+            font-weight: 700;
+            color: var(--text);
         }
     }
 
     .login-signup-container {
         display: flex;
 
-        .login-link {
-            @include padding-x(16px);
-            @include btn-bg-nopress(transparent, var(--overlay-light-1));
-            color: var(--text-inverse);
-            text-decoration: none;
-            @include flex-center-center();
-        }
-
         .signup-link {
-            @include padding-x(16px);
             @include btn-primary-bg();
-            color: var(--text-inverse);
-            text-decoration: none;
-            @include flex-center-center();
         }
     }
 }
