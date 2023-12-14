@@ -23,17 +23,18 @@ export function BugDetails() {
         }
     }
 
-    if (!bug) return <h1>loadings....</h1>
+    if (!bug) return <h1>Loading....</h1>
     return (
         <div className="bug-details">
             <div className="header">
                 <Link to="/bug">Back to List</Link>
             </div>
             <div className="main">
-                <div className="created-at">
-                    Created at: {utilService.formatDateTime(bug.createdAt)}
-                </div>
                 <div className="title">{bug.title}</div>
+                <div className="created-at">
+                    Created at: {utilService.formatDateTime(bug.createdAt)} by{' '}
+                    {bug.creator.fullname} ({bug.creator.username})
+                </div>
                 <div className="severity">Severity: {bug.severity}</div>
                 <div className="description">{bug.description}</div>
             </div>
