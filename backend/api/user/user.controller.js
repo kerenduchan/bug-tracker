@@ -46,7 +46,7 @@ export async function removeUser(req, res) {
 }
 
 // // Save
-export async function addUser(req, res) {
+export async function createUser(req, res) {
     try {
         const savedUser = await userService.create(req.body)
         res.send(savedUser)

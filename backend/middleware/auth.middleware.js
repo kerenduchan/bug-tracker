@@ -12,13 +12,13 @@ export function requireAuth(req, res, next) {
 export function requireAdmin(req, res, next) {
     const { loginToken } = req.cookies
     const loggedinUser = authService.validateToken(loginToken)
-
     if (!loggedinUser) return res.status(401).send('Not logged in')
+
     if (!loggedinUser.isAdmin) {
         loggerService.warn(
-            `${loggedinUser.fullname} tried to perform admin action`
+            `${loggedinUser.username} tried to perform admin action`
         )
-        return res.status(403).send('Not autorized')
+        return res.status(403).send('Not authorized')
     }
     req.loggedinUser = loggedinUser
     next()
