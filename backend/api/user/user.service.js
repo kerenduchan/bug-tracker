@@ -1,4 +1,7 @@
 import { utilService } from '../../services/util.service.js'
+import bcrypt from 'bcrypt'
+
+const HASH_SALT_ROUNDS = 10
 
 export const userService = {
     query,
@@ -43,43 +46,55 @@ async function remove(userId) {
     utilService.remove(userId, users, FILENAME)
 }
 
-// Create a new user
 async function create(user) {
-    return utilService.create(user, _validateUserFields, users, FILENAME)
+    return utilService.create(user, _processUserFields, users, FILENAME)
 }
 
-// Update an existing bug
 async function update(user) {
-    return utilService.update(user, _validateUserFields, users, FILENAME)
+    return await utilService.update(user, _processUserFields, users, FILENAME)
 }
 
-// Ignore any unknown fields and validate the known fields
-function _validateUserFields(user, isNew) {
-    const res = {}
+// Ignore any unknown fields, validate the known fields, and add any needed
+// fields
+async function _processUserFields(user, isNew) {
+    const fields = ['username', 'fullname', 'password', 'score']
 
-    const mandatoryFields = ['username', 'fullname', 'password']
-
-    // if is new, some fields are mandatory
-    if (isNew) {
-        const missingFields = mandatoryFields.filter((field) => !user[field])
-        if (missingFields.length) {
-            throw `Missing mandatory field${
-                missingFields.length > 1 ? 's' : ''
-            }: ${missingFields.join(', ')}`
+    // disregard unrecognized fields
+    let res = {}
+    fields.forEach((field) => {
+        if (user[field] !== undefined) {
+            res[field] = user[field]
         }
+    })
+
+    // special handling for create
+    if (isNew) {
+        // set is admin
+        res['isAdmin'] = false
+
+        // check that all mandatory fields were supplied
+        const mandatoryFields = ['username', 'fullname', 'password']
+        utilService.validateMandatoryFields(res, mandatoryFields)
+
+        // check that the username isn't taken
+        const userExists = await getByUsername(user.username)
+        if (userExists) throw 'Username already taken'
+
+        // hash the password
+        res.password = await bcrypt.hash(res.password, HASH_SALT_ROUNDS)
 
         // default values for optional fields
-        res.score = 100
+        if (res.score === undefined) {
+            res.score = 100
+        }
     }
 
-    mandatoryFields.forEach((field) => (res[field] = user[field]))
-
-    if (user.score !== undefined) {
-        const score = +user.score
-        if (score < 0 || score > 100) {
+    // validate the score field
+    if (res.score !== undefined) {
+        res.score = +res.score
+        if (res.score < 0 || res.score > 100) {
             throw 'User score must be between 0-100'
         }
-        res.score = score
     }
 
     return res

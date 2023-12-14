@@ -39,20 +39,19 @@ async function remove(bugId, loggedinUserId) {
     utilService.remove(bugId, bugs, FILENAME)
 }
 
-// Create a new bug
 async function create(bug, loggedinUserId) {
     const newBug = { ...bug, creatorId: loggedinUserId }
-    return utilService.create(newBug, _validateBugFields, bugs, FILENAME)
+    return utilService.create(newBug, _processBugFields, bugs, FILENAME)
 }
 
-// Update an existing bug
 async function update(bug, loggedinUserId) {
     await _validateIsCreator(bug._id, loggedinUserId)
-    return utilService.update(bug, _validateBugFields, bugs, FILENAME)
+    return utilService.update(bug, _processBugFields, bugs, FILENAME)
 }
 
-// Ignore any unknown fields and validate the known fields
-function _validateBugFields(bug, isNew) {
+// Ignore any unknown fields, validate the known fields, and add any needed
+// fields
+function _processBugFields(bug, isNew) {
     const fields = ['title', 'severity', 'description', 'labels']
 
     // disregard unrecognized fields
@@ -63,18 +62,16 @@ function _validateBugFields(bug, isNew) {
         }
     })
 
-    // if is new, check that all mandatory fields were given
+    // special handling for create
     if (isNew) {
+        // set the creator ID
         res['creatorId'] = bug['creatorId']
 
+        // check that all mandatory fields were supplied
         const mandatoryFields = ['title', 'severity']
-        mandatoryFields.forEach((field) => {
-            if (!res[field]) {
-                throw `Missing mandatory field: ${field}`
-            }
-        })
+        utilService.validateMandatoryFields(res, mandatoryFields)
 
-        // default values for optional fields
+        // set default values for optional fields that were not supplied
         if (res.labels === undefined) {
             res.labels = []
         }

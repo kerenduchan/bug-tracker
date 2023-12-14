@@ -15,6 +15,7 @@ export const utilService = {
     create,
     update,
     query,
+    validateMandatoryFields,
 }
 
 function readJsonFile(path) {
@@ -111,12 +112,13 @@ function getById(id, objs) {
     }
 }
 
-async function create(obj, validateFields, objs, path) {
+async function create(obj, processFields, objs, path) {
+    obj = await processFields(obj, true)
     try {
         const newObj = {
             _id: makeId(),
             createdAt: Date.now(),
-            ...validateFields(obj, true),
+            ...obj,
         }
 
         // save to "DB"
@@ -132,7 +134,7 @@ async function create(obj, validateFields, objs, path) {
 async function update(obj, validateFields, objs, path) {
     try {
         // strict fields
-        const fieldsToUpdate = validateFields(obj, false)
+        const fieldsToUpdate = await validateFields(obj, false)
 
         // fetch by ID from "DB"
         var idx = objs.findIndex((o) => o._id === obj._id)
@@ -187,6 +189,17 @@ async function query(
     } catch (err) {
         loggerService.error(err)
         throw err
+    }
+}
+
+function validateMandatoryFields(obj, mandatoryFields) {
+    const missingFields = mandatoryFields.filter(
+        (field) => obj[field] === undefined || obj[field] === null
+    )
+    if (missingFields.length) {
+        throw `Missing mandatory field${
+            missingFields.length > 1 ? 's' : ''
+        }: ${missingFields.join(', ')}`
     }
 }
 
