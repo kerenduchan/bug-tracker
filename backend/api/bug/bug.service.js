@@ -1,4 +1,5 @@
 import { utilService } from '../../services/util.service.js'
+import { userService } from '../user/user.service.js'
 
 export const bugService = {
     query,
@@ -35,7 +36,7 @@ async function getById(bugId) {
 }
 
 async function remove(bugId, loggedinUserId) {
-    await _validateIsCreator(bugId, loggedinUserId)
+    await _validateIsCreatorOrAdmin(bugId, loggedinUserId)
     utilService.remove(bugId, bugs, FILENAME)
 }
 
@@ -45,7 +46,7 @@ async function create(bug, loggedinUserId) {
 }
 
 async function update(bug, loggedinUserId) {
-    await _validateIsCreator(bug._id, loggedinUserId)
+    await _validateIsCreatorOrAdmin(bug._id, loggedinUserId)
     return utilService.update(bug, _processBugFields, bugs, FILENAME)
 }
 
@@ -130,12 +131,13 @@ function _isMatchFilter(bug, filterBy) {
     return true
 }
 
-async function _validateIsCreator(bugId, loggedinUserId) {
+async function _validateIsCreatorOrAdmin(bugId, loggedinUserId) {
     if (!bugId) {
         throw 'missing bug ID'
     }
     const bug = await getById(bugId)
-    if (loggedinUserId != bug.creatorId) {
-        throw 'Unauthorized - only the creator of this bug is authorized to perform this action'
+    const user = await userService.getById(loggedinUserId)
+    if (!user.isAdmin && loggedinUserId !== bug.creatorId) {
+        throw 'Not authorized'
     }
 }
