@@ -32,17 +32,7 @@ async function query(
 }
 
 async function getById(bugId) {
-    const bug = await utilService.getById(bugId, bugs)
-    const creator = await userService.getById(bug.creatorId)
-    delete bug.creatorId
-    return {
-        ...bug,
-        creator: {
-            _id: creator._id,
-            fullname: creator.fullname,
-            username: creator.username,
-        },
-    }
+    return await utilService.getById(bugId, bugs)
 }
 
 async function remove(bugId, loggedinUserId) {
