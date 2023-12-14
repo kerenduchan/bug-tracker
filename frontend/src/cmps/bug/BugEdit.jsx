@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import { LoginContext } from '../../contexts/LoginContext'
 import { bugService } from '../../services/bug.service'
-import { useForm } from '../../customHooks/useForm'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { useForm } from '../../customHooks/useForm'
 
 export function BugEdit() {
+    const { loggedinUser } = useContext(LoginContext)
+
     const [draft, handleChange, setDraft] = useForm(null)
     const { bugId } = useParams()
     const navigate = useNavigate()
 
     useEffect(() => {
+        if (!loggedinUser) {
+            navigate('/login', { replace: true })
+        }
         loadBug()
     }, [])
 
