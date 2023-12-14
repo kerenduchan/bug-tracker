@@ -16,6 +16,7 @@ export function BugEdit() {
     useEffect(() => {
         if (!loggedinUser) {
             navigate('/login', { replace: true })
+            return
         }
         loadBug()
     }, [])

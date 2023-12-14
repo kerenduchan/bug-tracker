@@ -1,13 +1,16 @@
+import { useState, useEffect, useContext } from 'react'
+import { LoginContext } from '../contexts/LoginContext.js'
 import { bugService } from '../services/bug.service'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/bug/BugList.jsx'
-import { useState } from 'react'
-import { useEffect } from 'react'
 import { PageNav } from '../cmps/general/PageNav.jsx'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
 import { BugIndexTopbar } from '../cmps/bug/BugIndexTopbar.jsx'
+import { useNavigate } from 'react-router'
 
 export function BugIndex() {
+    const { loggedinUser } = useContext(LoginContext)
+    const navigate = useNavigate()
     const [bugs, setBugs] = useState([])
     const [totalCount, setTotalCount] = useState(null)
     const [filter, setFilter] = useState(bugService.getDefaultFilter())
@@ -35,6 +38,11 @@ export function BugIndex() {
     }
 
     async function onRemoveBug(bugId) {
+        if (!loggedinUser) {
+            navigate('/login')
+            return
+        }
+
         try {
             await bugService.remove(bugId)
             loadBugs(0)
