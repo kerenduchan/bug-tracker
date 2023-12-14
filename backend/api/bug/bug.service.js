@@ -39,8 +39,9 @@ async function remove(bugId) {
 }
 
 // Create a new bug
-async function create(bug) {
-    return utilService.create(bug, _validateBugFields, bugs, FILENAME)
+async function create(bug, creatorId) {
+    const newBug = { ...bug, creatorId }
+    return utilService.create(newBug, _validateBugFields, bugs, FILENAME)
 }
 
 // Update an existing bug
@@ -50,47 +51,49 @@ async function update(bug) {
 
 // Ignore any unknown fields and validate the known fields
 function _validateBugFields(bug, isNew) {
-    const res = {}
+    const fields = ['title', 'severity', 'description', 'labels', 'creatorId']
 
-    // if is new, some fields are mandatory
+    // disregard unrecognized fields
+    let res = {}
+    fields.forEach((field) => (res[field] = bug[field]))
+
+    // if is new, check that all mandatory fields were given
     if (isNew) {
         const mandatoryFields = ['title', 'severity']
         mandatoryFields.forEach((field) => {
-            if (!bug[field]) {
+            if (!res[field]) {
                 throw `Missing mandatory field: ${field}`
             }
         })
+
         // default values for optional fields
-        res.labels = []
-        res.description = ''
+        if (res.labels === undefined) {
+            res.labels = []
+        }
+
+        if (res.description === undefined) {
+            res.description = ''
+        }
     }
 
-    if (bug.description !== undefined) {
-        res.description = bug.description
-    }
-
-    if (bug.title !== undefined) {
-        res.title = bug.title
-    }
-
-    if (bug.labels !== undefined) {
-        if (!Array.isArray(bug.labels)) {
+    // validate the labels field
+    if (res.labels !== undefined) {
+        if (!Array.isArray(res.labels)) {
             throw 'labels must be an array of strings'
         }
-        bug.labels.forEach((l) => {
+        res.labels.forEach((l) => {
             if (typeof l !== 'string') {
                 throw 'labels must be an array of strings'
             }
         })
-        res.labels = bug.labels
     }
 
-    if (bug.severity !== undefined) {
-        const severity = +bug.severity
+    // validate the severity
+    if (res.severity !== undefined) {
+        const severity = +res.severity
         if (severity < 1 || severity > 5) {
             throw 'Bug severity must be between 1-5'
         }
-        res.severity = severity
     }
 
     return res
