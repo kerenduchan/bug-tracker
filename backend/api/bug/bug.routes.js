@@ -1,6 +1,6 @@
 import express from 'express'
 import {
-    addBug,
+    createBug,
     getBug,
     getBugs,
     removeBug,
@@ -12,7 +12,7 @@ const router = express.Router()
 router.get('/', getBugs)
 router.get('/:bugId', getBug)
 router.delete('/:bugId', removeBug)
-router.post('/', addBug)
+router.post('/', createBug)
 router.put('/', updateBug)
 
 export const bugRoutes = router

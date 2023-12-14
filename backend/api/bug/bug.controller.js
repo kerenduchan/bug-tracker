@@ -63,7 +63,7 @@ export async function removeBug(req, res) {
 }
 
 // // Save
-export async function addBug(req, res) {
+export async function createBug(req, res) {
     try {
         const savedBug = await bugService.create(req.body)
         res.send(savedBug)
