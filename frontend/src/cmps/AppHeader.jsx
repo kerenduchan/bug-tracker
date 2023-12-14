@@ -32,8 +32,12 @@ export function AppHeader() {
                     <div>Welcome</div>
                 ) : (
                     <div className="login-signup-container">
-                        <div className="login-link">Log in</div>
-                        <div className="signup-link">Sign up</div>
+                        <NavLink className="login-link" to="/login">
+                            Log in
+                        </NavLink>
+                        <NavLink className="signup-link" to="/signup">
+                            Sign up
+                        </NavLink>
                     </div>
                 )}
             </div>

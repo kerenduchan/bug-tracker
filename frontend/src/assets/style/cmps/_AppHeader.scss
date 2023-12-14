@@ -37,6 +37,7 @@
             @include padding-x(16px);
             @include btn-bg-nopress(transparent, var(--overlay-light-1));
             color: var(--text-inverse);
+            text-decoration: none;
             @include flex-center-center();
         }
 
@@ -44,6 +45,7 @@
             @include padding-x(16px);
             @include btn-primary-bg();
             color: var(--text-inverse);
+            text-decoration: none;
             @include flex-center-center();
         }
     }

@@ -10,6 +10,7 @@ import { UserIndex } from './pages/UserIndex.jsx'
 import { UserDetails } from './pages/UserDetails.jsx'
 import { UserEdit } from './cmps/user/UserEdit.jsx'
 import { LoginContext } from './contexts/LoginContext'
+import { LoginSignup } from './cmps/LoginSignup.jsx'
 
 export function App() {
     const [loggedinUser, setLoggedinUser] = useState(null)
@@ -22,6 +23,14 @@ export function App() {
                     <main className="app-main">
                         <Routes>
                             <Route path="/" element={<Home />} />
+                            <Route
+                                path="/login"
+                                element={<LoginSignup isLogin={true} />}
+                            />
+                            <Route
+                                path="/signup"
+                                element={<LoginSignup isLogin={false} />}
+                            />
 
                             <Route path="/bug" element={<BugIndex />} />
                             <Route
