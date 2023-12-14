@@ -1,7 +1,11 @@
-import { UserMsg } from './general/UserMsg'
+import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
+import { LoginContext } from '../contexts/LoginContext'
+import { UserMsg } from './general/UserMsg'
 
 export function AppHeader() {
+    const { loggedinUser, setLoggedinUser } = useContext(LoginContext)
+
     const navlinks = [
         { to: '/', text: 'Home' },
         { to: '/bug', text: 'Bugs' },
@@ -10,8 +14,8 @@ export function AppHeader() {
 
     return (
         <header className="app-header ">
+            <UserMsg />
             <div className="header-container">
-                <UserMsg />
                 <nav className="app-nav">
                     {navlinks.map((navlink) => (
                         <NavLink
@@ -23,6 +27,15 @@ export function AppHeader() {
                         </NavLink>
                     ))}
                 </nav>
+
+                {loggedinUser ? (
+                    <div>Welcome</div>
+                ) : (
+                    <div className="login-signup-container">
+                        <div className="login-link">Log in</div>
+                        <div className="signup-link">Sign up</div>
+                    </div>
+                )}
             </div>
         </header>
     )

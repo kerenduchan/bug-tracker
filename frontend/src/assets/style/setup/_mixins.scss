@@ -150,3 +150,9 @@
     @include entity-preview-grid();
     grid-template-columns: 200px 300px 1fr;
 }
+
+@mixin flex-center-center() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

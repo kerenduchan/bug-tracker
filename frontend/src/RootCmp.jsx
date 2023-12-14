@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { AppHeader } from './cmps/AppHeader.jsx'
 import { AppFooter } from './cmps/AppFooter.jsx'
@@ -8,30 +9,44 @@ import { BugEdit } from './cmps/bug/BugEdit.jsx'
 import { UserIndex } from './pages/UserIndex.jsx'
 import { UserDetails } from './pages/UserDetails.jsx'
 import { UserEdit } from './cmps/user/UserEdit.jsx'
+import { LoginContext } from './contexts/LoginContext'
 
 export function App() {
+    const [loggedinUser, setLoggedinUser] = useState(null)
+
     return (
-        <Router>
-            <div className="app">
-                <AppHeader />
-                <main className="app-main">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
+        <LoginContext.Provider value={{ loggedinUser, setLoggedinUser }}>
+            <Router>
+                <div className="app">
+                    <AppHeader />
+                    <main className="app-main">
+                        <Routes>
+                            <Route path="/" element={<Home />} />
 
-                        <Route path="/bug" element={<BugIndex />} />
-                        <Route path="/bug/:bugId" element={<BugDetails />} />
-                        <Route path="/bug/edit/:bugId?" element={<BugEdit />} />
+                            <Route path="/bug" element={<BugIndex />} />
+                            <Route
+                                path="/bug/:bugId"
+                                element={<BugDetails />}
+                            />
+                            <Route
+                                path="/bug/edit/:bugId?"
+                                element={<BugEdit />}
+                            />
 
-                        <Route path="/user" element={<UserIndex />} />
-                        <Route path="/user/:userId" element={<UserDetails />} />
-                        <Route
-                            path="/user/edit/:userId?"
-                            element={<UserEdit />}
-                        />
-                    </Routes>
-                </main>
-                <AppFooter />
-            </div>
-        </Router>
+                            <Route path="/user" element={<UserIndex />} />
+                            <Route
+                                path="/user/:userId"
+                                element={<UserDetails />}
+                            />
+                            <Route
+                                path="/user/edit/:userId?"
+                                element={<UserEdit />}
+                            />
+                        </Routes>
+                    </main>
+                    <AppFooter />
+                </div>
+            </Router>
+        </LoginContext.Provider>
     )
 }
