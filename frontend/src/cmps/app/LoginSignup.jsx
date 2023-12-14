@@ -1,10 +1,16 @@
 import { useForm } from '../../customHooks/useForm'
+import { authService } from '../../services/auth.service'
 
 export function LoginSignup({ isLogin }) {
     const [draft, handleChange] = useForm(getInitialDraft())
 
     function onSubmit(e) {
         e.preventDefault()
+        if (isLogin) {
+            authService.login(draft)
+        } else {
+            authService.signup(draft)
+        }
     }
 
     function getInitialDraft() {
