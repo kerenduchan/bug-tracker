@@ -3,6 +3,7 @@ import { utilService } from '../../services/util.service.js'
 export const userService = {
     query,
     getById,
+    getByUsername,
     remove,
     create,
     update,
@@ -32,6 +33,10 @@ async function query(
 
 async function getById(userId) {
     return utilService.getById(userId, users)
+}
+
+async function getByUsername(username) {
+    return users.find((user) => user.username === username)
 }
 
 async function remove(userId) {
