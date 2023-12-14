@@ -34,31 +34,39 @@ async function getById(bugId) {
     return utilService.getById(bugId, bugs)
 }
 
-async function remove(bugId) {
+async function remove(bugId, loggedinUserId) {
+    await _validateIsCreator(bugId, loggedinUserId)
     utilService.remove(bugId, bugs, FILENAME)
 }
 
 // Create a new bug
-async function create(bug, creatorId) {
-    const newBug = { ...bug, creatorId }
+async function create(bug, loggedinUserId) {
+    const newBug = { ...bug, creatorId: loggedinUserId }
     return utilService.create(newBug, _validateBugFields, bugs, FILENAME)
 }
 
 // Update an existing bug
-async function update(bug) {
+async function update(bug, loggedinUserId) {
+    await _validateIsCreator(bug._id, loggedinUserId)
     return utilService.update(bug, _validateBugFields, bugs, FILENAME)
 }
 
 // Ignore any unknown fields and validate the known fields
 function _validateBugFields(bug, isNew) {
-    const fields = ['title', 'severity', 'description', 'labels', 'creatorId']
+    const fields = ['title', 'severity', 'description', 'labels']
 
     // disregard unrecognized fields
     let res = {}
-    fields.forEach((field) => (res[field] = bug[field]))
+    fields.forEach((field) => {
+        if (bug[field] !== undefined) {
+            res[field] = bug[field]
+        }
+    })
 
     // if is new, check that all mandatory fields were given
     if (isNew) {
+        res['creatorId'] = bug['creatorId']
+
         const mandatoryFields = ['title', 'severity']
         mandatoryFields.forEach((field) => {
             if (!res[field]) {
@@ -123,4 +131,14 @@ function _isMatchFilter(bug, filterBy) {
         return false
     }
     return true
+}
+
+async function _validateIsCreator(bugId, loggedinUserId) {
+    if (!bugId) {
+        throw 'missing bug ID'
+    }
+    const bug = await getById(bugId)
+    if (loggedinUserId != bug.creatorId) {
+        throw 'Unauthorized - only the creator of this bug is authorized to perform this action'
+    }
 }

@@ -55,10 +55,10 @@ export async function removeBug(req, res) {
     const { bugId } = req.params
 
     try {
-        await bugService.remove(bugId)
+        await bugService.remove(bugId, req.loggedinUser._id)
         res.send('Deleted OK')
     } catch (err) {
-        res.status(400).send(`Couldn't remove bug`)
+        res.status(400).send(err)
     }
 }
 
@@ -74,7 +74,7 @@ export async function createBug(req, res) {
 
 export async function updateBug(req, res) {
     try {
-        const savedBug = await bugService.update(req.body)
+        const savedBug = await bugService.update(req.body, req.loggedinUser._id)
         res.send(savedBug)
     } catch (err) {
         res.status(400).send(err)
