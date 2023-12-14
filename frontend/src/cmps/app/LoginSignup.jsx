@@ -1,16 +1,25 @@
+import { useContext } from 'react'
 import { useForm } from '../../customHooks/useForm'
 import { authService } from '../../services/auth.service'
+import { LoginContext } from '../../contexts/LoginContext'
+import { useNavigate } from 'react-router'
 
 export function LoginSignup({ isLogin }) {
+    const { loggedinUser, setLoggedinUser } = useContext(LoginContext)
+    const navigate = useNavigate()
+
     const [draft, handleChange] = useForm(getInitialDraft())
 
-    function onSubmit(e) {
+    async function onSubmit(e) {
         e.preventDefault()
+        let user = undefined
         if (isLogin) {
-            authService.login(draft)
+            user = await authService.login(draft)
         } else {
-            authService.signup(draft)
+            user = await authService.signup(draft)
         }
+        setLoggedinUser(user)
+        navigate('/bug')
     }
 
     function getInitialDraft() {

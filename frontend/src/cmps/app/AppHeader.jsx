@@ -1,16 +1,26 @@
 import { useContext } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { LoginContext } from '../../contexts/LoginContext'
 import { UserMsg } from '../general/UserMsg'
+import { authService } from '../../services/auth.service'
 
 export function AppHeader() {
     const { loggedinUser, setLoggedinUser } = useContext(LoginContext)
+    const navigate = useNavigate()
 
     const navlinks = [
         { to: '/', text: 'Home' },
         { to: '/bug', text: 'Bugs' },
         { to: '/user', text: 'Users' },
     ]
+
+    async function onLogout() {
+        try {
+            await authService.logout()
+            setLoggedinUser(null)
+            navigate('/login')
+        } catch (err) {}
+    }
 
     return (
         <header className="app-header ">
@@ -29,7 +39,10 @@ export function AppHeader() {
                 </nav>
 
                 {loggedinUser ? (
-                    <div>Welcome</div>
+                    <div className="logout-container">
+                        <div>Hi, {loggedinUser.fullname}!</div>
+                        <button onClick={onLogout}>Log out</button>
+                    </div>
                 ) : (
                     <div className="login-signup-container">
                         <NavLink className="navlink" to="/login">
