@@ -37,4 +37,25 @@
             @include btn-primary-bg();
         }
     }
+
+    .logout-container {
+        @include padding-x(16px);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .loggedin-user {
+            color: var(--text-inverse);
+        }
+
+        .logout {
+            text-decoration: underline;
+            color: #b3cfee;
+            cursor: pointer;
+
+            &:hover {
+                color: #7aaae1;
+            }
+        }
+    }
 }

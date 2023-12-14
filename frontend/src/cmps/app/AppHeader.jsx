@@ -40,8 +40,12 @@ export function AppHeader() {
 
                 {loggedinUser ? (
                     <div className="logout-container">
-                        <div>Hi, {loggedinUser.fullname}!</div>
-                        <button onClick={onLogout}>Log out</button>
+                        <div className="loggedin-user">
+                            Hi, {loggedinUser.fullname}!
+                        </div>
+                        <div className="logout" onClick={onLogout}>
+                            Log out
+                        </div>
                     </div>
                 ) : (
                     <div className="login-signup-container">
