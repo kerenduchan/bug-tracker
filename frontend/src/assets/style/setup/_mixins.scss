@@ -153,7 +153,7 @@
 
 @mixin user-preview-grid() {
     @include entity-preview-grid();
-    grid-template-columns: 200px 300px 1fr;
+    grid-template-columns: 200px 300px 100px 1fr;
 }
 
 @mixin flex-center-center() {

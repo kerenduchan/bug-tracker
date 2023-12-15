@@ -7,6 +7,7 @@ export function UserList({ users, onRemoveUser }) {
                 <div className="title">Full name</div>
                 <div className="title">Username</div>
                 <div className="title">Score</div>
+                <div className="title">Bugs</div>
             </div>
             <ul>
                 {users.map((user) => (

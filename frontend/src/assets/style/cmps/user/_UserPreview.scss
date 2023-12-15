@@ -20,8 +20,12 @@
         gap: 5px;
     }
 
-    .actions {
+    .bugs-count {
         grid-area: 1 / 4;
+    }
+
+    .actions {
+        grid-area: 1 / 5;
         justify-self: end;
         gap: 2px;
         padding-inline-end: 12px;
