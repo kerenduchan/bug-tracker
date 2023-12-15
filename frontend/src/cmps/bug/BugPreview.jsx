@@ -14,6 +14,9 @@ export function BugPreview({ bug, onRemoveBug }) {
             <div className="created-at">
                 {utilService.formatDateTime(bug.createdAt)}
             </div>
+            <div className="created-by">
+                {bug.creator.fullname} ({bug.creator.username})
+            </div>
             <div className="severity">{bug.severity}</div>
             <div className="title">{bug.title}</div>
             <div className="description">{bug.description}</div>

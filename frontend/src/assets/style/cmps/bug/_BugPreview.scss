@@ -14,14 +14,20 @@
         padding-inline-end: 6px;
     }
 
-    .title {
+    .created-by {
         grid-area: 1 / 3;
         @include ellipsis();
         padding-inline-end: 6px;
     }
 
-    .labels {
+    .title {
         grid-area: 1 / 4;
+        @include ellipsis();
+        padding-inline-end: 6px;
+    }
+
+    .labels {
+        grid-area: 1 / 5;
         @include ellipsis();
         padding-inline-end: 6px;
 
@@ -38,13 +44,13 @@
     }
 
     .description {
-        grid-area: 1 / 5;
+        grid-area: 1 / 6;
         @include ellipsis();
         padding-inline-end: 6px;
     }
 
     .actions {
-        grid-area: 1 / 6;
+        grid-area: 1 / 7;
         justify-self: end;
         gap: 2px;
         padding-inline-end: 12px;

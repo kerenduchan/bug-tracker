@@ -34,6 +34,9 @@ export function BugDetails() {
                 <div className="created-at">
                     Created at: {utilService.formatDateTime(bug.createdAt)}
                 </div>
+                <div className="created-by">
+                    Created by: {bug.creator.fullname} ({bug.creator.username})
+                </div>
                 <div className="severity">Severity: {bug.severity}</div>
                 <div className="description">{bug.description}</div>
             </div>
