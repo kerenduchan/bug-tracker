@@ -71,7 +71,19 @@ export function BugEdit() {
         navigate('/bug')
     }
 
+    function isAuthorized() {
+        return (
+            loggedinUser &&
+            (loggedinUser.isAdmin || loggedinUser._id === draft.creatorId)
+        )
+    }
+
     if (!draft) return <h1>loading....</h1>
+
+    if (!isAuthorized()) {
+        return <h1>Not authorized</h1>
+    }
+
     return (
         <div className="bug-edit">
             <div className="header">
