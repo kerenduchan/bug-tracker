@@ -18,12 +18,14 @@ export function UserPreview({ user, onRemoveUser }) {
             <Link to={`/user/${user._id}`} />
 
             <div className="actions">
-                <button
-                    className="btn-icon-round"
-                    onClick={() => onRemoveUser(user._id)}
-                >
-                    <Icon type="delete" />
-                </button>
+                {user.bugs.length === 0 && (
+                    <button
+                        className="btn-icon-round"
+                        onClick={() => onRemoveUser(user._id)}
+                    >
+                        <Icon type="delete" />
+                    </button>
+                )}
                 <button className="btn-icon-round" onClick={onEdit}>
                     <Icon type="edit" />
                 </button>
