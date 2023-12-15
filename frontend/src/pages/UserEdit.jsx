@@ -1,10 +1,10 @@
 import { useContext, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { userService } from '../../services/user.service'
-import { useForm } from '../../customHooks/useForm'
-import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { LoginContext } from '../../contexts/LoginContext'
+import { userService } from '../services/user.service'
+import { useForm } from '../customHooks/useForm'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
+import { LoginContext } from '../contexts/LoginContext'
 
 export function UserEdit() {
     const { loggedinUser } = useContext(LoginContext)

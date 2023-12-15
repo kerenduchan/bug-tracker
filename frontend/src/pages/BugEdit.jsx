@@ -1,10 +1,10 @@
 import { useContext, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { LoginContext } from '../../contexts/LoginContext'
-import { bugService } from '../../services/bug.service'
-import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
-import { useForm } from '../../customHooks/useForm'
+import { LoginContext } from '../contexts/LoginContext'
+import { bugService } from '../services/bug.service'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
+import { useForm } from '../customHooks/useForm'
 
 export function BugEdit() {
     const { loggedinUser } = useContext(LoginContext)
@@ -72,10 +72,16 @@ export function BugEdit() {
     }
 
     function isAuthorized() {
-        return (
-            loggedinUser &&
-            (loggedinUser.isAdmin || loggedinUser._id === draft.creatorId)
-        )
+        if (!loggedinUser) {
+            // must be logged in to create/edit
+            return false
+        }
+        if (!bugId) {
+            // create bug - everyone is authorized
+            return true
+        }
+        // only admin or bug creator can edit a bug
+        return loggedinUser.isAdmin || loggedinUser._id === draft.creatorId
     }
 
     if (!draft) return <h1>loading....</h1>
