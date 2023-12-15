@@ -34,13 +34,13 @@ async function query(
         pageSize
     )
 
-    foundUsers.data = await _expandBugIds(foundUsers.data)
+    foundUsers.data = await _expandUserBugs(foundUsers.data)
     return foundUsers
 }
 
 async function getById(userId) {
     const user = await utilService.getById('user', userId, users)
-    const [expandedUser] = await _expandBugIds([user])
+    const [expandedUser] = await _expandUserBugs([user])
     return expandedUser
 }
 
@@ -128,13 +128,13 @@ function _isMatchFilter(user, filterBy) {
     return true
 }
 
-async function _expandBugIds(usersToExpand) {
+async function _expandUserBugs(usersToExpand) {
     let expandedUsers = []
     for (const user of usersToExpand) {
         const userBugs = bugService.getByCreatorId(user._id)
         expandedUsers.push({
             ...user,
-            bugIds: userBugs.map((bug) => bug._id),
+            bugs: userBugs.map((bug) => ({ _id: bug._id, title: bug.title })),
         })
     }
     return expandedUsers
