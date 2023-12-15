@@ -20,7 +20,7 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
-    return utilService.query(
+    const foundBugs = await utilService.query(
         bugs,
         _isMatchFilter,
         filterBy,
@@ -29,10 +29,14 @@ async function query(
         pageIdx,
         pageSize
     )
+    foundBugs.data = await _expandCreator(foundBugs.data)
+    return foundBugs
 }
 
 async function getById(bugId) {
-    return await utilService.getById(bugId, bugs)
+    const bug = await utilService.getById(bugId, bugs)
+    const [bugWithCreator] = await _expandCreator([bug])
+    return bugWithCreator
 }
 
 async function remove(bugId, loggedinUserId) {
@@ -140,4 +144,20 @@ async function _validateIsCreatorOrAdmin(bugId, loggedinUserId) {
     if (!user.isAdmin && loggedinUserId !== bug.creatorId) {
         throw 'Not authorized'
     }
+}
+
+async function _expandCreator(bugsToExpand) {
+    let expandedBugs = []
+    for (const bug of bugsToExpand) {
+        const creator = await userService.getById(bug.creatorId)
+        expandedBugs.push({
+            ...bug,
+            creator: {
+                _id: creator._id,
+                username: creator.username,
+                fullname: creator.fullname,
+            },
+        })
+    }
+    return expandedBugs
 }
