@@ -39,7 +39,9 @@ async function query(
 }
 
 async function getById(userId) {
-    return utilService.getById('user', userId, users)
+    const user = await utilService.getById('user', userId, users)
+    const [expandedUser] = await _expandBugIds([user])
+    return expandedUser
 }
 
 async function getByUsername(username) {
