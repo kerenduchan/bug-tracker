@@ -11,9 +11,12 @@ import { UserDetails } from './pages/UserDetails.jsx'
 import { UserEdit } from './cmps/user/UserEdit.jsx'
 import { LoginContext } from './contexts/LoginContext'
 import { LoginSignup } from './cmps/app/LoginSignup.jsx'
+import { authService } from './services/auth.service.js'
 
 export function App() {
-    const [loggedinUser, setLoggedinUser] = useState(null)
+    const [loggedinUser, setLoggedinUser] = useState(
+        authService.getLoggedinUser()
+    )
 
     return (
         <LoginContext.Provider value={{ loggedinUser, setLoggedinUser }}>
