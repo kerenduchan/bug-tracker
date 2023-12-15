@@ -1,12 +1,22 @@
+import { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { LoginContext } from '../../contexts/LoginContext'
 import { utilService } from '../../services/util.service'
 import { Icon } from '../general/Icon'
 
 export function BugPreview({ bug, onRemoveBug }) {
+    const { loggedinUser } = useContext(LoginContext)
     const navigate = useNavigate()
 
     function onEdit() {
         navigate(`/bug/edit/${bug._id}`)
+    }
+
+    function isActionsAllowed() {
+        return (
+            loggedinUser &&
+            (loggedinUser.isAdmin || loggedinUser._id === bug.creatorId)
+        )
     }
 
     return (
@@ -28,17 +38,19 @@ export function BugPreview({ bug, onRemoveBug }) {
                 ))}
             </div>
             <Link to={`/bug/${bug._id}`} />
-            <div className="actions">
-                <button
-                    className="btn-icon-round"
-                    onClick={() => onRemoveBug(bug._id)}
-                >
-                    <Icon type="delete" />
-                </button>
-                <button className="btn-icon-round" onClick={onEdit}>
-                    <Icon type="edit" />
-                </button>
-            </div>
+            {isActionsAllowed() && (
+                <div className="actions">
+                    <button
+                        className="btn-icon-round"
+                        onClick={() => onRemoveBug(bug._id)}
+                    >
+                        <Icon type="delete" />
+                    </button>
+                    <button className="btn-icon-round" onClick={onEdit}>
+                        <Icon type="edit" />
+                    </button>
+                </div>
+            )}
         </article>
     )
 }
