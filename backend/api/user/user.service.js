@@ -1,5 +1,6 @@
 import { utilService } from '../../services/util.service.js'
 import bcrypt from 'bcrypt'
+import { bugService } from '../bug/bug.service.js'
 
 const HASH_SALT_ROUNDS = 10
 
@@ -23,7 +24,7 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
-    return utilService.query(
+    const foundUsers = await utilService.query(
         users,
         _isMatchFilter,
         filterBy,
@@ -32,6 +33,9 @@ async function query(
         pageIdx,
         pageSize
     )
+
+    foundUsers.data = await _expandBugIds(foundUsers.data)
+    return foundUsers
 }
 
 async function getById(userId) {
@@ -120,4 +124,16 @@ function _isMatchFilter(user, filterBy) {
         return false
     }
     return true
+}
+
+async function _expandBugIds(usersToExpand) {
+    let expandedUsers = []
+    for (const user of usersToExpand) {
+        const userBugs = bugService.getByCreatorId(user._id)
+        expandedUsers.push({
+            ...user,
+            bugIds: userBugs.map((bug) => bug._id),
+        })
+    }
+    return expandedUsers
 }

@@ -4,6 +4,7 @@ import { userService } from '../user/user.service.js'
 export const bugService = {
     query,
     getById,
+    getByCreatorId,
     remove,
     create,
     update,
@@ -37,6 +38,10 @@ async function getById(bugId) {
     const bug = await utilService.getById('bug', bugId, bugs)
     const [bugWithCreator] = await _expandCreator([bug])
     return bugWithCreator
+}
+
+function getByCreatorId(creatorId) {
+    return bugs.filter((bug) => bug.creatorId === creatorId)
 }
 
 async function remove(bugId, loggedinUserId) {
