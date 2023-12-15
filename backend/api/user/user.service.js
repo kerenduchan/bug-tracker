@@ -49,6 +49,12 @@ async function getByUsername(username) {
 }
 
 async function remove(userId) {
+    // don't allow removing a user that has bugs
+    const userBugs = await bugService.getByCreatorId(userId)
+    if (userBugs.length > 0) {
+        throw 'Cannot delete a user that has bugs'
+    }
+
     utilService.remove('user', userId, users, FILENAME)
 }
 
