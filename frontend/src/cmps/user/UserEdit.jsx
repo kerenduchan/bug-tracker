@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { userService } from '../../services/user.service'
 import { useForm } from '../../customHooks/useForm'
 import { showErrorMsg, showSuccessMsg } from '../../services/event-bus.service'
+import { LoginContext } from '../../contexts/LoginContext'
 
 export function UserEdit() {
+    const { loggedinUser } = useContext(LoginContext)
     const [draft, handleChange, setDraft] = useForm(null)
     const { userId } = useParams()
     const navigate = useNavigate()
@@ -63,6 +65,14 @@ export function UserEdit() {
 
     function onCancel() {
         navigate('/user')
+    }
+
+    function isAuthorized() {
+        return loggedinUser?.isAdmin
+    }
+
+    if (!isAuthorized()) {
+        return <h1>Not authorized</h1>
     }
 
     if (!draft) return <h1>loading....</h1>
