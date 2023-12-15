@@ -89,10 +89,10 @@ function toNumber(s) {
     return res
 }
 
-function remove(id, objs, filename) {
+function remove(entityType, id, objs, filename) {
     try {
         const idx = objs.findIndex((obj) => obj._id === id)
-        if (idx === -1) throw `Couldn't find entity with ID ${id}`
+        if (idx === -1) throw `Couldn't find ${entityType} with ID ${id}`
         objs.splice(idx, 1)
         writeJsonFile(filename, objs)
     } catch (err) {
@@ -101,10 +101,10 @@ function remove(id, objs, filename) {
     }
 }
 
-function getById(id, objs) {
+function getById(entityType, id, objs) {
     try {
         var obj = objs.find((o) => o._id === id)
-        if (!obj) throw `Couldn't find entity with ID ${id}`
+        if (!obj) throw `Couldn't find ${entityType} with ID ${id}`
         return obj
     } catch (err) {
         loggerService.error(err)
@@ -131,14 +131,14 @@ async function create(obj, processFields, objs, path) {
     }
 }
 
-async function update(obj, validateFields, objs, path) {
+async function update(entityType, obj, validateFields, objs, path) {
     try {
         // strict fields
         const fieldsToUpdate = await validateFields(obj, false)
 
         // fetch by ID from "DB"
         var idx = objs.findIndex((o) => o._id === obj._id)
-        if (idx === -1) throw `Couldn't find entity with ID ${obj._id}`
+        if (idx === -1) throw `Couldn't find ${entityType} with ID ${obj._id}`
         const dbObj = objs[idx]
 
         // update only the supplied fields

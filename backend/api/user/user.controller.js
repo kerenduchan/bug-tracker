@@ -29,7 +29,7 @@ export async function getUser(req, res) {
         const user = await userService.getById(userId)
         res.send(user)
     } catch (err) {
-        res.status(400).send(`Couldn't get user`)
+        res.status(400).send(err)
     }
 }
 
@@ -41,7 +41,7 @@ export async function removeUser(req, res) {
         await userService.remove(userId)
         res.send('Deleted OK')
     } catch (err) {
-        res.status(400).send(`Couldn't remove user`)
+        res.status(400).send(err)
     }
 }
 

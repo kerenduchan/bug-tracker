@@ -34,14 +34,14 @@ async function query(
 }
 
 async function getById(bugId) {
-    const bug = await utilService.getById(bugId, bugs)
+    const bug = await utilService.getById('bug', bugId, bugs)
     const [bugWithCreator] = await _expandCreator([bug])
     return bugWithCreator
 }
 
 async function remove(bugId, loggedinUserId) {
     await _validateIsCreatorOrAdmin(bugId, loggedinUserId)
-    utilService.remove(bugId, bugs, FILENAME)
+    utilService.remove('bug', bugId, bugs, FILENAME)
 }
 
 async function create(bug, loggedinUserId) {
@@ -51,7 +51,7 @@ async function create(bug, loggedinUserId) {
 
 async function update(bug, loggedinUserId) {
     await _validateIsCreatorOrAdmin(bug._id, loggedinUserId)
-    return utilService.update(bug, _processBugFields, bugs, FILENAME)
+    return utilService.update('bug', bug, _processBugFields, bugs, FILENAME)
 }
 
 // Ignore any unknown fields, validate the known fields, and add any needed

@@ -35,7 +35,7 @@ async function query(
 }
 
 async function getById(userId) {
-    return utilService.getById(userId, users)
+    return utilService.getById('user', userId, users)
 }
 
 async function getByUsername(username) {
@@ -43,7 +43,7 @@ async function getByUsername(username) {
 }
 
 async function remove(userId) {
-    utilService.remove(userId, users, FILENAME)
+    utilService.remove('user', userId, users, FILENAME)
 }
 
 async function create(user) {
@@ -51,7 +51,13 @@ async function create(user) {
 }
 
 async function update(user) {
-    return await utilService.update(user, _processUserFields, users, FILENAME)
+    return await utilService.update(
+        'user',
+        user,
+        _processUserFields,
+        users,
+        FILENAME
+    )
 }
 
 // Ignore any unknown fields, validate the known fields, and add any needed
