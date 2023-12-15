@@ -8,11 +8,14 @@ export function AppHeader() {
     const { loggedinUser, setLoggedinUser } = useContext(LoginContext)
     const navigate = useNavigate()
 
-    const navlinks = [
+    let navlinks = [
         { to: '/', text: 'Home' },
         { to: '/bug', text: 'Bugs' },
-        { to: '/user', text: 'Users' },
     ]
+
+    if (loggedinUser && loggedinUser.isAdmin) {
+        navlinks.push({ to: '/user', text: 'Users' })
+    }
 
     async function onLogout() {
         try {
