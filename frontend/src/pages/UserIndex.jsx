@@ -1,44 +1,41 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
+import { useNavigate } from 'react-router'
+import { useIndex } from '../customHooks/useIndex.js'
+import { LoginContext } from '../contexts/LoginContext.js'
 import { userService } from '../services/user.service'
-import { UserList } from '../cmps/user/UserList'
-import { PageNav } from '../cmps/general/PageNav'
-import { PageSizeSelect } from '../cmps/general/PageSizeSelect'
-import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
-import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar'
-import { LoginContext } from '../contexts/LoginContext'
+import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
+import { UserList } from '../cmps/user/UserList.jsx'
+import { PageNav } from '../cmps/general/PageNav.jsx'
+import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
+import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar.jsx'
 
 export function UserIndex() {
     const { loggedinUser } = useContext(LoginContext)
-    const [users, setUsers] = useState([])
-    const [totalCount, setTotalCount] = useState(null)
-    const [filter, setFilter] = useState(userService.getDefaultFilter())
-    const [sort, setSort] = useState(userService.getDefaultSort())
-    const [curPageIdx, setCurPageIdx] = useState(0)
-    const [maxPageIdx, setMaxPageIdx] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
-
-    useEffect(() => {
-        loadUsers(curPageIdx)
-    }, [curPageIdx])
-
-    useEffect(() => {
-        loadUsers(0)
-    }, [filter, sort, pageSize])
-
-    async function loadUsers(pageIdx) {
-        setCurPageIdx(pageIdx)
-        const res = await userService.query(filter, sort, pageIdx, pageSize)
-
-        const { data, totalCount } = res
-        setUsers(data)
-        setTotalCount(totalCount)
-        setMaxPageIdx(Math.ceil(totalCount / pageSize))
-    }
+    const navigate = useNavigate()
+    const {
+        loadEntities,
+        filter,
+        setFilter,
+        sort,
+        setSort,
+        totalCount,
+        curPageIdx,
+        setCurPageIdx,
+        maxPageIdx,
+        pageSize,
+        setPageSize,
+        entities: users,
+    } = useIndex(userService)
 
     async function onRemoveUser(userId) {
+        if (!loggedinUser) {
+            navigate('/login')
+            return
+        }
+
         try {
             await userService.remove(userId)
-            loadUsers(0)
+            loadEntities()
             showSuccessMsg('User removed')
         } catch (err) {
             console.error('Error from onRemoveUser ->', err)
@@ -53,6 +50,8 @@ export function UserIndex() {
     if (!isAuthorized()) {
         return <h1>Not authorized</h1>
     }
+
+    if (!filter || !users) return <div>Loading...</div>
 
     return (
         <main className="main-layout">

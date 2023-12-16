@@ -1,4 +1,5 @@
 import { userAxiosService } from './user.axios.service.js'
+import { utilService } from './util.service.js'
 
 export const userService = {
     ...userAxiosService,
@@ -7,6 +8,8 @@ export const userService = {
     getDefaultFilter,
     getDefaultSort,
     getSortByOptions,
+    buildSearchParams,
+    parseSearchParams,
 }
 
 function getEmptyUser(
@@ -19,7 +22,7 @@ function getEmptyUser(
 }
 
 function getDefaultFilter() {
-    return { txt: '', minScore: 0 }
+    return { txt: '', minScore: '0' }
 }
 
 function getDefaultSort() {
@@ -31,6 +34,25 @@ function getDefaultSort() {
 
 function getSortByOptions() {
     return _sortByOptions
+}
+
+function buildSearchParams(filter, sort, curPageIdx, pageSize) {
+    return utilService.buildSearchParams(
+        filter,
+        sort,
+        curPageIdx,
+        pageSize,
+        getDefaultFilter(),
+        getDefaultSort()
+    )
+}
+
+function parseSearchParams(searchParams) {
+    return utilService.parseSearchParams(
+        searchParams,
+        getDefaultFilter(),
+        getDefaultSort()
+    )
 }
 
 const _sortByOptions = [
