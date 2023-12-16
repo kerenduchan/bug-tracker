@@ -50,8 +50,14 @@ export function UserDetails() {
 
                     <div className="label">Score:</div>
                     <div className="fullname">{user.score}</div>
+
+                    <div className="label">Bugs:</div>
+                    <div className="fullname">
+                        <Link to={`/bug?creatorUsername=${user.username}`}>
+                            See all bugs created by this user
+                        </Link>
+                    </div>
                 </div>
-                <h2>Bugs</h2>
             </div>
         </div>
     )
