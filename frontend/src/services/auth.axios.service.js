@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import { getBaseUrl } from './base-url.axios.service'
 
 export const authAxiosService = {
     login,
@@ -11,7 +12,7 @@ var axios = Axios.create({
     withCredentials: true,
 })
 
-const BASE_URL = '//localhost:3030/api/auth/'
+const BASE_URL = getBaseUrl() + 'auth/'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 

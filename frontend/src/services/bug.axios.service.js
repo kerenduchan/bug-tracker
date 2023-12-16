@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import { getBaseUrl } from './base-url.axios.service'
 
 export const bugAxiosService = {
     query,
@@ -11,7 +12,7 @@ var axios = Axios.create({
     withCredentials: true,
 })
 
-const BASE_URL = '//localhost:3030/api/bug/'
+const BASE_URL = getBaseUrl() + 'bug/'
 
 async function query(filter = {}, sort = {}, pageIdx, pageSize) {
     const params = { ...filter, ...sort, pageIdx, pageSize }

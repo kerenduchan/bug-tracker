@@ -10,7 +10,7 @@ const corsOptions = {
 }
 
 const app = express()
-const port = 3030
+const port = process.env.PORT || 3000
 
 // App configuration
 app.use(cors(corsOptions))
@@ -31,5 +31,5 @@ app.use('/api/auth', authRoutes)
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
-    loggerService.info('Up and running on port 3030')
+    loggerService.info(`Up and running on port ${port}`)
 })
