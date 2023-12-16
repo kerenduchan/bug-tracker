@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "_id": "ePdmK",
+        "createdAt": 1702746736681,
+        "username": "admin",
+        "fullname": "Administrator",
+        "password": "$2b$10$Zdstc3MGYduqkwej7gfJOOaOCf.QnFIDJYlOc0k3zgbXZWkjUuT7u",
+        "isAdmin": true,
+        "score": 100
+    }
+]
