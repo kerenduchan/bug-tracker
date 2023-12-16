@@ -12,7 +12,10 @@
 
 /* Pages */
 
+@import 'pages/BugDetails';
+@import 'pages/BugEdit';
 @import 'pages/Home';
+@import 'pages/UserEdit';
 
 /* Components */
 
@@ -26,15 +29,12 @@
 @import 'cmps/app/LoginSignup';
 
 /* bug */
-@import 'cmps/bug/BugDetails';
-@import 'cmps/bug/BugEdit';
 @import 'cmps/bug/BugFilter';
 @import 'cmps/bug/BugIndexTopbar';
 @import 'cmps/bug/BugList';
 @import 'cmps/bug/BugPreview';
 
 /* user */
-@import 'cmps/user/UserEdit';
 @import 'cmps/user/UserFilter';
 @import 'cmps/user/UserIndexTopbar';
 @import 'cmps/user/UserList';
