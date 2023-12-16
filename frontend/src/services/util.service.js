@@ -8,6 +8,8 @@ export const utilService = {
     saveToStorage,
     loadFromStorage,
     formatDateTime,
+    parseSearchParams,
+    buildSearchParams,
 }
 
 function makeId(length = 6) {
@@ -90,4 +92,59 @@ function loadFromStorage(key) {
 
 function formatDateTime(timestamp) {
     return moment(timestamp).format('DD/MM/YYYY hh:mm')
+}
+
+function buildSearchParams(
+    filter,
+    sort,
+    curPageIdx,
+    pageSize,
+    defaultFilter,
+    defaultSort
+) {
+    const params = {}
+
+    Object.keys(defaultFilter).forEach((key) => {
+        if (filter[key] !== defaultFilter[key]) {
+            params[key] = filter[key]
+        }
+    })
+
+    Object.keys(defaultSort).forEach((key) => {
+        if (sort[key] !== defaultSort[key]) {
+            params[key] = sort[key]
+        }
+    })
+
+    if (curPageIdx !== 0) {
+        params.curPageIdx = curPageIdx
+    }
+
+    if (pageSize !== 5) {
+        params.pageSize = pageSize
+    }
+
+    return params
+}
+
+function parseSearchParams(searchParams, defaultFilter, defaultSort) {
+    const filter = {}
+    Object.keys(defaultFilter).forEach((key) => {
+        filter[key] = searchParams.get(key) || defaultFilter[key]
+    })
+
+    const sort = {}
+    Object.keys(defaultSort).forEach((key) => {
+        sort[key] = searchParams.get(key) || defaultSort[key]
+    })
+
+    const curPageIdx = +searchParams.get('curPageIdx') || 0
+    const pageSize = +searchParams.get('pageSize') || 5
+
+    return {
+        filter,
+        sort,
+        curPageIdx,
+        pageSize,
+    }
 }
