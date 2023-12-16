@@ -31,7 +31,7 @@ function validateToken(token) {
 
 async function login(username, password) {
     var user = await userService.getByUsername(username)
-    if (!user) throw 'Invalid username or password'
+    if (!user || !password) throw 'Invalid username or password'
 
     const match = await bcrypt.compare(password, user.password)
     if (!match) throw 'Invalid username or password'
