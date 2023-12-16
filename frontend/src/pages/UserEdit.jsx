@@ -89,6 +89,7 @@ export function UserEdit() {
                     <input
                         id="username"
                         name="username"
+                        autoComplete="username"
                         value={draft.username}
                         onChange={handleChange}
                     />
@@ -98,6 +99,7 @@ export function UserEdit() {
                         type="password"
                         id="password"
                         name="password"
+                        autoComplete="new-password"
                         value={draft.password}
                         onChange={handleChange}
                     />
