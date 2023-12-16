@@ -21,8 +21,10 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
+    const expandedBugs = await _expandCreator(bugs)
+
     const foundBugs = await utilService.query(
-        bugs,
+        expandedBugs,
         _isMatchFilter,
         filterBy,
         sortBy,
@@ -30,7 +32,6 @@ async function query(
         pageIdx,
         pageSize
     )
-    foundBugs.data = await _expandCreator(foundBugs.data)
     return foundBugs
 }
 
@@ -120,6 +121,7 @@ function _isMatchFilter(bug, filterBy) {
 
     const lowercaseLabels = bug.labels.map((l) => l.toLowerCase())
 
+    // text filtering
     if (
         !bug.description.toLowerCase().includes(filterBy.txt) &&
         !bug.title.toLowerCase().includes(filterBy.txt)
@@ -127,6 +129,7 @@ function _isMatchFilter(bug, filterBy) {
         return false
     }
 
+    // labels filtering
     if (
         filterBy.labels?.length > 0 &&
         filterBy.labels?.every((l) => !lowercaseLabels.includes(l))
@@ -134,9 +137,19 @@ function _isMatchFilter(bug, filterBy) {
         return false
     }
 
+    // min severity filtering
     if (filterBy.minSeverity > bug.severity) {
         return false
     }
+
+    // creator filtering
+    if (
+        filterBy.creatorUsername &&
+        filterBy.creatorUsername !== bug.creator.username
+    ) {
+        return false
+    }
+
     return true
 }
 

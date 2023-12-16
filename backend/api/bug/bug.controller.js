@@ -12,6 +12,7 @@ export async function getBugs(req, res) {
                 req.query.labels === ''
                     ? []
                     : req.query.labels?.split(',') || undefined,
+            creatorUsername: req.query.creatorUsername || undefined,
         }
         const data = await bugService.query(
             filterBy,
