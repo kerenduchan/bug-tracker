@@ -18,7 +18,7 @@ function getEmptyBug(title = '', severity = 5, description = '') {
 }
 
 function getDefaultFilter() {
-    return { txt: '', minSeverity: 1, labels: '' }
+    return { txt: '', minSeverity: 1, labels: '', creatorUsername: '' }
 }
 
 function getDefaultSort() {

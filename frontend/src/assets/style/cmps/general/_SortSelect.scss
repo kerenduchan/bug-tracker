@@ -1,14 +1,13 @@
 .sort-select {
     background-color: var(--bg-5);
     padding: 6px;
+    display: flex;
+    gap: 12px;
 
-    .title {
-        @include title-1();
-    }
-
-    form {
+    .field {
+        flex-grow: 1;
         display: flex;
-        gap: 12px;
+        flex-direction: column;
 
         label {
             font-size: 14px;
