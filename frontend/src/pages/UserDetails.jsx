@@ -35,16 +35,24 @@ export function UserDetails() {
     if (!user) return <h1>Loading....</h1>
 
     return (
-        <div className="user-details main-layout">
-            <h3>User Details</h3>
-            <h4>{user.fullname}</h4>
-            <p>
-                Username: <span>{user.username}</span>
-            </p>
-            <p>
-                Score: <span>{user.score}</span>
-            </p>
-            <Link to="/user">Back to List</Link>
+        <div className="user-details">
+            <div className="header">
+                <Link to="/user">Back to List</Link>
+            </div>
+            <div className="main">
+                <h1>User Details</h1>
+                <div className="fields">
+                    <div className="label">Full Name:</div>
+                    <div className="fullname">{user.fullname}</div>
+
+                    <div className="label">Username:</div>
+                    <div className="fullname">{user.username}</div>
+
+                    <div className="label">Score:</div>
+                    <div className="fullname">{user.score}</div>
+                </div>
+                <h2>Bugs</h2>
+            </div>
         </div>
     )
 }

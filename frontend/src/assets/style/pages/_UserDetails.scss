@@ -1,0 +1,19 @@
+.user-details {
+    .header {
+        @include sub-header();
+    }
+
+    .main {
+        @include main-padding-x();
+
+        .fields {
+            display: grid;
+            grid-template-columns: 100px auto;
+            row-gap: 10px;
+
+            .label {
+                color: var(--text-subtle);
+            }
+        }
+    }
+}
