@@ -25,7 +25,7 @@ function getDefaultFilter() {
 function getDefaultSort() {
     return {
         sortBy: 'fullname',
-        sortDir: 'ascending',
+        sortDir: '1',
     }
 }
 

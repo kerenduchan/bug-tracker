@@ -11,6 +11,10 @@ export function BugFilter({ filter, setFilter }) {
     }))
 
     useEffect(() => {
+        setDraft(filter)
+    }, [])
+
+    useEffect(() => {
         setFilter(draft)
     }, [draft])
 
@@ -20,7 +24,6 @@ export function BugFilter({ filter, setFilter }) {
 
     function onChange(e) {
         handleChange(e)
-        setDraft((prev) => ({ ...prev, minSeverity: +prev.minSeverity }))
     }
 
     return (

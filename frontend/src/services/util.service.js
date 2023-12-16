@@ -75,8 +75,8 @@ function getSortDirOptions() {
     return _sortDirOptions
 }
 const _sortDirOptions = [
-    { text: 'ascending', value: 1 },
-    { text: 'descending', value: -1 },
+    { text: 'ascending', value: '1' },
+    { text: 'descending', value: '-1' },
 ]
 
 function saveToStorage(key, value) {
