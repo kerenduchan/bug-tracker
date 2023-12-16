@@ -22,7 +22,7 @@ function getEmptyUser(
 }
 
 function getDefaultFilter() {
-    return { txt: '', minScore: '0' }
+    return { txt: '', minScore: '' }
 }
 
 function getDefaultSort() {

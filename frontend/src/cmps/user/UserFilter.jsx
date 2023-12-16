@@ -5,7 +5,7 @@ export function UserFilter({ filter, setFilter }) {
     const [draft, handleChange, setDraft] = useForm(filter)
 
     useEffect(() => {
-        setFilter({ ...draft, minScore: +draft.minScore })
+        setFilter(draft)
     }, [draft])
 
     function onSubmit(e) {
