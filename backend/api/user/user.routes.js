@@ -6,12 +6,15 @@ import {
     removeUser,
     updateUser,
 } from './user.controller.js'
-import { requireAdmin } from '../../middleware/auth.middleware.js'
+import {
+    requireAdmin,
+    requireAdminOrSelf,
+} from '../../middleware/auth.middleware.js'
 
 const router = express.Router()
 
 router.get('/', requireAdmin, getUsers)
-router.get('/:userId', requireAdmin, getUser)
+router.get('/:userId', requireAdminOrSelf, getUser)
 router.delete('/:userId', requireAdmin, removeUser)
 router.post('/', requireAdmin, createUser)
 router.put('/', requireAdmin, updateUser)

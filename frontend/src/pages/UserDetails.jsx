@@ -10,6 +10,7 @@ export function UserDetails() {
     const { loggedinUser } = useContext(LoginContext)
     const [user, setUser] = useState(null)
     const { userId } = useParams()
+    const params = useParams()
 
     useEffect(() => {
         loadUser()
@@ -24,8 +25,19 @@ export function UserDetails() {
         }
     }
 
+    function isProfileView() {
+        return params.viewType === 'profile'
+    }
+
     function isAuthorized() {
-        return loggedinUser?.isAdmin
+        if (!loggedinUser) {
+            return false
+        }
+        if (loggedinUser.isAdmin) {
+            return true
+        }
+
+        return isProfileView() && loggedinUser._id === userId
     }
 
     if (!isAuthorized()) {
@@ -36,11 +48,13 @@ export function UserDetails() {
 
     return (
         <div className="user-details">
-            <div className="header">
-                <Link to="/user">Back to List</Link>
-            </div>
+            {!isProfileView() && (
+                <div className="header">
+                    <Link to="/user">Back to List</Link>
+                </div>
+            )}
             <div className="main">
-                <h1>User Details</h1>
+                <h1>User {isProfileView() ? 'Profile' : 'Details'}</h1>
                 <div className="fields">
                     <div className="label">Full Name:</div>
                     <div className="fullname">{user.fullname}</div>
@@ -54,7 +68,8 @@ export function UserDetails() {
                     <div className="label">Bugs:</div>
                     <div className="fullname">
                         <Link to={`/bug?creatorUsername=${user.username}`}>
-                            See all bugs created by this user
+                            See all bugs{' '}
+                            {isProfileView() ? 'you created' : 'created by this user'}
                         </Link>
                     </div>
                 </div>

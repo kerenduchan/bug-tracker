@@ -47,7 +47,7 @@ export function App() {
 
                             <Route path="/user" element={<UserIndex />} />
                             <Route
-                                path="/user/:userId"
+                                path="/user/:userId/:viewType?"
                                 element={<UserDetails />}
                             />
                             <Route

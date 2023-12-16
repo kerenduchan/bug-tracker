@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { LoginContext } from '../../contexts/LoginContext'
 import { UserMsg } from '../general/UserMsg'
 import { authService } from '../../services/auth.service'
@@ -44,11 +44,18 @@ export function AppHeader() {
                 {loggedinUser ? (
                     <div className="logout-container">
                         <div className="loggedin-user">
-                            Hi, {loggedinUser.fullname}!
+                            Hi,{' '}
+                            <Link
+                                className="inverse"
+                                to={`/user/${loggedinUser._id}/profile`}
+                            >
+                                {loggedinUser.fullname}
+                            </Link>
+                            !
                         </div>
-                        <div className="logout" onClick={onLogout}>
+                        <a className="logout inverse" onClick={onLogout}>
                             Log out
-                        </div>
+                        </a>
                     </div>
                 ) : (
                     <div className="login-signup-container">

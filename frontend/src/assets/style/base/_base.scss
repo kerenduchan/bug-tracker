@@ -9,7 +9,22 @@ body {
 }
 
 a {
+    text-decoration: underline;
     cursor: pointer;
+
+    color: #608bbb;
+
+    &:hover {
+        color: #3d628d;
+    }
+}
+
+a.inverse {
+    color: #b3cfee;
+
+    &:hover {
+        color: #7aaae1;
+    }
 }
 
 ul,

@@ -47,15 +47,5 @@
         .loggedin-user {
             color: var(--text-inverse);
         }
-
-        .logout {
-            text-decoration: underline;
-            color: #b3cfee;
-            cursor: pointer;
-
-            &:hover {
-                color: #7aaae1;
-            }
-        }
     }
 }
