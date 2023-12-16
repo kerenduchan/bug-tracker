@@ -23,7 +23,6 @@ export function BugIndex() {
 
     useEffect(() => {
         const parsedParams = bugService.parseSearchParams(searchParams)
-        console.log('parsedParams', parsedParams)
         setFilter(parsedParams.filter)
         setSort(parsedParams.sort)
         setCurPageIdx(parsedParams.curPageIdx)
