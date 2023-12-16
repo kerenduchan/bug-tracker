@@ -1,5 +1,28 @@
 .user-index-topbar {
     display: grid;
     grid-template-columns: repeat(2, auto) 100px;
-    gap: 12px;
+    grid-template-rows: repeat(2, auto);
+    column-gap: 12px;
+
+    .filter-title {
+        grid-area: 1 / 1;
+        @include title-1();
+    }
+
+    .user-filter {
+        grid-area: 2 / 1;
+    }
+
+    .sort-title {
+        grid-area: 1 / 2;
+        @include title-1();
+    }
+
+    .sort-select {
+        grid-area: 2 / 2;
+    }
+
+    .btn-create-user {
+        grid-area: 2 / 3;
+    }
 }

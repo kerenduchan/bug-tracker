@@ -13,3 +13,21 @@
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 }
+
+.entity-filter-or-sort {
+    background-color: var(--bg-5);
+    padding: 6px;
+    display: flex;
+    gap: 12px;
+
+    .field {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-size: 14px;
+            margin-inline-end: 6px;
+        }
+    }
+}

@@ -12,13 +12,19 @@ export function UserIndexTopbar({ filter, setFilter, sort, setSort }) {
 
     return (
         <div className="user-index-topbar">
+            <div className="filter-title">Filter</div>
             <UserFilter filter={filter} setFilter={setFilter} />
+
+            <div className="sort-title">Sort</div>
             <SortSelect
                 sort={sort}
                 setSort={setSort}
                 options={userService.getSortByOptions()}
             />
-            <button className="btn-primary" onClick={onCreateUser}>
+            <button
+                className="btn-primary btn-create-user"
+                onClick={onCreateUser}
+            >
                 Create User
             </button>
         </div>

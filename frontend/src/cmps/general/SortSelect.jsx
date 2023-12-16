@@ -15,7 +15,7 @@ export function SortSelect({ sort, setSort, options }) {
     }
 
     return (
-        <form className="sort-select" onSubmit={onSubmit}>
+        <form className="entity-filter-or-sort sort-select" onSubmit={onSubmit}>
             <div className="field">
                 <FormSelect
                     name="sortBy"

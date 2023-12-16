@@ -22,7 +22,6 @@
 
 /* general */
 @import 'cmps/general/PageNav';
-@import 'cmps/general/SortSelect';
 @import 'cmps/general/UserMsg';
 
 /* app */
@@ -30,13 +29,11 @@
 @import 'cmps/app/LoginSignup';
 
 /* bug */
-@import 'cmps/bug/BugFilter';
 @import 'cmps/bug/BugIndexTopbar';
 @import 'cmps/bug/BugList';
 @import 'cmps/bug/BugPreview';
 
 /* user */
-@import 'cmps/user/UserFilter';
 @import 'cmps/user/UserIndexTopbar';
 @import 'cmps/user/UserList';
 @import 'cmps/user/UserPreview';

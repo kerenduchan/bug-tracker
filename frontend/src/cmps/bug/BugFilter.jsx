@@ -27,7 +27,7 @@ export function BugFilter({ filter, setFilter }) {
     }
 
     return (
-        <form className="bug-filter" onSubmit={onSubmit}>
+        <form className="entity-filter-or-sort bug-filter" onSubmit={onSubmit}>
             <div className="field">
                 <label htmlFor="txt">Text Search</label>
                 <input
