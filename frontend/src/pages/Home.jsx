@@ -1,3 +1,8 @@
 export function Home() {
-    return <section className="home"></section>
+    return (
+        <div className="home main-layout">
+            <h1>Welcome</h1>
+            <p>Welcome to the bug tracker app!</p>
+        </div>
+    )
 }
