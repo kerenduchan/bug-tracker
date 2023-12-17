@@ -5,9 +5,8 @@ import { LoginContext } from '../contexts/LoginContext.js'
 import { userService } from '../services/user.service'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { UserList } from '../cmps/user/UserList.jsx'
-import { PageNav } from '../cmps/general/PageNav.jsx'
-import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
 import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar.jsx'
+import { PaginationFooter } from '../cmps/general/PaginationFooter.jsx'
 
 export function UserIndex() {
     const { loggedinUser } = useContext(LoginContext)
@@ -45,26 +44,26 @@ export function UserIndex() {
     if (!filter || !users) return <div>Loading...</div>
 
     return (
-        <main className="main-layout">
+        <main className="user-index entity-index">
             <h1>Users</h1>
-            <main>
-                <UserIndexTopbar
-                    filter={filter}
-                    setFilter={setFilter}
-                    sort={sort}
-                    setSort={setSort}
-                />
+            <UserIndexTopbar
+                filter={filter}
+                setFilter={setFilter}
+                sort={sort}
+                setSort={setSort}
+            />
 
-                <UserList users={users} onRemoveUser={onRemoveUser} />
-                {totalCount !== null && <p>Total: {totalCount} users</p>}
+            <UserList users={users} onRemoveUser={onRemoveUser} />
 
-                <PageNav
-                    curPageIdx={curPageIdx}
-                    setCurPageIdx={setCurPageIdx}
-                    maxPageIdx={maxPageIdx}
-                />
-                <PageSizeSelect pageSize={pageSize} setPageSize={setPageSize} />
-            </main>
+            <PaginationFooter
+                totalCount={totalCount}
+                itemType="users"
+                curPageIdx={curPageIdx}
+                setCurPageIdx={setCurPageIdx}
+                maxPageIdx={maxPageIdx}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+            />
         </main>
     )
 }

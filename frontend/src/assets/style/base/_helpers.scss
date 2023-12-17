@@ -35,3 +35,11 @@
         }
     }
 }
+
+.entity-index {
+    height: 100%;
+    overflow: hidden;
+    @include main-padding-x();
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+}

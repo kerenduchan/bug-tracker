@@ -5,8 +5,6 @@ import { LoginContext } from '../contexts/LoginContext.js'
 import { bugService } from '../services/bug.service'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/bug/BugList.jsx'
-import { PageNav } from '../cmps/general/PageNav.jsx'
-import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
 import { BugIndexTopbar } from '../cmps/bug/BugIndexTopbar.jsx'
 import { PaginationFooter } from '../cmps/general/PaginationFooter.jsx'
 
@@ -47,7 +45,7 @@ export function BugIndex() {
     if (!filter || !bugs) return <div>Loading...</div>
 
     return (
-        <main className="bug-index">
+        <main className="bug-index entity-index">
             <h1>Bugs</h1>
             <BugIndexTopbar
                 filter={filter}
