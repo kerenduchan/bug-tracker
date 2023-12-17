@@ -43,3 +43,7 @@
     display: grid;
     grid-template-rows: auto auto 1fr auto;
 }
+
+.main-padding-x {
+    @include main-padding-x();
+}
