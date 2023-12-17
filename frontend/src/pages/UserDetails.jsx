@@ -65,11 +65,18 @@ export function UserDetails() {
                     <div className="label">Score:</div>
                     <div className="fullname">{user.score}</div>
 
+                    <div className="label">Role:</div>
+                    <div className="role">
+                        {user.isAdmin ? 'Administrator' : 'User'}
+                    </div>
+
                     <div className="label">Bugs:</div>
                     <div className="fullname">
                         <Link to={`/bug?creatorUsername=${user.username}`}>
-                            See all bugs{' '}
-                            {isProfileView() ? 'you created' : 'created by this user'}
+                            See all the bugs{' '}
+                            {isProfileView()
+                                ? 'you created'
+                                : 'created by this user'}
                         </Link>
                     </div>
                 </div>
