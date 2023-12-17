@@ -8,6 +8,7 @@ import { BugList } from '../cmps/bug/BugList.jsx'
 import { PageNav } from '../cmps/general/PageNav.jsx'
 import { PageSizeSelect } from '../cmps/general/PageSizeSelect.jsx'
 import { BugIndexTopbar } from '../cmps/bug/BugIndexTopbar.jsx'
+import { PaginationFooter } from '../cmps/general/PaginationFooter.jsx'
 
 export function BugIndex() {
     const { loggedinUser } = useContext(LoginContext)
@@ -57,17 +58,15 @@ export function BugIndex() {
 
             <BugList bugs={bugs} onRemoveBug={onRemoveBug} />
 
-            <div className="pagination-footer">
-                {totalCount !== null && (
-                    <div className="total-count">Total: {totalCount} bugs</div>
-                )}
-                <PageNav
-                    curPageIdx={curPageIdx}
-                    setCurPageIdx={setCurPageIdx}
-                    maxPageIdx={maxPageIdx}
-                />
-                <PageSizeSelect pageSize={pageSize} setPageSize={setPageSize} />
-            </div>
+            <PaginationFooter
+                totalCount={totalCount}
+                itemType="bugs"
+                curPageIdx={curPageIdx}
+                setCurPageIdx={setCurPageIdx}
+                maxPageIdx={maxPageIdx}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+            />
         </main>
     )
 }
