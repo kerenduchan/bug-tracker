@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { LoginContext } from '../../contexts/LoginContext'
 import { utilService } from '../../services/util.service'
 import { Icon } from '../general/Icon'
-import { authService } from '../../services/auth.service'
+import { bugService } from '../../services/bug.service'
 
 export function BugPreview({ bug, onRemoveBug }) {
     const { loggedinUser } = useContext(LoginContext)
@@ -14,7 +14,7 @@ export function BugPreview({ bug, onRemoveBug }) {
     }
 
     function isDeleteOrEditBugAllowed() {
-        return authService.isDeleteOrEditBugAllowed(loggedinUser, bug)
+        return bugService.isDeleteOrEditBugAllowed(loggedinUser, bug)
     }
 
     return (

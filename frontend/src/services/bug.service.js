@@ -14,6 +14,7 @@ export const bugService = {
     getAllSeverities,
     parseSearchParams,
     buildSearchParams,
+    isDeleteOrEditBugAllowed,
 }
 
 function getEmptyBug(title = '', severity = 5, description = '') {
@@ -55,6 +56,15 @@ function parseSearchParams(searchParams) {
         searchParams,
         getDefaultFilter(),
         getDefaultSort()
+    )
+}
+
+// a user is allowed to delete/edit a bug only if they are logged in, and they
+// are either an admin or the bug creator
+function isDeleteOrEditBugAllowed(loggedinUser, bug) {
+    return (
+        loggedinUser &&
+        (loggedinUser.isAdmin || loggedinUser._id === bug.creatorId)
     )
 }
 
