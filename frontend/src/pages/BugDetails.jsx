@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { utilService } from '../services/util.service'
 import { bugService } from '../services/bug.service.js'
+import { authService } from '../services/auth.service.js'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
@@ -30,6 +31,10 @@ export function BugDetails() {
             console.error('Error from onRemoveBug ->', err)
             showErrorMsg('Cannot remove bug')
         }
+    }
+
+    function isDeleteOrEditBugAllowed() {
+        return authService.isDeleteOrEditBugAllowed(loggedinUser, bug)
     }
 
     async function loadBug() {
@@ -79,7 +84,7 @@ export function BugDetails() {
                 <h1>Bug Details</h1>
                 <FieldList fields={getFields()} />
 
-                {loggedinUser && (
+                {isDeleteOrEditBugAllowed() && (
                     <div className="actions">
                         <button
                             className="btn-primary btn-edit"
