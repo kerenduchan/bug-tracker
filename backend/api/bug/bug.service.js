@@ -104,6 +104,9 @@ function _processBugFields(bug, isNew) {
         })
     }
 
+    // remove empty labels and trim the labels
+    res.labels = res.labels.filter((l) => l.length > 0).map((l) => l.trim())
+
     // validate the severity
     if (res.severity !== undefined) {
         const severity = +res.severity
