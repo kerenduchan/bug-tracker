@@ -38,6 +38,10 @@ export async function removeUser(req, res) {
     const { userId } = req.params
 
     try {
+        // don't allow removing the logged in user
+        if (userId === req.loggedinUser._id) {
+            throw 'Cannot delete the logged in user'
+        }
         await userService.remove(userId)
         res.send('Deleted OK')
     } catch (err) {
