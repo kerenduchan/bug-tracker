@@ -19,7 +19,7 @@ export function PageSizeSelect({ pageSize, setPageSize }) {
         <form onSubmit={onSubmit} className="bug-page-size">
             <FormSelect
                 name="pageSize"
-                title="Page Size"
+                title="Page Size: "
                 value={draft.pageSize}
                 onChange={handleChange}
                 options={options}

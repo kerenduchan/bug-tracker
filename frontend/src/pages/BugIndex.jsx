@@ -57,8 +57,10 @@ export function BugIndex() {
 
             <BugList bugs={bugs} onRemoveBug={onRemoveBug} />
 
-            <div className="list-footer">
-                {totalCount !== null && <p>Total: {totalCount} bugs</p>}
+            <div className="pagination-footer">
+                {totalCount !== null && (
+                    <div className="total-count">Total: {totalCount} bugs</div>
+                )}
                 <PageNav
                     curPageIdx={curPageIdx}
                     setCurPageIdx={setCurPageIdx}
