@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { eventBusService } from '../../services/event-bus.service.js'
 import { useRef } from 'react'
 import { useEffect } from 'react'
+import { Icon } from './Icon.jsx'
 
 export function UserMsg() {
     const [msg, setMsg] = useState(null)
@@ -14,20 +15,22 @@ export function UserMsg() {
                 timeoutIdRef.current = null
                 clearTimeout(timeoutIdRef.current)
             }
-            timeoutIdRef.current = setTimeout(closeMsg, 3000)
+            timeoutIdRef.current = setTimeout(onClose, 3000)
         })
         return unsubscribe
     }, [])
 
-    function closeMsg() {
+    function onClose() {
         setMsg(null)
     }
 
     if (!msg) return <span></span>
     return (
         <section className={`user-msg ${msg.type}`}>
-            <button onClick={closeMsg}>x</button>
-            {msg.txt}
+            <div className="message-text">{msg.txt}</div>
+            <button className="btn-close btn-icon-round" onClick={onClose}>
+                <Icon type="close" />
+            </button>
         </section>
     )
 }

@@ -1,25 +1,19 @@
 .user-msg {
-    background-color: lightgray;
-    padding: .5em 1em;
+    background-color: var(--bg-3);
+    padding: 10px 20px;
     position: fixed;
-    bottom: 1em;
-    right: 1em;
-    color: white;
-    font-weight: bold;
-    border: 3px solid black;
-    border-radius: 2px;
-}
+    bottom: 30px;
+    right: 0px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
 
-.user-msg.success {
-    background-color: var(--clr1);
-}
+    &.success {
+        background-color: var(--bg-success-msg);
+    }
 
-.user-msg.error {
-    background-color: var(--clr2);
-}
-
-
-.user-msg button{
-    float: right;
-    margin: 1em;
+    &.error {
+        background-color: var(--bg-error-msg);
+    }
 }
