@@ -13,9 +13,8 @@
         }
     }
 
-    ul {
+    ul.bugs {
         overflow: auto;
-        list-style: none;
         display: grid;
         gap: 2px;
     }

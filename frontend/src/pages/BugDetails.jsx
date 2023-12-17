@@ -6,6 +6,7 @@ import { bugService } from '../services/bug.service.js'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
+import { BugLabels } from '../cmps/bug/BugLabels.jsx'
 
 export function BugDetails() {
     const { loggedinUser } = useContext(LoginContext)
@@ -70,6 +71,10 @@ export function BugDetails() {
                 label: 'Description',
                 value: bug.description,
             },
+            {
+                label: 'Labels',
+                value: <BugLabels labels={bug.labels} />,
+            },
         ]
     }
 
@@ -91,7 +96,10 @@ export function BugDetails() {
                         >
                             Edit
                         </button>
-                        <button className="btn-secondary btn-delete" onClick={onDelete}>
+                        <button
+                            className="btn-secondary btn-delete"
+                            onClick={onDelete}
+                        >
                             Delete
                         </button>
                     </div>

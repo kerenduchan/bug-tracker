@@ -26,21 +26,10 @@
         padding-inline-end: 6px;
     }
 
-    .labels {
+    .bug-labels {
         grid-area: 1 / 5;
         @include ellipsis();
         padding-inline-end: 6px;
-
-        display: flex;
-        align-items: center;
-        gap: 3px;
-
-        .label {
-            border-radius: 2px;
-            font-size: 13px;
-            padding: 0 3px;
-            background-color: var(--bg-4);
-        }
     }
 
     .description {

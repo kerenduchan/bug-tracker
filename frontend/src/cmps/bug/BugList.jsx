@@ -12,7 +12,7 @@ export function BugList({ bugs, onRemoveBug }) {
                 <div className="title">Description</div>
             </div>
 
-            <ul>
+            <ul className="bugs">
                 {bugs.map((bug) => (
                     <li key={bug._id}>
                         <BugPreview bug={bug} onRemoveBug={onRemoveBug} />

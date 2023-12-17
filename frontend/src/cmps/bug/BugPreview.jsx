@@ -4,6 +4,7 @@ import { LoginContext } from '../../contexts/LoginContext'
 import { utilService } from '../../services/util.service'
 import { Icon } from '../general/Icon'
 import { bugService } from '../../services/bug.service'
+import { BugLabels } from './BugLabels'
 
 export function BugPreview({ bug, onRemoveBug }) {
     const { loggedinUser } = useContext(LoginContext)
@@ -28,13 +29,8 @@ export function BugPreview({ bug, onRemoveBug }) {
             <div className="severity">{bug.severity}</div>
             <div className="title">{bug.title}</div>
             <div className="description">{bug.description}</div>
-            <div className="labels">
-                {bug.labels.map((l) => (
-                    <div key={l} className="label">
-                        {l}
-                    </div>
-                ))}
-            </div>
+            <BugLabels labels={bug.labels} />
+
             <Link to={`/bug/${bug._id}`} />
             {isDeleteOrEditBugAllowed() && (
                 <div className="actions">
