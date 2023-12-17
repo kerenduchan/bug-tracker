@@ -1,10 +1,11 @@
 import { useContext, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { LoginContext } from '../contexts/LoginContext'
 import { bugService } from '../services/bug.service'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
+import { LoginContext } from '../contexts/LoginContext'
 import { useForm } from '../customHooks/useForm'
+import { FormSelect } from '../cmps/general/FormSelect'
 
 export function BugEdit() {
     const { loggedinUser } = useContext(LoginContext)
@@ -12,6 +13,11 @@ export function BugEdit() {
     const [draft, handleChange, setDraft] = useForm(null)
     const { bugId } = useParams()
     const navigate = useNavigate()
+
+    const severityOptions = bugService.getAllSeverities().map((s) => ({
+        text: `${s}`,
+        value: s,
+    }))
 
     useEffect(() => {
         if (!loggedinUser) {
@@ -43,14 +49,6 @@ export function BugEdit() {
             ...draft,
             severity: +draft.severity,
             labels: draft.labels.split(','),
-        }
-        if (
-            !bugToSave.severity ||
-            bugToSave.severity < 1 ||
-            bugToSave.severity > 5
-        ) {
-            showErrorMsg('Severity must be between 1-5')
-            return
         }
 
         if (bugToSave.title.length === 0) {
@@ -116,11 +114,13 @@ export function BugEdit() {
                     />
 
                     <label htmlFor="severity">Severity:</label>
-                    <input
+                    <FormSelect
                         id="severity"
                         name="severity"
+                        title="Severity"
                         value={draft.severity}
                         onChange={handleChange}
+                        options={severityOptions}
                     />
 
                     <label htmlFor="labels">Labels (comma-separated):</label>
