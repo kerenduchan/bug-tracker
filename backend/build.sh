@@ -5,5 +5,10 @@ npm run build
 
 # Build backend
 cd ../backend
-cp -r data-empty data
+
+if ! test -d data
+then
+    cp -r data-empty data
+fi
+
 npm i
