@@ -2,9 +2,12 @@ import { useEffect } from 'react'
 import { useForm } from '../../customHooks/useForm'
 import { FormSelect } from '../general/FormSelect'
 import { bugService } from '../../services/bug.service'
+import { useDebounce } from '../../customHooks/useDebounce'
 
 export function BugFilter({ filter, setFilter }) {
     const [draft, handleChange, setDraft] = useForm(filter)
+    const debouncedDraft = useDebounce(draft)
+
     const severityOptions = bugService.getAllSeverities().map((s) => ({
         text: `${s}`,
         value: s,
@@ -15,15 +18,11 @@ export function BugFilter({ filter, setFilter }) {
     }, [])
 
     useEffect(() => {
-        setFilter(draft)
-    }, [draft])
+        setFilter(debouncedDraft)
+    }, [debouncedDraft])
 
     function onSubmit(e) {
         e.preventDefault()
-    }
-
-    function onChange(e) {
-        handleChange(e)
     }
 
     return (
@@ -34,7 +33,7 @@ export function BugFilter({ filter, setFilter }) {
                     type="text"
                     name="txt"
                     id="txt"
-                    onChange={onChange}
+                    onChange={handleChange}
                     value={draft.txt}
                 />
             </div>
@@ -45,7 +44,7 @@ export function BugFilter({ filter, setFilter }) {
                     type="text"
                     name="creatorUsername"
                     id="creatorUsername"
-                    onChange={onChange}
+                    onChange={handleChange}
                     value={draft.creatorUsername}
                 />
             </div>
@@ -56,7 +55,7 @@ export function BugFilter({ filter, setFilter }) {
                     type="text"
                     name="labels"
                     id="labels"
-                    onChange={onChange}
+                    onChange={handleChange}
                     value={draft.labels}
                 />
             </div>
@@ -66,7 +65,7 @@ export function BugFilter({ filter, setFilter }) {
                     name="minSeverity"
                     title="Min Severity"
                     value={draft.minSeverity}
-                    onChange={onChange}
+                    onChange={handleChange}
                     options={severityOptions}
                 />
             </div>

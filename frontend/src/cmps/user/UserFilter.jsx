@@ -1,19 +1,21 @@
 import { useEffect } from 'react'
 import { useForm } from '../../customHooks/useForm'
+import { useDebounce } from '../../customHooks/useDebounce'
 
 export function UserFilter({ filter, setFilter }) {
     const [draft, handleChange, setDraft] = useForm(filter)
+    const debouncedDraft = useDebounce(draft)
 
     useEffect(() => {
-        setFilter(draft)
-    }, [draft])
+        setDraft(filter)
+    }, [])
+
+    useEffect(() => {
+        setFilter(debouncedDraft)
+    }, [debouncedDraft])
 
     function onSubmit(e) {
         e.preventDefault()
-    }
-
-    function onChange(e) {
-        handleChange(e)
     }
 
     return (
@@ -24,7 +26,7 @@ export function UserFilter({ filter, setFilter }) {
                     type="text"
                     name="txt"
                     id="txt"
-                    onChange={onChange}
+                    onChange={handleChange}
                     value={draft.txt}
                 />
             </div>
@@ -35,7 +37,7 @@ export function UserFilter({ filter, setFilter }) {
                     type="text"
                     name="minScore"
                     id="minScore"
-                    onChange={onChange}
+                    onChange={handleChange}
                     value={draft.minScore}
                 />
             </div>
