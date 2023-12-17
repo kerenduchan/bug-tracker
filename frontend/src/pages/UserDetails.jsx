@@ -17,6 +17,14 @@ export function UserDetails() {
         loadUser()
     }, [])
 
+    function onEdit() {
+        console.log('onEdit')
+    }
+
+    function onDelete() {
+        console.log('onDelete')
+    }
+
     async function loadUser() {
         try {
             const user = await userService.getById(userId)
@@ -30,7 +38,7 @@ export function UserDetails() {
         return params.viewType === 'profile'
     }
 
-    function isAuthorized() {
+    function isAuthorizedToView() {
         if (!loggedinUser) {
             return false
         }
@@ -39,6 +47,24 @@ export function UserDetails() {
         }
 
         return isProfileView() && loggedinUser._id === userId
+    }
+
+    function isAuthorizedToEditAndDelete() {
+        return loggedinUser?.isAdmin
+    }
+
+    function isDeleteAllowed() {
+        return loggedinUser._id !== userId && user.bugs.length === 0
+    }
+
+    function getBugsFieldValue() {
+        return user.bugs.length ? (
+            <Link to={`/bug?creatorUsername=${user.username}`}>
+                {user.bugs.length}
+            </Link>
+        ) : (
+            0
+        )
     }
 
     function getFields() {
@@ -51,19 +77,12 @@ export function UserDetails() {
             { label: 'Role', value: user.isAdmin ? 'Administrator' : 'User' },
             {
                 label: 'Bugs',
-                value: (
-                    <Link to={`/bug?creatorUsername=${user.username}`}>
-                        See all the bugs{' '}
-                        {isProfileView()
-                            ? 'you created'
-                            : 'created by this user'}
-                    </Link>
-                ),
+                value: getBugsFieldValue(),
             },
         ]
     }
 
-    if (!isAuthorized()) {
+    if (!isAuthorizedToView()) {
         return <h1>Not authorized</h1>
     }
 
@@ -79,6 +98,26 @@ export function UserDetails() {
             <div className="main">
                 <h1>User {isProfileView() ? 'Profile' : 'Details'}</h1>
                 <FieldList fields={getFields()} />
+
+                {isAuthorizedToEditAndDelete() && (
+                    <div className="actions">
+                        <button
+                            className="btn-primary btn-edit"
+                            onClick={onEdit}
+                        >
+                            Edit
+                        </button>
+
+                        {isDeleteAllowed() && (
+                            <button
+                                className="btn btn-delete"
+                                onClick={onDelete}
+                            >
+                                Delete
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

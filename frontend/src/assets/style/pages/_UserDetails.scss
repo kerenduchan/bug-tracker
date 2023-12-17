@@ -5,5 +5,19 @@
 
     .main {
         @include main-padding-x();
+
+        .actions {
+            padding-top: 30px;
+            display: flex;
+            gap: 200px;
+
+            .btn-edit {
+                width: 100px;
+            }
+
+            .btn-delete {
+                width: 100px;
+            }
+        }
     }
 }
