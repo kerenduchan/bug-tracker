@@ -11,7 +11,7 @@ import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar.jsx'
 
 export function UserIndex() {
     const { loggedinUser } = useContext(LoginContext)
-    const navigate = useNavigate()
+
     const {
         loadEntities,
         filter,
@@ -28,18 +28,13 @@ export function UserIndex() {
     } = useIndex(userService)
 
     async function onRemoveUser(userId) {
-        if (!loggedinUser) {
-            navigate('/login')
-            return
-        }
-
         try {
             await userService.remove(userId)
             loadEntities()
-            showSuccessMsg('User removed')
+            showSuccessMsg('User deleted')
         } catch (err) {
-            console.error('Error from onRemoveUser ->', err)
-            showErrorMsg('Cannot remove user')
+            console.error('Error:', err)
+            showErrorMsg('Failed to delete user')
         }
     }
 

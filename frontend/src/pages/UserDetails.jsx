@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { userService } from '../services/user.service.js'
-import { showErrorMsg } from '../services/event-bus.service.js'
-import { useParams } from 'react-router'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
+import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { LoginContext } from '../contexts/LoginContext.js'
@@ -10,19 +10,26 @@ import { FieldList } from '../cmps/general/FieldList.jsx'
 export function UserDetails() {
     const { loggedinUser } = useContext(LoginContext)
     const [user, setUser] = useState(null)
-    const { userId } = useParams()
-    const params = useParams()
+    const { userId, viewType } = useParams()
+    const navigate = useNavigate()
 
     useEffect(() => {
         loadUser()
     }, [])
 
     function onEdit() {
-        console.log('onEdit')
+        navigate(`/user/edit/${user._id}`)
     }
 
-    function onDelete() {
-        console.log('onDelete')
+    async function onDelete() {
+        try {
+            await userService.remove(userId)
+            navigate('/user')
+            showSuccessMsg('User deleted')
+        } catch (err) {
+            console.error('Error:', err)
+            showErrorMsg('Failed to delete user')
+        }
     }
 
     async function loadUser() {
@@ -35,7 +42,7 @@ export function UserDetails() {
     }
 
     function isProfileView() {
-        return params.viewType === 'profile'
+        return viewType === 'profile'
     }
 
     function isViewAllowed() {
