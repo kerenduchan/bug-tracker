@@ -9,7 +9,7 @@ import { BugEdit } from './pages/BugEdit.jsx'
 import { UserIndex } from './pages/UserIndex.jsx'
 import { UserDetails } from './pages/UserDetails.jsx'
 import { UserEdit } from './pages/UserEdit.jsx'
-import { LoginContext } from './contexts/LoginContext'
+import { LoginContext } from './contexts/LoginContext.js'
 import { LoginSignup } from './cmps/app/LoginSignup.jsx'
 import { authService } from './services/auth.service.js'
 
