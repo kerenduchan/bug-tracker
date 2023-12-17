@@ -1,18 +1,36 @@
-import { useState, useEffect } from 'react'
-import { useParams } from 'react-router'
+import { useState, useEffect, useContext } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { utilService } from '../services/util.service'
 import { bugService } from '../services/bug.service.js'
-import { showErrorMsg } from '../services/event-bus.service.js'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
+import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
 
 export function BugDetails() {
+    const { loggedinUser } = useContext(LoginContext)
     const [bug, setBug] = useState(null)
     const { bugId } = useParams()
+    const navigate = useNavigate()
 
     useEffect(() => {
         loadBug()
     }, [])
+
+    function onEdit() {
+        navigate(`/bug/edit/${bugId}`)
+    }
+
+    async function onDelete() {
+        try {
+            await bugService.remove(bugId)
+            navigate(`/bug`)
+            showSuccessMsg('Bug removed')
+        } catch (err) {
+            console.error('Error from onRemoveBug ->', err)
+            showErrorMsg('Cannot remove bug')
+        }
+    }
 
     async function loadBug() {
         try {
@@ -60,6 +78,20 @@ export function BugDetails() {
             <div className="main">
                 <h1>Bug Details</h1>
                 <FieldList fields={getFields()} />
+
+                {loggedinUser && (
+                    <div className="actions">
+                        <button
+                            className="btn-primary btn-edit"
+                            onClick={onEdit}
+                        >
+                            Edit
+                        </button>
+                        <button className="btn btn-delete" onClick={onDelete}>
+                            Delete
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

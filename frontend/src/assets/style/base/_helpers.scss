@@ -2,6 +2,10 @@
     @include btn-primary();
 }
 
+.btn {
+    @include btn();
+}
+
 .btn-icon-round {
     @include btn-icon-round();
 }
