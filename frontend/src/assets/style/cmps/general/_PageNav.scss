@@ -7,9 +7,12 @@
 
 .page-idx {
     padding: 5px 10px;
-    background-color: var(--bg-3);
     cursor: pointer;
     user-select: none;
+    @include btn-bg-nopress(
+        var(--bg-btn-secondary),
+        var(--bg-btn-secondary-hovered)
+    );
 }
 
 .page-idx.current {
