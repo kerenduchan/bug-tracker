@@ -109,7 +109,10 @@ export function UserDetails() {
                     )}
 
                     {isDeleteAllowed() && (
-                        <button className="btn btn-delete" onClick={onDelete}>
+                        <button
+                            className="btn-secondary btn-delete"
+                            onClick={onDelete}
+                        >
                             Delete
                         </button>
                     )}

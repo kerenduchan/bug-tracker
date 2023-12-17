@@ -2,8 +2,8 @@
     @include btn-primary();
 }
 
-.btn {
-    @include btn();
+.btn-secondary {
+    @include btn-secondary();
 }
 
 .btn-icon-round {

@@ -81,6 +81,14 @@
     );
 }
 
+@mixin btn-secondary-bg() {
+    @include btn-bg(
+        var(--bg-btn-secondary),
+        var(--bg-btn-secondary-hovered),
+        var(--bg-btn-secondary-pressed)
+    );
+}
+
 @mixin btn-icon-round-bg() {
     @include btn-bg(
         var(--bg-btn-icon-round),
@@ -116,6 +124,11 @@
     @include btn();
     @include btn-primary-bg();
     color: var(--text-inverse);
+}
+
+@mixin btn-secondary() {
+    @include btn();
+    @include btn-secondary-bg();
 }
 
 @mixin btn-icon-round() {
