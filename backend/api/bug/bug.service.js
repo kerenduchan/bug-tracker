@@ -120,7 +120,9 @@ function _processBugFields(bug, isNew) {
 
 function _isMatchFilter(bug, filterBy) {
     filterBy.txt = filterBy.txt?.toLowerCase()
-    filterBy.labels = filterBy.labels?.map((l) => l.toLowerCase())
+    filterBy.labels = filterBy.labels
+        ?.map((l) => l.toLowerCase())
+        .filter((l) => l.length > 0)
 
     const lowercaseLabels = bug.labels.map((l) => l.toLowerCase())
 
