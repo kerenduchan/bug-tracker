@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { utilService } from '../services/util.service'
 import { bugService } from '../services/bug.service.js'
 import { showErrorMsg } from '../services/event-bus.service.js'
+import { FieldList } from '../cmps/general/FieldList.jsx'
 
 export function BugDetails() {
     const [bug, setBug] = useState(null)
@@ -23,6 +24,33 @@ export function BugDetails() {
         }
     }
 
+    function getFields() {
+        if (!bug) return []
+
+        return [
+            {
+                label: 'Title',
+                value: bug.title,
+            },
+            {
+                label: 'Created at',
+                value: utilService.formatDateTime(bug.createdAt),
+            },
+            {
+                label: 'Created by',
+                value: `${bug.creator.fullname} (${bug.creator.username})`,
+            },
+            {
+                label: 'Severity',
+                value: bug.severity,
+            },
+            {
+                label: 'Description',
+                value: bug.description,
+            },
+        ]
+    }
+
     if (!bug) return <h1>Loading....</h1>
     return (
         <div className="bug-details">
@@ -30,15 +58,8 @@ export function BugDetails() {
                 <Link to="/bug">Back to List</Link>
             </div>
             <div className="main">
-                <div className="title">{bug.title}</div>
-                <div className="created-at">
-                    Created at: {utilService.formatDateTime(bug.createdAt)}
-                </div>
-                <div className="created-by">
-                    Created by: {bug.creator.fullname} ({bug.creator.username})
-                </div>
-                <div className="severity">Severity: {bug.severity}</div>
-                <div className="description">{bug.description}</div>
+                <h1>Bug Details</h1>
+                <FieldList fields={getFields()} />
             </div>
         </div>
     )

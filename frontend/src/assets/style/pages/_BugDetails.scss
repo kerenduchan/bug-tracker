@@ -5,17 +5,5 @@
 
     .main {
         @include main-padding-x();
-        padding-top: 20px;
-        display: grid;
-        row-gap: 10px;
-
-        .title {
-            font-size: 24px;
-        }
-
-        .created-at {
-            color: var(--text-subtle);
-            font-size: 14px;
-        }
     }
 }

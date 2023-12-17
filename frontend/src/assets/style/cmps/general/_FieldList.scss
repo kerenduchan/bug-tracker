@@ -1,0 +1,14 @@
+.field-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .field {
+        display: grid;
+        grid-template-columns: 100px auto;
+
+        .label {
+            color: var(--text-subtle);
+        }
+    }
+}

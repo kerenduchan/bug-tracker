@@ -5,6 +5,7 @@ import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { LoginContext } from '../contexts/LoginContext.js'
+import { FieldList } from '../cmps/general/FieldList.jsx'
 
 export function UserDetails() {
     const { loggedinUser } = useContext(LoginContext)
@@ -40,6 +41,28 @@ export function UserDetails() {
         return isProfileView() && loggedinUser._id === userId
     }
 
+    function getFields() {
+        if (!user) return []
+
+        return [
+            { label: 'Full Name', value: user.fullname },
+            { label: 'Username', value: user.username },
+            { label: 'Score', value: user.score },
+            { label: 'Role', value: user.isAdmin ? 'Administrator' : 'User' },
+            {
+                label: 'Bugs',
+                value: (
+                    <Link to={`/bug?creatorUsername=${user.username}`}>
+                        See all the bugs{' '}
+                        {isProfileView()
+                            ? 'you created'
+                            : 'created by this user'}
+                    </Link>
+                ),
+            },
+        ]
+    }
+
     if (!isAuthorized()) {
         return <h1>Not authorized</h1>
     }
@@ -55,31 +78,7 @@ export function UserDetails() {
             )}
             <div className="main">
                 <h1>User {isProfileView() ? 'Profile' : 'Details'}</h1>
-                <div className="fields">
-                    <div className="label">Full Name:</div>
-                    <div className="fullname">{user.fullname}</div>
-
-                    <div className="label">Username:</div>
-                    <div className="fullname">{user.username}</div>
-
-                    <div className="label">Score:</div>
-                    <div className="fullname">{user.score}</div>
-
-                    <div className="label">Role:</div>
-                    <div className="role">
-                        {user.isAdmin ? 'Administrator' : 'User'}
-                    </div>
-
-                    <div className="label">Bugs:</div>
-                    <div className="fullname">
-                        <Link to={`/bug?creatorUsername=${user.username}`}>
-                            See all the bugs{' '}
-                            {isProfileView()
-                                ? 'you created'
-                                : 'created by this user'}
-                        </Link>
-                    </div>
-                </div>
+                <FieldList fields={getFields()} />
             </div>
         </div>
     )
