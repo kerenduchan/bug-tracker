@@ -85,6 +85,14 @@ export function UserEdit() {
                 <h1>{userId ? 'Edit' : 'Create'} User</h1>
 
                 <form onSubmit={onSubmit}>
+                    <label htmlFor="fullname">Full Name:</label>
+                    <input
+                        id="fullname"
+                        name="fullname"
+                        value={draft.fullname}
+                        onChange={handleChange}
+                    />
+
                     <label htmlFor="username">Username:</label>
                     <input
                         id="username"
@@ -101,14 +109,6 @@ export function UserEdit() {
                         name="password"
                         autoComplete="new-password"
                         value={draft.password}
-                        onChange={handleChange}
-                    />
-
-                    <label htmlFor="fullname">Full Name:</label>
-                    <input
-                        id="fullname"
-                        name="fullname"
-                        value={draft.fullname}
                         onChange={handleChange}
                     />
 
