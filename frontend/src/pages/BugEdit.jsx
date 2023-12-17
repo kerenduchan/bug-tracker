@@ -132,8 +132,12 @@ export function BugEdit() {
                     />
 
                     <div className="actions">
-                        <button>Save</button>
-                        <button type="button" onClick={onCancel}>
+                        <button className="btn-primary">Save</button>
+                        <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={onCancel}
+                        >
                             Cancel
                         </button>
                     </div>
