@@ -46,26 +46,26 @@ export function BugIndex() {
     if (!filter || !bugs) return <div>Loading...</div>
 
     return (
-        <main className="main-layout">
+        <main className="bug-index">
             <h1>Bugs</h1>
-            <main>
-                <BugIndexTopbar
-                    filter={filter}
-                    setFilter={setFilter}
-                    sort={sort}
-                    setSort={setSort}
-                />
+            <BugIndexTopbar
+                filter={filter}
+                setFilter={setFilter}
+                sort={sort}
+                setSort={setSort}
+            />
 
-                <BugList bugs={bugs} onRemoveBug={onRemoveBug} />
+            <BugList bugs={bugs} onRemoveBug={onRemoveBug} />
+
+            <div className="list-footer">
                 {totalCount !== null && <p>Total: {totalCount} bugs</p>}
-
                 <PageNav
                     curPageIdx={curPageIdx}
                     setCurPageIdx={setCurPageIdx}
                     maxPageIdx={maxPageIdx}
                 />
                 <PageSizeSelect pageSize={pageSize} setPageSize={setPageSize} />
-            </main>
+            </div>
         </main>
     )
 }
