@@ -10,6 +10,10 @@ export const userService = {
     getSortByOptions,
     buildSearchParams,
     parseSearchParams,
+    isViewUserListAllowed,
+    isViewUserDetailsAllowed,
+    isEditUserAllowed,
+    isDeleteUserAllowed,
 }
 
 function getEmptyUser(
@@ -52,6 +56,38 @@ function parseSearchParams(searchParams) {
         searchParams,
         getDefaultFilter(),
         getDefaultSort()
+    )
+}
+
+// a user is allowed to view the list of users only if they are logged in, and
+// they are an admin
+function isViewUserListAllowed(loggedinUser) {
+    return loggedinUser && loggedinUser.isAdmin
+}
+
+// a user is allowed to view a user only if they are logged in, and they
+// are either an admin or they are the user themselves
+function isViewUserDetailsAllowed(loggedinUser, user) {
+    return (
+        loggedinUser && (loggedinUser.isAdmin || loggedinUser._id === user._id)
+    )
+}
+
+// a user is allowed to edit a user only if they are logged in and they are an
+// admin
+function isEditUserAllowed(loggedinUser, user) {
+    return loggedinUser && loggedinUser.isAdmin
+}
+
+// a user is allowed to delete a user only if they are logged in and they are an
+// admin, and the user has no bugs, and the user is not attempting to delete
+// themselves
+function isDeleteUserAllowed(loggedinUser, user) {
+    return (
+        loggedinUser &&
+        loggedinUser.isAdmin &&
+        loggedinUser._id !== user._id &&
+        user.bugs.length === 0
     )
 }
 

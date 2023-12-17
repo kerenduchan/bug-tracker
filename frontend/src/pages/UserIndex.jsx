@@ -43,11 +43,7 @@ export function UserIndex() {
         }
     }
 
-    function isAuthorized() {
-        return loggedinUser?.isAdmin
-    }
-
-    if (!isAuthorized()) {
+    if (!userService.isViewUserListAllowed(loggedinUser)) {
         return <h1>Not authorized</h1>
     }
 

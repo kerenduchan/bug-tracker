@@ -1,11 +1,23 @@
+import { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { userService } from '../../services/user.service'
+import { LoginContext } from '../../contexts/LoginContext'
 import { Icon } from '../general/Icon'
 
 export function UserPreview({ user, onRemoveUser }) {
+    const { loggedinUser } = useContext(LoginContext)
     const navigate = useNavigate()
 
     function onEdit() {
         navigate(`/user/edit/${user._id}`)
+    }
+
+    function isEditAllowed() {
+        return userService.isEditUserAllowed(loggedinUser, user)
+    }
+
+    function isDeleteAllowed() {
+        return userService.isDeleteUserAllowed(loggedinUser, user)
     }
 
     return (
@@ -18,7 +30,13 @@ export function UserPreview({ user, onRemoveUser }) {
             <Link to={`/user/${user._id}`} />
 
             <div className="actions">
-                {user.bugs.length === 0 && (
+                {isEditAllowed() && (
+                    <button className="btn-icon-round" onClick={onEdit}>
+                        <Icon type="edit" />
+                    </button>
+                )}
+
+                {isDeleteAllowed() && (
                     <button
                         className="btn-icon-round"
                         onClick={() => onRemoveUser(user._id)}
@@ -26,9 +44,6 @@ export function UserPreview({ user, onRemoveUser }) {
                         <Icon type="delete" />
                     </button>
                 )}
-                <button className="btn-icon-round" onClick={onEdit}>
-                    <Icon type="edit" />
-                </button>
             </div>
         </article>
     )

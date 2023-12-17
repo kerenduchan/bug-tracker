@@ -38,23 +38,16 @@ export function UserDetails() {
         return params.viewType === 'profile'
     }
 
-    function isAuthorizedToView() {
-        if (!loggedinUser) {
-            return false
-        }
-        if (loggedinUser.isAdmin) {
-            return true
-        }
-
-        return isProfileView() && loggedinUser._id === userId
+    function isViewAllowed() {
+        return userService.isViewUserDetailsAllowed(loggedinUser, user)
     }
 
-    function isAuthorizedToEditAndDelete() {
-        return loggedinUser?.isAdmin
+    function isEditAllowed() {
+        return userService.isEditUserAllowed(loggedinUser, user)
     }
 
     function isDeleteAllowed() {
-        return loggedinUser._id !== userId && user.bugs.length === 0
+        return userService.isDeleteUserAllowed(loggedinUser, user)
     }
 
     function getBugsFieldValue() {
@@ -82,7 +75,7 @@ export function UserDetails() {
         ]
     }
 
-    if (!isAuthorizedToView()) {
+    if (!isViewAllowed()) {
         return <h1>Not authorized</h1>
     }
 
@@ -98,26 +91,22 @@ export function UserDetails() {
             <div className="main">
                 <h1>User {isProfileView() ? 'Profile' : 'Details'}</h1>
                 <FieldList fields={getFields()} />
-
-                {isAuthorizedToEditAndDelete() && (
-                    <div className="actions">
+                <div className="actions">
+                    {isEditAllowed() && (
                         <button
                             className="btn-primary btn-edit"
                             onClick={onEdit}
                         >
                             Edit
                         </button>
+                    )}
 
-                        {isDeleteAllowed() && (
-                            <button
-                                className="btn btn-delete"
-                                onClick={onDelete}
-                            >
-                                Delete
-                            </button>
-                        )}
-                    </div>
-                )}
+                    {isDeleteAllowed() && (
+                        <button className="btn btn-delete" onClick={onDelete}>
+                            Delete
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     )
