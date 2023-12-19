@@ -40,7 +40,6 @@ async function save(entity) {
     // remove duplicate labels and empty labels
     entity.labels = [...new Set(entity.labels)].filter((l) => l.length > 0)
 
-    console.log(entity.labels)
     const method = entity._id ? 'put' : 'post'
     const { data } = await axios[method](BASE_URL, entity)
     return data
