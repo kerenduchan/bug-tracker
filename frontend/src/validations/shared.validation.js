@@ -1,6 +1,6 @@
-import { string } from 'yup'
+import { number, string } from 'yup'
 
-export { username, password, fullname }
+export { username, password, fullname, score }
 
 const username = string()
     .max(20, 'Must be 20 characters or less')
@@ -12,4 +12,10 @@ const password = string()
 
 const fullname = string()
     .max(40, 'Must be 40 characters or less')
+    .required('Required')
+
+const score = number()
+    .min(0, 'Must be between 1-100')
+    .max(100, 'Must be between 1-100')
+    .typeError('Must be a number between 1-100')
     .required('Required')

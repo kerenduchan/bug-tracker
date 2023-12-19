@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react'
-import { Formik, Form, useFormikContext } from 'formik'
+import { useState, useContext } from 'react'
+import { Formik } from 'formik'
 import { authService } from '../../services/auth.service'
 import { LoginContext } from '../../contexts/LoginContext'
 import { useNavigate } from 'react-router'
@@ -29,12 +29,12 @@ export function LoginSignup({ isLogin }) {
                 })
             }
             setLoggedinUser(user)
-            setSubmitting(false)
             navigate('/bug')
         } catch (err) {
             console.error(err)
             setError(err.response.data.error)
         }
+        setSubmitting(false)
     }
 
     function getInitialDraft() {
