@@ -107,6 +107,17 @@ async function _processUserFields(user, isNew) {
         }
     }
 
+    // special handling for update
+    if (!isNew) {
+        // keep the old password if unchanged
+        const existingUser = await getById(user._id)
+        if (res.password?.length) {
+            res.password = await bcrypt.hash(res.password, HASH_SALT_ROUNDS)
+        } else {
+            res.password = existingUser.password
+        }
+    }
+
     // validate the score field
     if (res.score !== undefined) {
         res.score = +res.score
