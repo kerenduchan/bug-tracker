@@ -34,11 +34,13 @@ async function remove(id) {
 }
 
 async function save(entity) {
-    // convert to array with no duplicates and no empty values
-    entity.labels = [...new Set(entity.labels.split(','))].filter(
-        (label) => label.length > 0
-    )
+    // convert comma-separated labels string to array and trim the labels
+    entity.labels = entity.labels.split(',').map((l) => l.trim())
 
+    // remove duplicate labels and empty labels
+    entity.labels = [...new Set(entity.labels)].filter((l) => l.length > 0)
+
+    console.log(entity.labels)
     const method = entity._id ? 'put' : 'post'
     const { data } = await axios[method](BASE_URL, entity)
     return data

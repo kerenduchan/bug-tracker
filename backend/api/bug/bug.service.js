@@ -104,8 +104,11 @@ function _processBugFields(bug, isNew) {
         })
     }
 
-    // remove empty labels and trim the labels
-    res.labels = res.labels.filter((l) => l.length > 0).map((l) => l.trim())
+    // trim the labels
+    res.labels = res.labels.map((l) => l.trim())
+
+    // remove duplicate labels and empty labels
+    res.labels = [...new Set(res.labels)].filter((l) => l.length > 0)
 
     // validate the severity
     if (res.severity !== undefined) {
