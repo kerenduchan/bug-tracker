@@ -4,7 +4,7 @@ import { TextInput } from '../general/form/TextInput'
 
 // need this separate component in order to reset form between signup/login
 // through useEffect
-export function LoginSignupForm({ isLogin, error, setError }) {
+export function LoginSignupForm({ isLogin, error, setError, isValid }) {
     const { resetForm } = useFormikContext()
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export function LoginSignupForm({ isLogin, error, setError }) {
                 <TextInput label="Full Name" name="fullname" type="text" />
             )}
 
-            <button className="btn-primary" type="submit">
+            <button className="btn-primary" type="submit" disabled={!isValid}>
                 {isLogin ? 'Log in' : 'Sign up'}
             </button>
             {error && <div className="error-msg">{error}</div>}

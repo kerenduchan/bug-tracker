@@ -54,11 +54,14 @@ export function LoginSignup({ isLogin }) {
                 validationSchema={getValidationSchema()}
                 onSubmit={onSubmit}
             >
-                <LoginSignupForm
-                    isLogin={isLogin}
-                    error={error}
-                    setError={setError}
-                />
+                {({ isValid }) => (
+                    <LoginSignupForm
+                        isLogin={isLogin}
+                        isValid={isValid}
+                        error={error}
+                        setError={setError}
+                    />
+                )}
             </Formik>
         </div>
     )
