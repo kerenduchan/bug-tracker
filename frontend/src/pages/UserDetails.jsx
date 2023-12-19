@@ -82,11 +82,11 @@ export function UserDetails() {
         ]
     }
 
+    if (!user) return <h1>Loading....</h1>
+
     if (!isViewAllowed()) {
         return <h1>Not authorized</h1>
     }
-
-    if (!user) return <h1>Loading....</h1>
 
     return (
         <div className="user-details">
