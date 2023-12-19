@@ -1,16 +1,19 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import { Formik, Form } from 'formik'
 import { bugService } from '../services/bug.service'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { LoginContext } from '../contexts/LoginContext'
-import { useForm } from '../customHooks/useForm'
-import { FormSelect } from '../cmps/general/FormSelect'
+import { FormikSelect } from '../cmps/general/formik/FormikSelect'
+import { FormikTextArea } from '../cmps/general/formik/FormikTextArea'
+import { bugValidation } from '../validations/bug.validation'
+import { FormikInput } from '../cmps/general/formik/FormikInput'
 
 export function BugEdit() {
     const { loggedinUser } = useContext(LoginContext)
 
-    const [draft, handleChange, setDraft] = useForm(null)
+    const [initialValues, setInitialValues] = useState()
     const { bugId } = useParams()
     const navigate = useNavigate()
 
@@ -30,38 +33,29 @@ export function BugEdit() {
     async function loadBug() {
         if (!bugId) {
             const emptyBug = bugService.getEmptyBug()
-            setDraft({ ...emptyBug, labels: '' })
+            setInitialValues({ ...emptyBug, labels: '' })
             return
         }
         try {
             const bugToEdit = await bugService.getById(bugId)
-            setDraft({ ...bugToEdit, labels: bugToEdit.labels.join(',') })
+            setInitialValues({
+                ...bugToEdit,
+                labels: bugToEdit.labels.join(','),
+            })
         } catch (err) {
             console.error(err)
             showErrorMsg(err.response.data)
         }
     }
 
-    async function onSubmit(e) {
-        e.preventDefault()
-
-        const bugToSave = {
-            ...draft,
-            severity: +draft.severity,
-            labels: draft.labels.split(','),
-        }
-
-        if (bugToSave.title.length === 0) {
-            showErrorMsg('Title must not be empty')
-            return
-        }
-
+    async function onSubmit(values, { setSubmitting }) {
         try {
-            await bugService.save(bugToSave)
+            await bugService.save(values)
             showSuccessMsg(`Bug ${bugId ? 'updated' : 'created'}`)
         } catch (err) {
             showErrorMsg(`Failed to ${bugId ? 'update' : 'create'} bug`)
         }
+        setSubmitting(false)
         navigate('/bug')
     }
 
@@ -82,7 +76,7 @@ export function BugEdit() {
         return loggedinUser.isAdmin || loggedinUser._id === draft.creatorId
     }
 
-    if (!draft) return <h1>loading....</h1>
+    if (!initialValues) return <h1>loading....</h1>
 
     if (!isAuthorized()) {
         return <h1>Not authorized</h1>
@@ -96,52 +90,54 @@ export function BugEdit() {
             <div className="main">
                 <h1>{bugId ? 'Edit' : 'Create'} Bug</h1>
 
-                <form onSubmit={onSubmit}>
-                    <label htmlFor="title">Title:</label>
-                    <input
-                        id="title"
-                        name="title"
-                        value={draft.title}
-                        onChange={handleChange}
-                    />
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={bugValidation}
+                    onSubmit={onSubmit}
+                >
+                    {({ isValid }) => (
+                        <Form>
+                            <FormikInput
+                                label="Title:"
+                                name="title"
+                                type="text"
+                            />
+                            <FormikTextArea
+                                label="Description:"
+                                name="description"
+                            />
 
-                    <label htmlFor="description">Description:</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={draft.description}
-                        onChange={handleChange}
-                    />
+                            <FormikSelect
+                                label="Severity:"
+                                name="severity"
+                                options={severityOptions}
+                            />
 
-                    <label htmlFor="severity">Severity:</label>
-                    <FormSelect
-                        id="severity"
-                        name="severity"
-                        title="Severity"
-                        value={draft.severity}
-                        onChange={handleChange}
-                        options={severityOptions}
-                    />
+                            <FormikInput
+                                label="Labels (comma-separated):"
+                                name="labels"
+                                type="text"
+                            />
 
-                    <label htmlFor="labels">Labels (comma-separated):</label>
-                    <input
-                        id="labels"
-                        name="labels"
-                        value={draft.labels}
-                        onChange={handleChange}
-                    />
-
-                    <div className="actions">
-                        <button className="btn-primary">Save</button>
-                        <button
-                            type="button"
-                            className="btn-secondary"
-                            onClick={onCancel}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </form>
+                            <div className="actions">
+                                <button
+                                    className="btn-primary"
+                                    type="submit"
+                                    disabled={!isValid}
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={onCancel}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
             </div>
         </div>
     )

@@ -6,7 +6,7 @@ import { userService } from '../services/user.service'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { userValidation } from '../validations/user.validation'
 import { LoginContext } from '../contexts/LoginContext'
-import { TextInput } from '../cmps/general/form/TextInput'
+import { FormikInput } from '../cmps/general/formik/FormikInput'
 
 export function UserEdit() {
     const { loggedinUser } = useContext(LoginContext)
@@ -72,24 +72,28 @@ export function UserEdit() {
                 >
                     {({ isValid }) => (
                         <Form>
-                            <TextInput
+                            <FormikInput
                                 label="Full Name"
                                 name="fullname"
                                 type="text"
                             />
 
-                            <TextInput
+                            <FormikInput
                                 label="Username"
                                 name="username"
                                 type="text"
                             />
 
-                            <TextInput
+                            <FormikInput
                                 label="Password"
                                 name="password"
                                 type="password"
                             />
-                            <TextInput label="Score" name="score" type="text" />
+                            <FormikInput
+                                label="Score"
+                                name="score"
+                                type="text"
+                            />
 
                             <div className="actions">
                                 <button

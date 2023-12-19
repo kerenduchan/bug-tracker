@@ -1,6 +1,6 @@
 import { useField } from 'formik'
 
-export function TextInput({ label, ...props }) {
+export function FormikInput({ label, ...props }) {
     const [field, meta] = useField(props)
 
     function isError() {
@@ -8,7 +8,7 @@ export function TextInput({ label, ...props }) {
     }
 
     return (
-        <div className={`form-field-input ${isError() ? 'error' : ''}`}>
+        <div className={`formik-input ${isError() ? 'error' : ''}`}>
             <label htmlFor={props.id || props.name}>{label}</label>
             <input {...field} {...props} />
             {isError() && <div className="error-msg">{meta.error}</div>}

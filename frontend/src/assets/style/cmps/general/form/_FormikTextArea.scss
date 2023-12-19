@@ -1,0 +1,12 @@
+.formik-textarea {
+    display: grid;
+
+    &.error {
+        label {
+            color: var(--text-error);
+        }
+        textarea {
+            border: 1px solid var(--text-error);
+        }
+    }
+}

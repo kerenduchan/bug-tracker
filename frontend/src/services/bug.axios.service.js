@@ -34,6 +34,11 @@ async function remove(id) {
 }
 
 async function save(entity) {
+    // convert to array with no duplicates and no empty values
+    entity.labels = [...new Set(entity.labels.split(','))].filter(
+        (label) => label.length > 0
+    )
+
     const method = entity._id ? 'put' : 'post'
     const { data } = await axios[method](BASE_URL, entity)
     return data

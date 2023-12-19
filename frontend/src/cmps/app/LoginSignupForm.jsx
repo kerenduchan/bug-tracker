@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Form, useFormikContext } from 'formik'
-import { TextInput } from '../general/form/TextInput'
+import { FormikInput } from '../general/formik/FormikInput'
 
 // need this separate component in order to reset form between signup/login
 // through useEffect
@@ -15,12 +15,12 @@ export function LoginSignupForm({ isLogin, error, setError, isValid }) {
 
     return (
         <Form>
-            <TextInput label="Username" name="username" type="text" />
+            <FormikInput label="Username" name="username" type="text" />
 
-            <TextInput label="Password" name="password" type="password" />
+            <FormikInput label="Password" name="password" type="password" />
 
             {!isLogin && (
-                <TextInput label="Full Name" name="fullname" type="text" />
+                <FormikInput label="Full Name" name="fullname" type="text" />
             )}
 
             <button className="btn-primary" type="submit" disabled={!isValid}>
