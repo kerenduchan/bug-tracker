@@ -32,7 +32,7 @@ export function LoginSignup({ isLogin }) {
             setSubmitting(false)
             navigate('/bug')
         } catch (err) {
-            console.log(err)
+            console.error(err)
             setError(err.response.data.error)
         }
     }

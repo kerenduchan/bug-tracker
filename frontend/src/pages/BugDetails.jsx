@@ -42,7 +42,7 @@ export function BugDetails() {
             const bug = await bugService.getById(bugId)
             setBug(bug)
         } catch (err) {
-            console.log(err)
+            console.error(err)
             showErrorMsg(err.response.data)
         }
     }
