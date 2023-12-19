@@ -1,0 +1,12 @@
+.form-field-input {
+    display: grid;
+
+    &.error {
+        label {
+            color: var(--text-error);
+        }
+        input {
+            border: 1px solid var(--text-error);
+        }
+    }
+}

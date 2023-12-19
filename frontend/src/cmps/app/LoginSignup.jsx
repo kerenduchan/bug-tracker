@@ -1,8 +1,14 @@
 import { useState, useEffect, useContext } from 'react'
+import { Formik, Form } from 'formik'
 import { useForm } from '../../customHooks/useForm'
 import { authService } from '../../services/auth.service'
 import { LoginContext } from '../../contexts/LoginContext'
 import { useNavigate } from 'react-router'
+import {
+    loginValidation,
+    signupValidation,
+} from '../../validations/loginSignup.validation'
+import { TextInput } from '../general/form/TextInput'
 
 export function LoginSignup({ isLogin }) {
     const { loggedinUser, setLoggedinUser } = useContext(LoginContext)
@@ -20,19 +26,22 @@ export function LoginSignup({ isLogin }) {
         setError(null)
     }, [isLogin, draft])
 
-    async function onSubmit(e) {
-        e.preventDefault()
+    async function onSubmit(values, { setSubmitting }) {
+        const { username, password, fullname } = values
+
         try {
             let user = undefined
             if (isLogin) {
-                user = await authService.login({
-                    username: draft.username,
-                    password: draft.password,
-                })
+                user = await authService.login({ username, password })
             } else {
-                user = await authService.signup(draft)
+                user = await authService.signup({
+                    username,
+                    password,
+                    fullname,
+                })
             }
             setLoggedinUser(user)
+            setSubmitting(false)
             navigate('/bug')
         } catch (err) {
             console.log(err)
@@ -44,47 +53,42 @@ export function LoginSignup({ isLogin }) {
         return { username: '', password: '', fullname: '' }
     }
 
+    function getValidationSchema() {
+        return isLogin ? loginValidation : signupValidation
+    }
+
     return (
         <div className="login-signup">
             <h1>{isLogin ? 'Log in' : 'Sign up'}</h1>
 
-            <form onSubmit={onSubmit}>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Username"
-                    autoComplete="username"
-                    onChange={handleChange}
-                    value={draft.username}
-                />
+            <Formik
+                initialValues={getInitialDraft()}
+                validationSchema={getValidationSchema()}
+                onSubmit={onSubmit}
+            >
+                <Form>
+                    <TextInput label="Username" name="username" type="text" />
 
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    autoComplete={isLogin ? 'current-password' : 'new-password'}
-                    onChange={handleChange}
-                    value={draft.password}
-                />
-
-                {!isLogin && (
-                    <input
-                        type="text"
-                        id="fullname"
-                        name="fullname"
-                        placeholder="Full Name"
-                        onChange={handleChange}
-                        value={draft.fullname}
+                    <TextInput
+                        label="Password"
+                        name="password"
+                        type="password"
                     />
-                )}
 
-                <button className="btn-primary">
-                    {isLogin ? 'Log in' : 'Sign up'}
-                </button>
-                {error && <div className="error">{error}</div>}
-            </form>
+                    {!isLogin && (
+                        <TextInput
+                            label="Full Name"
+                            name="fullname"
+                            type="text"
+                        />
+                    )}
+
+                    <button className="btn-primary" type="submit">
+                        {isLogin ? 'Log in' : 'Sign up'}
+                    </button>
+                    {error && <div className="error-msg">{error}</div>}
+                </Form>
+            </Formik>
         </div>
     )
 }

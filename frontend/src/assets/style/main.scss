@@ -20,10 +20,14 @@
 /* Components */
 
 /* general */
+
 @import 'cmps/general/FieldList';
 @import 'cmps/general/PageNav';
 @import 'cmps/general/PaginationFooter';
 @import 'cmps/general/UserMsg';
+
+/* general/form */
+@import 'cmps/general/form/TextInput';
 
 /* app */
 @import 'cmps/app/AppHeader';

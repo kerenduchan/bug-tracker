@@ -47,3 +47,8 @@
 .main-padding-x {
     @include main-padding-x();
 }
+
+.error-msg {
+    color: var(--text-error);
+    font-size: 12px;
+}
