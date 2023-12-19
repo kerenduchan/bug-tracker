@@ -73,7 +73,9 @@ export function BugEdit() {
             return true
         }
         // only admin or bug creator can edit a bug
-        return loggedinUser.isAdmin || loggedinUser._id === draft.creatorId
+        return (
+            loggedinUser.isAdmin || loggedinUser._id === initialValues.creatorId
+        )
     }
 
     if (!initialValues) return <h1>loading....</h1>
