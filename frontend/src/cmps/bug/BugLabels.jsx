@@ -2,7 +2,9 @@ export function BugLabels({ labels }) {
     return (
         <ul className="bug-labels">
             {labels.map((label) => (
-                <li className="bug-label">{label}</li>
+                <li key={label} className="bug-label">
+                    {label}
+                </li>
             ))}
         </ul>
     )
