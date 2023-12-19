@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import { userService } from '../services/user.service'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
-import { userValidation } from '../validations/user.validation'
+import {
+    createUserValidation,
+    editUserValidation,
+} from '../validations/user.validation'
 import { LoginContext } from '../contexts/LoginContext'
 import { FormikInput } from '../cmps/general/formik/FormikInput'
 
@@ -26,7 +29,7 @@ export function UserEdit() {
         }
         try {
             const user = await userService.getById(userId)
-            setInitialValues(user)
+            setInitialValues({ ...user, password: '' })
         } catch (err) {
             console.error(err)
             showErrorMsg(err.response.data)
@@ -48,6 +51,10 @@ export function UserEdit() {
         navigate('/user')
     }
 
+    function getValidationSchema() {
+        return userId ? editUserValidation : createUserValidation
+    }
+
     function isAuthorized() {
         return loggedinUser?.isAdmin
     }
@@ -67,7 +74,7 @@ export function UserEdit() {
 
                 <Formik
                     initialValues={initialValues}
-                    validationSchema={userValidation}
+                    validationSchema={getValidationSchema()}
                     onSubmit={onSubmit}
                 >
                     {({ isValid }) => (
