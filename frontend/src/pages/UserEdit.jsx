@@ -70,39 +70,45 @@ export function UserEdit() {
                     validationSchema={userValidation}
                     onSubmit={onSubmit}
                 >
-                    <Form>
-                        <TextInput
-                            label="Full Name"
-                            name="fullname"
-                            type="text"
-                        />
+                    {({ isValid }) => (
+                        <Form>
+                            <TextInput
+                                label="Full Name"
+                                name="fullname"
+                                type="text"
+                            />
 
-                        <TextInput
-                            label="Username"
-                            name="username"
-                            type="text"
-                        />
+                            <TextInput
+                                label="Username"
+                                name="username"
+                                type="text"
+                            />
 
-                        <TextInput
-                            label="Password"
-                            name="password"
-                            type="password"
-                        />
-                        <TextInput label="Score" name="score" type="text" />
+                            <TextInput
+                                label="Password"
+                                name="password"
+                                type="password"
+                            />
+                            <TextInput label="Score" name="score" type="text" />
 
-                        <div className="actions">
-                            <button className="btn-primary" type="submit">
-                                Save
-                            </button>
-                            <button
-                                type="button"
-                                className="btn-secondary"
-                                onClick={onCancel}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </Form>
+                            <div className="actions">
+                                <button
+                                    className="btn-primary"
+                                    disabled={!isValid}
+                                    type="submit"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={onCancel}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </Form>
+                    )}
                 </Formik>
             </div>
         </div>

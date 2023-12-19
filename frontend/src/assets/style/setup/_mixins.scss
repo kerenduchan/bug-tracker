@@ -79,6 +79,11 @@
         var(--bg-btn-primary-hovered),
         var(--bg-btn-primary-pressed)
     );
+
+    &:disabled {
+        background-color: rgb(215, 215, 215);
+        cursor: not-allowed;
+    }
 }
 
 @mixin btn-secondary-bg() {
