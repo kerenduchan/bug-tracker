@@ -47,7 +47,7 @@ export async function getBug(req, res) {
         })
         res.send(bug)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -78,6 +78,6 @@ export async function updateBug(req, res) {
         const savedBug = await bugService.update(req.body, req.loggedinUser._id)
         res.send(savedBug)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }

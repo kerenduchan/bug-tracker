@@ -18,7 +18,7 @@ export async function getUsers(req, res) {
         )
         res.send(users)
     } catch (err) {
-        res.status(400).send(`Couldn't get users`)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -29,7 +29,7 @@ export async function getUser(req, res) {
         const user = await userService.getById(userId)
         res.send(user)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -45,7 +45,7 @@ export async function removeUser(req, res) {
         await userService.remove(userId)
         res.send('Deleted OK')
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -55,7 +55,7 @@ export async function createUser(req, res) {
         const savedUser = await userService.create(req.body)
         res.send(savedUser)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -64,6 +64,6 @@ export async function updateUser(req, res) {
         const savedUser = await userService.update(req.body)
         res.send(savedUser)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }

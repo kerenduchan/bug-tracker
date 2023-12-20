@@ -2,8 +2,11 @@ import fs from 'fs'
 import http from 'http'
 import https from 'https'
 import { loggerService } from './logger.service.js'
+import { ObjectId } from 'mongodb'
+import { dbService } from './db.service.js'
 
 export const utilService = {
+    createObjectId,
     readJsonFile,
     writeJsonFile,
     download,
@@ -15,7 +18,17 @@ export const utilService = {
     create,
     update,
     query,
+    findOne,
     validateMandatoryFields,
+    extractFields,
+}
+
+function createObjectId(id) {
+    try {
+        return new ObjectId(id)
+    } catch (err) {
+        throw `Invalid ID: ${id}`
+    }
 }
 
 function readJsonFile(path) {
@@ -89,103 +102,90 @@ function toNumber(s) {
     return res
 }
 
-function remove(entityType, id, objs, filename) {
+async function remove(entityType, _id) {
     try {
-        const idx = objs.findIndex((obj) => obj._id === id)
-        if (idx === -1) throw `Couldn't find ${entityType} with ID ${id}`
-        objs.splice(idx, 1)
-        writeJsonFile(filename, objs)
+        const collection = await dbService.getCollection(entityType)
+        const { deletedCount } = await collection.deleteOne({
+            _id: createObjectId(_id),
+        })
+        return { deletedCount }
+    } catch (err) {
+        loggerService.error(`Failed to delete ${entityType} by ID ${_id}`, err)
+        throw err
+    }
+}
+
+async function getById(entityType, _id) {
+    console.log('get by ID', _id)
+    try {
+        const collection = await dbService.getCollection(entityType)
+        _id = utilService.createObjectId(_id)
+        const entity = await collection.findOne({ _id })
+        if (!entity) throw `Failed to find ${entityType} with ID ${_id}`
+        return entity
     } catch (err) {
         loggerService.error(err)
         throw err
     }
 }
 
-function getById(entityType, id, objs) {
+async function create(entityType, entity) {
     try {
-        var obj = objs.find((o) => o._id === id)
-        if (!obj) throw `Couldn't find ${entityType} with ID ${id}`
-        return obj
+        const collection = await dbService.getCollection(entityType)
+        const result = await collection.insertOne(entity)
+        return { _id: result.insertedId, ...entity }
     } catch (err) {
-        loggerService.error(err)
+        loggerService.error(`Failed to insert ${entityType} into db:`, err)
         throw err
     }
 }
 
-async function create(obj, processFields, objs, path) {
-    obj = await processFields(obj, true)
+async function update(entityType, _id, fieldsToUpdate) {
     try {
-        const newObj = {
-            _id: makeId(),
-            createdAt: Date.now(),
-            ...obj,
+        const collection = await dbService.getCollection(entityType)
+        const result = await collection.updateOne(
+            { _id: new ObjectId(_id) },
+            { $set: fieldsToUpdate }
+        )
+        console.log(result)
+
+        if (result.matchedCount === 0) {
+            throw `${entityType} with ID ${_id} does not exist`
         }
-
-        // save to "DB"
-        objs.push(newObj)
-        writeJsonFile(path, objs)
-        return newObj
-    } catch (err) {
-        loggerService.error(err)
-        throw err
-    }
-}
-
-async function update(entityType, obj, validateFields, objs, path) {
-    try {
-        // strict fields
-        const fieldsToUpdate = await validateFields(obj, false)
-
-        // fetch by ID from "DB"
-        var idx = objs.findIndex((o) => o._id === obj._id)
-        if (idx === -1) throw `Couldn't find ${entityType} with ID ${obj._id}`
-        const dbObj = objs[idx]
-
-        // update only the supplied fields
-        const updatedObj = { ...dbObj, ...fieldsToUpdate }
-
-        // save to "DB"
-        objs.splice(idx, 1, updatedObj)
-        writeJsonFile(path, objs)
-        return updatedObj
-    } catch (err) {
-        loggerService.error(err)
-        throw err
-    }
-}
-
-async function query(
-    objs,
-    isMatchFilter,
-    filterBy,
-    sortBy,
-    sortDir,
-    pageIdx = undefined,
-    pageSize = 5
-) {
-    try {
-        // filter
-        let res = objs.filter((o) => isMatchFilter(o, filterBy))
-
-        // total count after filtering
-        const totalCount = res.length
-
-        // sort
-        if (sortBy) {
-            res = res.sort((o1, o2) => _compare(o1, o2, sortBy, sortDir))
-        }
-
-        // pagination
-        if (pageIdx !== undefined) {
-            const firstIdx = pageIdx * pageSize
-            const endIdx = firstIdx + pageSize
-            res = res.slice(firstIdx, endIdx)
-        }
-
         return {
-            data: res,
-            totalCount,
+            changed: Boolean(result.modifiedCount),
         }
+    } catch (err) {
+        loggerService.error(
+            `Failed to update ${entityType} with ID ${_id}`,
+            err
+        )
+        throw err
+    }
+}
+
+async function query(entityType, criteria, pageIdx, pageSize) {
+    try {
+        const collection = await dbService.getCollection(entityType)
+        const cursor = await collection.find(criteria)
+
+        if (pageIdx !== undefined) {
+            const startIdx = pageIdx * pageSize
+            cursor.skip(startIdx).limit(pageSize)
+        }
+        const entities = await cursor.toArray()
+        return entities
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
+}
+
+async function findOne(entityType, criteria) {
+    try {
+        const collection = await dbService.getCollection(entityType)
+        const entity = await collection.findOne(criteria)
+        return entity
     } catch (err) {
         loggerService.error(err)
         throw err
@@ -201,6 +201,16 @@ function validateMandatoryFields(obj, mandatoryFields) {
             missingFields.length > 1 ? 's' : ''
         }: ${missingFields.join(', ')}`
     }
+}
+
+function extractFields(entity, fields) {
+    let res = {}
+    fields.forEach((field) => {
+        if (entity[field] !== undefined) {
+            res[field] = entity[field]
+        }
+    })
+    return res
 }
 
 function _compare(bug1, bug2, sortBy, sortDir = 1) {

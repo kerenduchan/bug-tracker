@@ -1,5 +1,8 @@
 import { utilService } from '../../services/util.service.js'
 import { userService } from '../user/user.service.js'
+import { dbService } from '../../services/db.service.js'
+import { ObjectId } from 'mongodb'
+import { loggerService } from '../../services/logger.service.js'
 
 export const bugService = {
     query,
@@ -9,6 +12,8 @@ export const bugService = {
     create,
     update,
 }
+
+const ENTITY_TYPE = 'bug'
 
 const FILENAME = './data/bug.json'
 
@@ -36,9 +41,7 @@ async function query(
 }
 
 async function getById(bugId) {
-    const bug = await utilService.getById('bug', bugId, bugs)
-    const [bugWithCreator] = await _expandCreator([bug])
-    return bugWithCreator
+    return utilService.getById(ENTITY_TYPE, bugId)
 }
 
 function getByCreatorId(creatorId) {
@@ -47,17 +50,19 @@ function getByCreatorId(creatorId) {
 
 async function remove(bugId, loggedinUserId) {
     await _validateIsCreatorOrAdmin(bugId, loggedinUserId)
-    utilService.remove('bug', bugId, bugs, FILENAME)
+    utilService.remove(ENTITY_TYPE, bugId)
 }
 
 async function create(bug, loggedinUserId) {
-    const newBug = { ...bug, creatorId: loggedinUserId }
-    return utilService.create(newBug, _processBugFields, bugs, FILENAME)
+    bug = { ...bug, creatorId: loggedinUserId }
+    bug = _processBugFields(newBug, true)
+    return await userService.create(ENTITY_TYPE, bug)
 }
 
 async function update(bug, loggedinUserId) {
     await _validateIsCreatorOrAdmin(bug._id, loggedinUserId)
-    return utilService.update('bug', bug, _processBugFields, bugs, FILENAME)
+    const fieldsToUpdate = _processBugFields(bug, false)
+    return await utilService.update(ENTITY_TYPE, bug._id, fieldsToUpdate)
 }
 
 // Ignore any unknown fields, validate the known fields, and add any needed
@@ -102,13 +107,13 @@ function _processBugFields(bug, isNew) {
                 throw 'labels must be an array of strings'
             }
         })
+
+        // trim the labels
+        res.labels = res.labels.map((l) => l.trim())
+
+        // remove duplicate labels and empty labels
+        res.labels = [...new Set(res.labels)].filter((l) => l.length > 0)
     }
-
-    // trim the labels
-    res.labels = res.labels.map((l) => l.trim())
-
-    // remove duplicate labels and empty labels
-    res.labels = [...new Set(res.labels)].filter((l) => l.length > 0)
 
     // validate the severity
     if (res.severity !== undefined) {
@@ -186,4 +191,8 @@ async function _expandCreator(bugsToExpand) {
         })
     }
     return expandedBugs
+}
+
+async function _getCollection() {
+    return dbService.getCollection('bug')
 }

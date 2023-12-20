@@ -2,8 +2,6 @@ import { utilService } from '../../services/util.service.js'
 import bcrypt from 'bcrypt'
 import { bugService } from '../bug/bug.service.js'
 
-const HASH_SALT_ROUNDS = 10
-
 export const userService = {
     query,
     getById,
@@ -13,9 +11,12 @@ export const userService = {
     update,
 }
 
-const FILENAME = './data/user.json'
+const HASH_SALT_ROUNDS = 10
 
-var users = utilService.readJsonFile(FILENAME)
+const ENTITY_TYPE = 'user'
+
+// user fields that can be set/updated
+const FIELDS = ['username', 'fullname', 'password', 'score']
 
 async function query(
     filterBy,
@@ -24,135 +25,106 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
-    const foundUsers = await utilService.query(
-        users,
-        _isMatchFilter,
-        filterBy,
-        sortBy,
-        sortDir,
-        pageIdx,
-        pageSize
-    )
-
-    foundUsers.data = await _expandUserBugs(foundUsers.data)
-    return foundUsers
+    // TODO: sort
+    const criteria = _buildCriteria(filterBy)
+    return utilService.query(ENTITY_TYPE, criteria, pageIdx, pageSize)
 }
 
 async function getById(userId) {
-    const user = await utilService.getById('user', userId, users)
-    const [expandedUser] = await _expandUserBugs([user])
-    return expandedUser
+    return utilService.getById(ENTITY_TYPE, userId)
 }
 
 async function getByUsername(username) {
-    return users.find((user) => user.username === username)
+    const criteria = { username }
+    return utilService.findOne(ENTITY_TYPE, criteria)
 }
 
 async function remove(userId) {
-    // don't allow removing a user that has bugs
-    const userBugs = await bugService.getByCreatorId(userId)
-    if (userBugs.length > 0) {
-        throw 'Cannot delete a user that has bugs'
-    }
+    // TODO don't allow removing a user that has bugs
+    // const userBugs = await bugService.getByCreatorId(userId)
+    // if (userBugs.length > 0) {
+    //     throw 'Cannot delete a user that has bugs'
+    // }
 
-    utilService.remove('user', userId, users, FILENAME)
+    utilService.remove(ENTITY_TYPE, userId)
 }
 
 async function create(user) {
-    return utilService.create(user, _processUserFields, users, FILENAME)
+    console.log('create user')
+    console.log(user)
+    // disregard unexpected fields
+    user = utilService.extractFields(user, FIELDS)
+    console.log('after extract fields')
+    console.log(user)
+
+    const mandatoryFields = ['username', 'fullname', 'password']
+    utilService.validateMandatoryFields(user, mandatoryFields)
+
+    user.isAdmin = false
+    user.password = await bcrypt.hash(user.password, HASH_SALT_ROUNDS)
+
+    // default values for optional fields
+    if (user.score === undefined) {
+        user.score = 100
+    }
+
+    // validations
+    user.score = _validateScore(user.score)
+
+    const existingUser = await getByUsername(user.username)
+    if (existingUser) {
+        throw `Username ${user.username} is taken`
+    }
+    // TODO: validate username / fullname field lengths
+
+    return await utilService.create(ENTITY_TYPE, user)
 }
 
 async function update(user) {
-    return await utilService.update(
-        'user',
-        user,
-        _processUserFields,
-        users,
-        FILENAME
-    )
+    const _id = user._id
+
+    // disregard unexpected fields
+    user = utilService.extractFields(user, FIELDS)
+
+    // validations
+    user.score = _validateScore(user.score)
+
+    const existingUser = await getByUsername(user.username)
+    if (existingUser && existingUser._id.toString() !== _id) {
+        throw `Username ${user.username} is taken`
+    }
+
+    // TODO: validate username / fullname field lengths
+
+    return await utilService.update(ENTITY_TYPE, _id, user)
 }
 
-// Ignore any unknown fields, validate the known fields, and add any needed
-// fields
-async function _processUserFields(user, isNew) {
-    const fields = ['username', 'fullname', 'password', 'score']
-
-    // disregard unrecognized fields
-    let res = {}
-    fields.forEach((field) => {
-        if (user[field] !== undefined) {
-            res[field] = user[field]
-        }
-    })
-
-    // special handling for create
-    if (isNew) {
-        // set is admin
-        res['isAdmin'] = false
-
-        // check that all mandatory fields were supplied
-        const mandatoryFields = ['username', 'fullname', 'password']
-        utilService.validateMandatoryFields(res, mandatoryFields)
-
-        // check that the username isn't taken
-        const userExists = await getByUsername(user.username)
-        if (userExists) throw 'Username already taken'
-
-        // hash the password
-        res.password = await bcrypt.hash(res.password, HASH_SALT_ROUNDS)
-
-        // default values for optional fields
-        if (res.score === undefined) {
-            res.score = 100
-        }
+function _validateScore(score) {
+    if (score === undefined) {
+        return
     }
-
-    // special handling for update
-    if (!isNew) {
-        // keep the old password if unchanged
-        const existingUser = await getById(user._id)
-        if (res.password?.length) {
-            res.password = await bcrypt.hash(res.password, HASH_SALT_ROUNDS)
-        } else {
-            res.password = existingUser.password
-        }
+    score = +score
+    if (isNaN(score) || score < 0 || score > 100) {
+        throw 'User score must be between 0-100'
     }
-
-    // validate the score field
-    if (res.score !== undefined) {
-        res.score = +res.score
-        if (res.score < 0 || res.score > 100) {
-            throw 'User score must be between 0-100'
-        }
-    }
-
-    return res
+    return score
 }
 
-function _isMatchFilter(user, filterBy) {
-    filterBy.txt = filterBy.txt?.toLowerCase()
-
-    if (
-        !user.username.toLowerCase().includes(filterBy.txt) &&
-        !user.fullname.toLowerCase().includes(filterBy.txt)
-    ) {
-        return false
+function _buildCriteria(filterBy) {
+    const criteria = {}
+    if (filterBy.minScore) {
+        criteria.score = { $gte: filterBy.minScore }
     }
-
-    if (filterBy.minScore > user.score) {
-        return false
+    if (filterBy.txt && filterBy.txt.length > 0) {
+        const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
+        criteria.$or = [
+            {
+                username: txtCriteria,
+            },
+            {
+                fullname: txtCriteria,
+            },
+        ]
     }
-    return true
-}
-
-async function _expandUserBugs(usersToExpand) {
-    let expandedUsers = []
-    for (const user of usersToExpand) {
-        const userBugs = bugService.getByCreatorId(user._id)
-        expandedUsers.push({
-            ...user,
-            bugs: userBugs.map((bug) => ({ _id: bug._id, title: bug.title })),
-        })
-    }
-    return expandedUsers
+    return criteria
 }
