@@ -1,9 +1,7 @@
 import fs from 'fs'
 import http from 'http'
 import https from 'https'
-import { loggerService } from './logger.service.js'
 import { ObjectId } from 'mongodb'
-import { dbService } from './db.service.js'
 
 export const utilService = {
     createObjectId,
@@ -13,14 +11,10 @@ export const utilService = {
     httpGet,
     makeId,
     toNumber,
-    remove,
-    getById,
-    create,
-    update,
-    query,
-    findOne,
     validateMandatoryFields,
     extractFields,
+    validateStringLength,
+    validateNumber,
 }
 
 function createObjectId(id) {
@@ -102,94 +96,6 @@ function toNumber(s) {
     return res
 }
 
-async function remove(entityType, _id) {
-    try {
-        const collection = await dbService.getCollection(entityType)
-        const { deletedCount } = await collection.deleteOne({
-            _id: createObjectId(_id),
-        })
-        return { deletedCount }
-    } catch (err) {
-        loggerService.error(`Failed to delete ${entityType} by ID ${_id}`, err)
-        throw err
-    }
-}
-
-async function getById(entityType, _id) {
-    try {
-        const collection = await dbService.getCollection(entityType)
-        _id = utilService.createObjectId(_id)
-        const entity = await collection.findOne({ _id })
-        if (!entity) throw `Failed to find ${entityType} with ID ${_id}`
-        return entity
-    } catch (err) {
-        loggerService.error(err)
-        throw err
-    }
-}
-
-async function create(entityType, entity) {
-    try {
-        const collection = await dbService.getCollection(entityType)
-        const result = await collection.insertOne(entity)
-        return { _id: result.insertedId, ...entity }
-    } catch (err) {
-        loggerService.error(`Failed to insert ${entityType} into db:`, err)
-        throw err
-    }
-}
-
-async function update(entityType, _id, fieldsToUpdate) {
-    try {
-        const collection = await dbService.getCollection(entityType)
-        const result = await collection.updateOne(
-            { _id: new ObjectId(_id) },
-            { $set: fieldsToUpdate }
-        )
-
-        if (result.matchedCount === 0) {
-            throw `${entityType} with ID ${_id} does not exist`
-        }
-        return {
-            changed: Boolean(result.modifiedCount),
-        }
-    } catch (err) {
-        loggerService.error(
-            `Failed to update ${entityType} with ID ${_id}`,
-            err
-        )
-        throw err
-    }
-}
-
-async function query(entityType, criteria, pageIdx, pageSize) {
-    try {
-        const collection = await dbService.getCollection(entityType)
-        const cursor = await collection.find(criteria)
-
-        if (pageIdx !== undefined) {
-            const startIdx = pageIdx * pageSize
-            cursor.skip(startIdx).limit(pageSize)
-        }
-        const entities = await cursor.toArray()
-        return entities
-    } catch (err) {
-        loggerService.error(err)
-        throw err
-    }
-}
-
-async function findOne(entityType, criteria) {
-    try {
-        const collection = await dbService.getCollection(entityType)
-        const entity = await collection.findOne(criteria)
-        return entity
-    } catch (err) {
-        loggerService.error(err)
-        throw err
-    }
-}
-
 function validateMandatoryFields(obj, mandatoryFields) {
     const missingFields = mandatoryFields.filter(
         (field) => obj[field] === undefined || obj[field] === null
@@ -211,11 +117,42 @@ function extractFields(entity, fields) {
     return res
 }
 
-function _compare(bug1, bug2, sortBy, sortDir = 1) {
-    const res = bug1[sortBy] < bug2[sortBy] ? -1 : 1
+function validateStringLength(fieldName, value, allowedLength) {
+    const { min, max } = allowedLength
 
-    if (sortDir === -1) {
-        return -res
+    if (value === undefined) {
+        return
     }
-    return res
+
+    if (typeof value !== 'string') {
+        throw `${fieldName} must be a string`
+    }
+
+    if (min && value.length < min) {
+        throw `${fieldName} must be at least ${min} characters`
+    }
+
+    if (max && value.length > max) {
+        throw `${fieldName} must be at most ${max} characters`
+    }
+}
+
+function validateNumber(fieldName, value, allowedRange) {
+    const { min, max } = allowedRange
+
+    if (value === undefined) {
+        return
+    }
+
+    if (typeof value !== 'number') {
+        throw `${fieldName} must be a number`
+    }
+
+    if (min && value < min) {
+        throw `${fieldName} must be at least ${min}`
+    }
+
+    if (max && value > max) {
+        throw `${fieldName} must be at most ${max}`
+    }
 }

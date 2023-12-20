@@ -42,8 +42,8 @@ export async function removeUser(req, res) {
         if (userId === req.loggedinUser._id) {
             throw 'Cannot delete the logged in user'
         }
-        await userService.remove(userId)
-        res.send('Deleted OK')
+        const result = await userService.remove(userId)
+        res.send(result)
     } catch (err) {
         res.status(400).send({ error: err })
     }

@@ -1,6 +1,8 @@
 import { utilService } from '../../services/util.service.js'
 import bcrypt from 'bcrypt'
 import { bugService } from '../bug/bug.service.js'
+import { dbService } from '../../services/db.service.js'
+import { loggerService } from '../../services/logger.service.js'
 
 export const userService = {
     query,
@@ -17,6 +19,11 @@ const ENTITY_TYPE = 'user'
 
 // user fields that can be set/updated
 const FIELDS = ['username', 'fullname', 'password', 'score']
+const VALID_PASSWORD_LENGTH = { min: 4 }
+const VALID_FULLNAME_LENGTH = { min: 1, max: 40 }
+const VALID_USERNAME_LENGTH = { min: 4, max: 20 }
+const VALID_SCORE_RANGE = { min: 0, max: 100 }
+const PROJECTION = ['username', 'fullname', 'score', 'isAdmin']
 
 async function query(
     filterBy,
@@ -26,17 +33,50 @@ async function query(
     pageSize = 5
 ) {
     // TODO: sort
-    const criteria = _buildCriteria(filterBy)
-    return utilService.query(ENTITY_TYPE, criteria, pageIdx, pageSize)
+    try {
+        const criteria = _buildCriteria(filterBy)
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const cursor = await collection.find(criteria, {
+            projection: PROJECTION,
+        })
+
+        if (pageIdx !== undefined) {
+            const startIdx = pageIdx * pageSize
+            cursor.skip(startIdx).limit(pageSize)
+        }
+        const users = await cursor.toArray()
+        return users
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
 async function getById(userId) {
-    return utilService.getById(ENTITY_TYPE, userId)
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const _id = utilService.createObjectId(userId)
+        const user = await collection.findOne(
+            { _id },
+            { projection: PROJECTION }
+        )
+        if (!user) throw `Failed to find user with ID ${_id}`
+        return user
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
 async function getByUsername(username) {
-    const criteria = { username }
-    return utilService.findOne(ENTITY_TYPE, criteria)
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const user = await collection.findOne({ username })
+        return user
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
 async function remove(userId) {
@@ -46,7 +86,15 @@ async function remove(userId) {
     //     throw 'Cannot delete a user that has bugs'
     // }
 
-    utilService.remove(ENTITY_TYPE, userId)
+    try {
+        const _id = utilService.createObjectId(userId)
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const { deletedCount } = await collection.deleteOne({ _id })
+        return { deletedCount }
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
 async function create(user) {
@@ -57,53 +105,90 @@ async function create(user) {
     utilService.validateMandatoryFields(user, mandatoryFields)
 
     user.isAdmin = false
-    user.password = await bcrypt.hash(user.password, HASH_SALT_ROUNDS)
 
     // default values for optional fields
     if (user.score === undefined) {
         user.score = 100
     }
+    // validations and field processing where needed
+    await _validateUser(user)
 
-    // validations
-    user.score = _validateScore(user.score)
+    // password hash
+    user.password = await bcrypt.hash(user.password, HASH_SALT_ROUNDS)
 
-    const existingUser = await getByUsername(user.username)
-    if (existingUser) {
-        throw `Username ${user.username} is taken`
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const result = await collection.insertOne(user)
+        delete user.password
+        return { _id: result.insertedId, ...user }
+    } catch (err) {
+        loggerService.error(err)
+        throw err
     }
-    // TODO: validate username / fullname field lengths
-
-    return await utilService.create(ENTITY_TYPE, user)
 }
 
 async function update(user) {
-    const _id = user._id
+    let _id = user._id
 
     // disregard unexpected fields
     user = utilService.extractFields(user, FIELDS)
 
-    // validations
-    user.score = _validateScore(user.score)
+    // validations and field processing where needed
+    await _validateUser(user, _id)
 
-    const existingUser = await getByUsername(user.username)
-    if (existingUser && existingUser._id.toString() !== _id) {
-        throw `Username ${user.username} is taken`
+    // password hash
+    if (user.password) {
+        user.password = await bcrypt.hash(user.password, HASH_SALT_ROUNDS)
     }
 
-    // TODO: validate username / fullname field lengths
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const result = await collection.updateOne(
+            { _id: utilService.createObjectId(_id) },
+            { $set: user }
+        )
 
-    return await utilService.update(ENTITY_TYPE, _id, user)
+        if (result.matchedCount === 0) {
+            throw `User with ID ${_id} does not exist`
+        }
+        return { msg: 'Updated OK' }
+    } catch (err) {
+        loggerService.error(`Failed to update user with ID ${_id}`, err)
+        throw err
+    }
 }
 
-function _validateScore(score) {
-    if (score === undefined) {
-        return
+async function _validateUser(user, _id = null) {
+    const { score, password, fullname, username } = user
+
+    // score
+    utilService.validateNumber('score', score, VALID_SCORE_RANGE)
+
+    // password
+    utilService.validateStringLength(
+        'password',
+        password,
+        VALID_PASSWORD_LENGTH
+    )
+
+    // full name
+    utilService.validateStringLength(
+        'fullname',
+        fullname,
+        VALID_FULLNAME_LENGTH
+    )
+
+    // username
+    utilService.validateStringLength(
+        'username',
+        username,
+        VALID_USERNAME_LENGTH
+    )
+
+    const existingUser = await getByUsername(username, _id)
+    if (existingUser && (!_id || existingUser._id.toString() !== _id)) {
+        throw `Username ${username} is taken`
     }
-    score = +score
-    if (isNaN(score) || score < 0 || score > 100) {
-        throw 'User score must be between 0-100'
-    }
-    return score
 }
 
 function _buildCriteria(filterBy) {
