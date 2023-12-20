@@ -50,12 +50,8 @@ async function remove(userId) {
 }
 
 async function create(user) {
-    console.log('create user')
-    console.log(user)
     // disregard unexpected fields
     user = utilService.extractFields(user, FIELDS)
-    console.log('after extract fields')
-    console.log(user)
 
     const mandatoryFields = ['username', 'fullname', 'password']
     utilService.validateMandatoryFields(user, mandatoryFields)

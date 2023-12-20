@@ -116,7 +116,6 @@ async function remove(entityType, _id) {
 }
 
 async function getById(entityType, _id) {
-    console.log('get by ID', _id)
     try {
         const collection = await dbService.getCollection(entityType)
         _id = utilService.createObjectId(_id)
@@ -147,7 +146,6 @@ async function update(entityType, _id, fieldsToUpdate) {
             { _id: new ObjectId(_id) },
             { $set: fieldsToUpdate }
         )
-        console.log(result)
 
         if (result.matchedCount === 0) {
             throw `${entityType} with ID ${_id} does not exist`

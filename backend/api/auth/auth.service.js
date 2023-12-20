@@ -47,7 +47,5 @@ async function login(username, password) {
 }
 
 async function signup({ username, password, fullname }) {
-    console.log('signup')
-    console.log({ username, password, fullname })
     return userService.create({ username, password, fullname })
 }
