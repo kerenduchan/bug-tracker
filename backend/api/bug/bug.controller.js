@@ -23,7 +23,7 @@ export async function getBugs(req, res) {
         )
         res.send(data)
     } catch (err) {
-        res.status(400).send(`Couldn't get bugs`)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -56,26 +56,25 @@ export async function removeBug(req, res) {
     const { bugId } = req.params
 
     try {
-        await bugService.remove(bugId, req.loggedinUser._id)
-        res.send('Deleted OK')
+        await bugService.remove(bugId, req.loggedinUser)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }
 
 // // Save
 export async function createBug(req, res) {
     try {
-        const savedBug = await bugService.create(req.body, req.loggedinUser._id)
+        const savedBug = await bugService.create(req.body, req.loggedinUser)
         res.send(savedBug)
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: err })
     }
 }
 
 export async function updateBug(req, res) {
     try {
-        const savedBug = await bugService.update(req.body, req.loggedinUser._id)
+        const savedBug = await bugService.update(req.body, req.loggedinUser)
         res.send(savedBug)
     } catch (err) {
         res.status(400).send({ error: err })

@@ -110,7 +110,7 @@ async function create(user) {
     if (user.score === undefined) {
         user.score = 100
     }
-    // validations and field processing where needed
+
     await _validateUser(user)
 
     // password hash
@@ -133,7 +133,6 @@ async function update(user) {
     // disregard unexpected fields
     user = utilService.extractFields(user, FIELDS)
 
-    // validations and field processing where needed
     await _validateUser(user, _id)
 
     // password hash

@@ -7,7 +7,6 @@ import { loggerService } from '../../services/logger.service.js'
 export const bugService = {
     query,
     getById,
-    getByCreatorId,
     remove,
     create,
     update,
@@ -15,9 +14,12 @@ export const bugService = {
 
 const ENTITY_TYPE = 'bug'
 
-const FILENAME = './data/bug.json'
+// bug fields that can be set/updated
+const FIELDS = ['title', 'severity', 'description', 'labels']
 
-var bugs = utilService.readJsonFile(FILENAME)
+const VALID_TITLE_LENGTH = { min: 1, max: 100 }
+const VALID_DESCRIPTION_LENGTH = { min: 1, max: 1000 }
+const VALID_SEVERITY_RANGE = { min: 1, max: 5 }
 
 async function query(
     filterBy,
@@ -26,104 +28,147 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
-    const expandedBugs = await _expandCreator(bugs)
+    // TODO: sort
+    try {
+        const criteria = _buildCriteria(filterBy)
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const cursor = await collection.find(criteria)
 
-    const foundBugs = await utilService.query(
-        expandedBugs,
-        _isMatchFilter,
-        filterBy,
-        sortBy,
-        sortDir,
-        pageIdx,
-        pageSize
-    )
-    return foundBugs
+        if (pageIdx !== undefined) {
+            const startIdx = pageIdx * pageSize
+            cursor.skip(startIdx).limit(pageSize)
+        }
+        const bugs = await cursor.toArray()
+        return bugs
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
 async function getById(bugId) {
-    return utilService.getById(ENTITY_TYPE, bugId)
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const _id = utilService.createObjectId(bugId)
+        const bug = await collection.findOne({ _id })
+        if (!bug) throw `Failed to find bug with ID ${_id}`
+        return bug
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
-function getByCreatorId(creatorId) {
-    return bugs.filter((bug) => bug.creatorId === creatorId)
+async function remove(bugId, loggedinUser) {
+    await _validateIsCreatorOrAdmin(bugId, loggedinUser)
+
+    try {
+        const _id = utilService.createObjectId(bugId)
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const { deletedCount } = await collection.deleteOne({ _id })
+        return { deletedCount }
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
 }
 
-async function remove(bugId, loggedinUserId) {
-    await _validateIsCreatorOrAdmin(bugId, loggedinUserId)
-    utilService.remove(ENTITY_TYPE, bugId)
-}
+async function create(bug, loggedinUser) {
+    // disregard unexpected fields
+    bug = utilService.extractFields(bug, FIELDS)
 
-async function create(bug, loggedinUserId) {
-    bug = { ...bug, creatorId: loggedinUserId }
-    bug = _processBugFields(newBug, true)
-    return await userService.create(ENTITY_TYPE, bug)
-}
+    const mandatoryFields = ['title', 'severity']
+    utilService.validateMandatoryFields(bug, mandatoryFields)
 
-async function update(bug, loggedinUserId) {
-    await _validateIsCreatorOrAdmin(bug._id, loggedinUserId)
-    const fieldsToUpdate = _processBugFields(bug, false)
-    return await utilService.update(ENTITY_TYPE, bug._id, fieldsToUpdate)
-}
-
-// Ignore any unknown fields, validate the known fields, and add any needed
-// fields
-function _processBugFields(bug, isNew) {
-    const fields = ['title', 'severity', 'description', 'labels']
-
-    // disregard unrecognized fields
-    let res = {}
-    fields.forEach((field) => {
-        if (bug[field] !== undefined) {
-            res[field] = bug[field]
-        }
-    })
-
-    // special handling for create
-    if (isNew) {
-        // set the creator ID
-        res['creatorId'] = bug['creatorId']
-
-        // check that all mandatory fields were supplied
-        const mandatoryFields = ['title', 'severity']
-        utilService.validateMandatoryFields(res, mandatoryFields)
-
-        // set default values for optional fields that were not supplied
-        if (res.labels === undefined) {
-            res.labels = []
-        }
-
-        if (res.description === undefined) {
-            res.description = ''
-        }
+    bug.creator = loggedinUser
+    // default values for optional fields
+    if (bug.description === undefined) {
+        bug.description = ''
     }
 
-    // validate the labels field
-    if (res.labels !== undefined) {
-        if (!Array.isArray(res.labels)) {
+    if (bug.labels === undefined) {
+        bug.labels = []
+    }
+
+    _validateBug(bug)
+    bug.labels = _sanitizeLabels(bug.labels)
+
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const result = await collection.insertOne(bug)
+        return { _id: result.insertedId, ...bug }
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
+}
+
+async function update(bug, loggedinUser) {
+    await _validateIsCreatorOrAdmin(bug._id, loggedinUser)
+
+    let _id = bug._id
+
+    // disregard unexpected fields
+    bug = utilService.extractFields(bug, FIELDS)
+
+    _validateBug(bug, _id)
+
+    if (bug.labels) {
+        bug.labels = _sanitizeLabels(bug.labels)
+    }
+
+    try {
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const result = await collection.updateOne(
+            { _id: utilService.createObjectId(_id) },
+            { $set: bug }
+        )
+
+        if (result.matchedCount === 0) {
+            throw `Bug with ID ${_id} does not exist`
+        }
+        return { msg: 'Updated OK' }
+    } catch (err) {
+        loggerService.error(`Failed to update bug with ID ${_id}`, err)
+        throw err
+    }
+}
+
+function _validateBug(bug) {
+    const { title, description, severity, labels } = bug
+
+    // title
+    utilService.validateStringLength('title', title, VALID_TITLE_LENGTH)
+
+    // description
+    utilService.validateStringLength(
+        'description',
+        description,
+        VALID_DESCRIPTION_LENGTH
+    )
+
+    // labels
+    if (labels !== undefined) {
+        if (!Array.isArray(labels)) {
             throw 'labels must be an array of strings'
         }
-        res.labels.forEach((l) => {
+        labels.forEach((l) => {
             if (typeof l !== 'string') {
                 throw 'labels must be an array of strings'
             }
         })
-
-        // trim the labels
-        res.labels = res.labels.map((l) => l.trim())
-
-        // remove duplicate labels and empty labels
-        res.labels = [...new Set(res.labels)].filter((l) => l.length > 0)
     }
 
-    // validate the severity
-    if (res.severity !== undefined) {
-        const severity = +res.severity
-        if (severity < 1 || severity > 5) {
-            throw 'Bug severity must be between 1-5'
-        }
-    }
+    // severity
+    utilService.validateNumber('severity', severity, VALID_SEVERITY_RANGE)
+}
 
-    return res
+function _sanitizeLabels(labels) {
+    // trim the labels
+    labels = labels.map((l) => l.trim())
+
+    // remove duplicate labels and empty labels
+    return [...new Set(labels)].filter((l) => l.length > 0)
 }
 
 function _isMatchFilter(bug, filterBy) {
@@ -166,33 +211,32 @@ function _isMatchFilter(bug, filterBy) {
     return true
 }
 
-async function _validateIsCreatorOrAdmin(bugId, loggedinUserId) {
+async function _validateIsCreatorOrAdmin(bugId, loggedinUser) {
     if (!bugId) {
         throw 'missing bug ID'
     }
     const bug = await getById(bugId)
-    const user = await userService.getById(loggedinUserId)
-    if (!user.isAdmin && loggedinUserId !== bug.creatorId) {
+    const user = await userService.getById(loggedinUser._id)
+    if (!user.isAdmin && loggedinUser._id !== bug.creator._id) {
         throw 'Not authorized'
     }
 }
 
-async function _expandCreator(bugsToExpand) {
-    let expandedBugs = []
-    for (const bug of bugsToExpand) {
-        const creator = await userService.getById(bug.creatorId)
-        expandedBugs.push({
-            ...bug,
-            creator: {
-                _id: creator._id,
-                username: creator.username,
-                fullname: creator.fullname,
-            },
-        })
+function _buildCriteria(filterBy) {
+    const criteria = {}
+    if (filterBy.minScore) {
+        criteria.score = { $gte: filterBy.minScore }
     }
-    return expandedBugs
-}
-
-async function _getCollection() {
-    return dbService.getCollection('bug')
+    if (filterBy.txt && filterBy.txt.length > 0) {
+        const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
+        criteria.$or = [
+            {
+                username: txtCriteria,
+            },
+            {
+                fullname: txtCriteria,
+            },
+        ]
+    }
+    return criteria
 }
