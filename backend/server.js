@@ -27,8 +27,12 @@ app.use('/api/bug', bugRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
 
-// start the server on port 3030
+// fallback route
+app.get('/**', (req, res) => {
+    res.sendFile(path.resolve('public/index.html'))
+})
 
+// start the server on port 3030
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
     loggerService.info(`Up and running on port ${port}`)
