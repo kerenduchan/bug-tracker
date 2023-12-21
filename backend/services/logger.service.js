@@ -37,6 +37,10 @@ function doLog(level, ...args) {
     )
     var line = strs.join(' | ')
     line = `${getTime()} - ${level} - ${line}\n`
+    if (level === 'ERROR') {
+        const err = args.find((arg) => isError(arg))
+        console.error(err.stack)
+    }
     console.log(line)
     fs.appendFile('./logs/backend.log', line, (err) => {
         if (err) console.error('FATAL: cannot write to log file')
