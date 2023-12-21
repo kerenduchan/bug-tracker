@@ -59,7 +59,8 @@ export async function removeBug(req, res) {
     const { bugId } = req.params
 
     try {
-        await bugService.remove(bugId, req.loggedinUser)
+        const result = await bugService.remove(bugId, req.loggedinUser)
+        res.send(result)
     } catch (err) {
         res.status(400).send({ error: err })
     }
