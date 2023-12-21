@@ -5,7 +5,9 @@ const _title = string()
     .max(100, 'Must be 100 characters or less')
     .required('Required')
 
-const _description = string().required('Required')
+const _description = string()
+    .max(100, 'Must be 1000 characters or less')
+    .required('Required')
 
 const _allSeverities = bugService.getAllSeverities()
 
