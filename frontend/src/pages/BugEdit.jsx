@@ -64,7 +64,15 @@ export function BugEdit() {
     }
 
     function isAuthorized() {
-        return bugService.isDeleteOrEditBugAllowed(loggedinUser, initialValues)
+        if (bugId) {
+            // edit bug
+            return bugService.isDeleteOrEditBugAllowed(
+                loggedinUser,
+                initialValues
+            )
+        }
+        // create bug
+        return bugService.isCreateBugAllowed(loggedinUser)
     }
 
     if (!initialValues) return <h1>loading....</h1>

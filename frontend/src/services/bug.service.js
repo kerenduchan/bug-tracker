@@ -15,6 +15,7 @@ export const bugService = {
     parseSearchParams,
     buildSearchParams,
     isDeleteOrEditBugAllowed,
+    isCreateBugAllowed,
 }
 
 function getEmptyBug(title = '', severity = 5, description = '') {
@@ -66,6 +67,11 @@ function isDeleteOrEditBugAllowed(loggedinUser, bug) {
         loggedinUser &&
         (loggedinUser.isAdmin || loggedinUser._id === bug.creator._id)
     )
+}
+
+// a user is allowed to create a bug only if they are logged in
+function isCreateBugAllowed(loggedinUser) {
+    return loggedinUser
 }
 
 const _sortByOptions = [

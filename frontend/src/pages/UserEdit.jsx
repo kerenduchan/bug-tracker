@@ -56,7 +56,12 @@ export function UserEdit() {
     }
 
     function isAuthorized() {
-        return loggedinUser?.isAdmin
+        if (userId) {
+            // edit user
+            return userService.isEditUserAllowed(loggedinUser, initialValues)
+        }
+        // create user
+        return userService.isCreateUserAllowed(loggedinUser)
     }
 
     if (!isAuthorized()) {

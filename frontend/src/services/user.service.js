@@ -13,6 +13,7 @@ export const userService = {
     isViewUserListAllowed,
     isViewUserDetailsAllowed,
     isEditUserAllowed,
+    isCreateUserAllowed,
     isDeleteUserAllowed,
 }
 
@@ -76,6 +77,12 @@ function isViewUserDetailsAllowed(loggedinUser, user) {
 // a user is allowed to edit a user only if they are logged in and they are an
 // admin
 function isEditUserAllowed(loggedinUser, user) {
+    return loggedinUser && loggedinUser.isAdmin
+}
+
+// a user is allowed to create a user only if they are logged in and they are an
+// admin
+function isCreateUserAllowed(loggedinUser) {
     return loggedinUser && loggedinUser.isAdmin
 }
 
