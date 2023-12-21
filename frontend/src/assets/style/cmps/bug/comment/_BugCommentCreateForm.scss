@@ -1,3 +1,12 @@
 .bug-comment-create-form {
-    
+    textarea {
+        @include bug-comment-txt();
+        margin-bottom: 8px;
+    }
+
+    & > .actions {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
 }

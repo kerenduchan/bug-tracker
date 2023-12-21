@@ -7,7 +7,9 @@ export function BugComment({ comment }) {
                 {utilService.formatDateTime(comment.createdAt)}
             </div>
             <div className="created-by">{comment.creator.fullname}</div>
-            <div className="txt">{comment.txt}</div>
+            <div className="txt">
+                <pre>{comment.txt}</pre>
+            </div>
         </div>
     )
 }
