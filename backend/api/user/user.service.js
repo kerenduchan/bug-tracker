@@ -17,8 +17,15 @@ const HASH_SALT_ROUNDS = 10
 
 const ENTITY_TYPE = 'user'
 
-// user fields that can be set/updated
-const FIELDS = ['username', 'fullname', 'password', 'score']
+// user fields that can be set when the user is created
+const CREATE_FIELDS = ['username', 'fullname', 'password', 'score']
+
+// mandatory fields that must be set when the user is created
+const MANDATORY_CREATE_FIELDS = ['username', 'fullname', 'password']
+
+// user fields that can be set when the user is updated
+const UPDATE_FIELDS = ['password', 'score']
+
 const VALID_PASSWORD_LENGTH = { min: 4 }
 const VALID_FULLNAME_LENGTH = { min: 1, max: 40 }
 const VALID_USERNAME_LENGTH = { min: 4, max: 20 }
@@ -101,10 +108,8 @@ async function remove(userId) {
 
 async function create(user) {
     // disregard unexpected fields
-    user = utilService.extractFields(user, FIELDS)
-
-    const mandatoryFields = ['username', 'fullname', 'password']
-    utilService.validateMandatoryFields(user, mandatoryFields)
+    user = utilService.extractFields(user, CREATE_FIELDS)
+    utilService.validateMandatoryFields(user, MANDATORY_CREATE_FIELDS)
 
     user.isAdmin = false
     user.createdAt = Date.now()
@@ -134,7 +139,7 @@ async function update(user) {
     let _id = user._id
 
     // disregard unexpected fields
-    user = utilService.extractFields(user, FIELDS)
+    user = utilService.extractFields(user, UPDATE_FIELDS)
 
     await _validateUser(user, _id)
 

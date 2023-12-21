@@ -94,7 +94,15 @@ async function create(bug, loggedinUser) {
     const mandatoryFields = ['title', 'severity']
     utilService.validateMandatoryFields(bug, mandatoryFields)
 
-    bug.creator = loggedinUser
+    // Store as little as possible because this data is duplicated in the DB.
+    // Changing these fields on the user would require changing them on all the
+    // user's bugs.
+    bug.creator = {
+        _id: loggedinUser._id,
+        username: loggedinUser.username,
+        fullname: loggedinUser.fullname,
+    }
+
     bug.createdAt = Date.now()
 
     // default values for optional fields

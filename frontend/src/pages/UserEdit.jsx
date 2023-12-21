@@ -10,6 +10,7 @@ import {
 } from '../validations/user.validation'
 import { LoginContext } from '../contexts/LoginContext'
 import { FormikInput } from '../cmps/general/formik/FormikInput'
+import { FieldList } from '../cmps/general/FieldList'
 
 export function UserEdit() {
     const { loggedinUser } = useContext(LoginContext)
@@ -64,6 +65,13 @@ export function UserEdit() {
         return userService.isCreateUserAllowed(loggedinUser)
     }
 
+    function getReadOnlyFields() {
+        return [
+            { label: 'Full Name', value: initialValues.fullname },
+            { label: 'Username', value: initialValues.username },
+        ]
+    }
+
     if (!isAuthorized()) {
         return <h1>Not authorized</h1>
     }
@@ -77,6 +85,8 @@ export function UserEdit() {
             <div className="main">
                 <h1>{userId ? 'Edit' : 'Create'} User</h1>
 
+                {userId && <FieldList fields={getReadOnlyFields()} />}
+
                 <Formik
                     initialValues={initialValues}
                     validationSchema={getValidationSchema()}
@@ -84,18 +94,22 @@ export function UserEdit() {
                 >
                     {({ isValid }) => (
                         <Form>
-                            <FormikInput
-                                label="Full Name"
-                                name="fullname"
-                                type="text"
-                            />
+                            {/* Can't edit a user's full name and username */}
+                            {!userId && (
+                                <>
+                                    <FormikInput
+                                        label="Full Name"
+                                        name="fullname"
+                                        type="text"
+                                    />
 
-                            <FormikInput
-                                label="Username"
-                                name="username"
-                                type="text"
-                            />
-
+                                    <FormikInput
+                                        label="Username"
+                                        name="username"
+                                        type="text"
+                                    />
+                                </>
+                            )}
                             <FormikInput
                                 label="Password"
                                 name="password"
