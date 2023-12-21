@@ -80,7 +80,6 @@ async function remove(commentId, loggedinUser) {
 }
 
 async function create(comment, loggedinUser) {
-    console.log('create')
     // disregard unexpected fields
     comment = utilService.extractFields(comment, CREATE_FIELDS)
     utilService.validateMandatoryFields(comment, MANDATORY_CREATE_FIELDS)
