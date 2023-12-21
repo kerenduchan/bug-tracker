@@ -64,18 +64,7 @@ export function BugEdit() {
     }
 
     function isAuthorized() {
-        if (!loggedinUser) {
-            // must be logged in to create/edit
-            return false
-        }
-        if (!bugId) {
-            // create bug - everyone is authorized
-            return true
-        }
-        // only admin or bug creator can edit a bug
-        return (
-            loggedinUser.isAdmin || loggedinUser._id === initialValues.creatorId
-        )
+        return bugService.isDeleteOrEditBugAllowed(loggedinUser, initialValues)
     }
 
     if (!initialValues) return <h1>loading....</h1>
