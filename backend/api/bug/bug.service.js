@@ -53,7 +53,8 @@ async function query(
             cursor.skip(startIdx).limit(pageSize)
         }
         const bugs = await cursor.toArray()
-        return bugs
+        const totalCount = await collection.countDocuments(criteria)
+        return { data: bugs, totalCount }
     } catch (err) {
         loggerService.error(err)
         throw err
