@@ -81,14 +81,9 @@ function isEditUserAllowed(loggedinUser, user) {
 
 // a user is allowed to delete a user only if they are logged in and they are an
 // admin, and the user has no bugs, and the user is not attempting to delete
-// themselves
+// themselves. The no bugs check is not done on the client side.
 function isDeleteUserAllowed(loggedinUser, user) {
-    return (
-        loggedinUser &&
-        loggedinUser.isAdmin &&
-        loggedinUser._id !== user._id &&
-        user.bugs.length === 0
-    )
+    return loggedinUser && loggedinUser.isAdmin && loggedinUser._id !== user._id
 }
 
 const _sortByOptions = [
