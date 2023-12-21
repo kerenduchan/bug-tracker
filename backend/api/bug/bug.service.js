@@ -24,15 +24,14 @@ const VALID_SEVERITY_RANGE = { min: 1, max: 5 }
 async function query(
     filterBy,
     sortBy,
-    sortDir,
+    sortDir = 1,
     pageIdx = undefined,
     pageSize = 5
 ) {
-    // TODO: sort
     try {
         const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection(ENTITY_TYPE)
-        const cursor = await collection.find(criteria)
+        let cursor = await collection.find(criteria).sort({ [sortBy]: sortDir })
 
         if (pageIdx !== undefined) {
             const startIdx = pageIdx * pageSize

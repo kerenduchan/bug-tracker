@@ -28,17 +28,18 @@ const PROJECTION = ['username', 'fullname', 'score', 'isAdmin']
 async function query(
     filterBy,
     sortBy,
-    sortDir,
+    sortDir = 1,
     pageIdx = undefined,
     pageSize = 5
 ) {
-    // TODO: sort
     try {
         const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection(ENTITY_TYPE)
-        const cursor = await collection.find(criteria, {
-            projection: PROJECTION,
-        })
+        const cursor = await collection
+            .find(criteria, {
+                projection: PROJECTION,
+            })
+            .sort({ [sortBy]: sortDir })
 
         if (pageIdx !== undefined) {
             const startIdx = pageIdx * pageSize
