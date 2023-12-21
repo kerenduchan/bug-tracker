@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import { getBaseUrl } from './base-url.axios.service'
+import { utilAxiosService } from './util.axios.service'
 
 export const bugAxiosService = {
     query,
@@ -15,42 +16,22 @@ var axios = Axios.create({
 const BASE_URL = getBaseUrl() + 'bug/'
 
 async function query(filter = {}, sort = {}, pageIdx, pageSize) {
-    const params = { ...filter, ...sort, pageIdx, pageSize }
-
-    try {
-        const { data } = await axios.get(BASE_URL, { params })
-        return data
-    } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
-    }
+    return utilAxiosService.query(
+        axios,
+        BASE_URL,
+        filter,
+        sort,
+        pageIdx,
+        pageSize
+    )
 }
 
 async function getById(id) {
-    const url = BASE_URL + id
-
-    try {
-        const { data } = await axios.get(url)
-        return data
-    } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
-    }
+    return await utilAxiosService.getById(axios, BASE_URL, id)
 }
 
 async function remove(id) {
-    const url = BASE_URL + id
-
-    try {
-        const { data } = await axios.delete(url)
-        return data
-    } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
-    }
+    return await utilAxiosService.remove(axios, BASE_URL, id)
 }
 
 async function save(entity) {
@@ -60,16 +41,7 @@ async function save(entity) {
     // convert severity to number
     entity.severity = +entity.severity
 
-    const method = entity._id ? 'put' : 'post'
-
-    try {
-        const { data } = await axios[method](BASE_URL, entity)
-        return data
-    } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
-    }
+    return await utilAxiosService.save(axios, BASE_URL, entity)
 }
 
 function _sanitizeLabels(labels) {
