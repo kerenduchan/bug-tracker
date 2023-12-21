@@ -171,46 +171,6 @@ function _sanitizeLabels(labels) {
     return [...new Set(labels)].filter((l) => l.length > 0)
 }
 
-function _isMatchFilter(bug, filterBy) {
-    filterBy.txt = filterBy.txt?.toLowerCase()
-    filterBy.labels = filterBy.labels
-        ?.map((l) => l.toLowerCase())
-        .filter((l) => l.length > 0)
-
-    const lowercaseLabels = bug.labels.map((l) => l.toLowerCase())
-
-    // text filtering
-    if (
-        !bug.description.toLowerCase().includes(filterBy.txt) &&
-        !bug.title.toLowerCase().includes(filterBy.txt)
-    ) {
-        return false
-    }
-
-    // labels filtering
-    if (
-        filterBy.labels?.length > 0 &&
-        filterBy.labels?.every((l) => !lowercaseLabels.includes(l))
-    ) {
-        return false
-    }
-
-    // min severity filtering
-    if (filterBy.minSeverity > bug.severity) {
-        return false
-    }
-
-    // creator filtering
-    if (
-        filterBy.creatorUsername &&
-        filterBy.creatorUsername !== bug.creator.username
-    ) {
-        return false
-    }
-
-    return true
-}
-
 async function _validateIsCreatorOrAdmin(bugId, loggedinUser) {
     if (!bugId) {
         throw 'missing bug ID'
@@ -224,19 +184,36 @@ async function _validateIsCreatorOrAdmin(bugId, loggedinUser) {
 
 function _buildCriteria(filterBy) {
     const criteria = {}
-    if (filterBy.minScore) {
-        criteria.score = { $gte: filterBy.minScore }
+
+    // min severity
+    if (filterBy.minSeverity) {
+        criteria.severity = { $gte: filterBy.minSeverity }
     }
+
+    // txt
     if (filterBy.txt && filterBy.txt.length > 0) {
         const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
         criteria.$or = [
             {
-                username: txtCriteria,
+                description: txtCriteria,
             },
             {
-                fullname: txtCriteria,
+                title: txtCriteria,
             },
         ]
     }
+
+    // creator username
+    if (filterBy.creatorUsername) {
+        criteria['creator.username'] = filterBy.creatorUsername
+    }
+
+    // labels
+    if (filterBy.labels?.length) {
+        const labels = _sanitizeLabels(filterBy.labels)
+
+        criteria.labels = { $in: labels }
+    }
+
     return criteria
 }
