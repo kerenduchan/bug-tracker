@@ -36,6 +36,16 @@ export function BugDetails() {
         }
     }
 
+    async function onCreateComment(txt) {
+        const comment = { txt, bugId }
+        try {
+            await commentService.save(comment)
+            loadBug()
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     function isDeleteOrEditBugAllowed() {
         return bugService.isDeleteOrEditBugAllowed(loggedinUser, bug)
     }
@@ -43,7 +53,11 @@ export function BugDetails() {
     async function loadBug() {
         try {
             const bug = await bugService.getById(bugId)
-            const comments = await commentService.query({ bugId })
+
+            const comments = await commentService.query(
+                { bugId },
+                { sortBy: 'createdAt', sortDir: -1 }
+            )
             setBug(bug)
             setComments(comments.data)
         } catch (err) {
@@ -110,7 +124,10 @@ export function BugDetails() {
                     </div>
                 )}
 
-                <BugComments comments={comments} />
+                <BugComments
+                    comments={comments}
+                    onCreateComment={onCreateComment}
+                />
             </div>
         </div>
     )

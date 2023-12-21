@@ -5,7 +5,7 @@ export const commentAxiosService = {
     query,
     // getById,
     // remove,
-    // save,
+    save,
 }
 
 var axios = Axios.create({
@@ -19,6 +19,19 @@ async function query(filter = {}, sort = {}, pageIdx, pageSize) {
 
     try {
         const { data } = await axios.get(BASE_URL, { params })
+        return data
+    } catch (err) {
+        console.error(err)
+        console.error(err.response.data.error)
+        throw err
+    }
+}
+
+async function save(entity) {
+    const method = entity._id ? 'put' : 'post'
+
+    try {
+        const { data } = await axios[method](BASE_URL, entity)
         return data
     } catch (err) {
         console.error(err)
