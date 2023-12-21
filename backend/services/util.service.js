@@ -10,6 +10,7 @@ export const utilService = {
     extractFields,
     validateStringLength,
     validateNumber,
+    removeNullAndUndefined,
 }
 
 function createObjectId(id) {
@@ -21,11 +22,14 @@ function createObjectId(id) {
 }
 
 function toNumber(s) {
-    const res = s && +s
-    if (s === NaN) {
+    if (s === undefined || s === null || s === '') {
         return undefined
     }
-    return res
+    s = +s
+    if (isNaN(s)) {
+        return undefined
+    }
+    return s
 }
 
 function validateMandatoryFields(obj, mandatoryFields) {
@@ -87,4 +91,14 @@ function validateNumber(fieldName, value, allowedRange) {
     if (max && value > max) {
         throw `${fieldName} must be at most ${max}`
     }
+}
+
+function removeNullAndUndefined(obj) {
+    let res = {}
+    for (let field in obj) {
+        if (obj[field] !== null && obj[field] !== undefined) {
+            res[field] = obj[field]
+        }
+    }
+    return res
 }
