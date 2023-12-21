@@ -15,12 +15,27 @@ export function LoginSignupForm({ isLogin, error, setError, isValid }) {
 
     return (
         <Form>
-            <FormikInput label="Username" name="username" type="text" />
+            <FormikInput
+                label="Username"
+                name="username"
+                type="text"
+                required
+            />
 
-            <FormikInput label="Password" name="password" type="password" />
+            <FormikInput
+                label="Password"
+                name="password"
+                type="password"
+                required={!isLogin}
+            />
 
             {!isLogin && (
-                <FormikInput label="Full Name" name="fullname" type="text" />
+                <FormikInput
+                    label="Full Name"
+                    name="fullname"
+                    type="text"
+                    required
+                />
             )}
 
             <button className="btn-primary" type="submit" disabled={!isValid}>
