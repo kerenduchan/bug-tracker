@@ -7,10 +7,13 @@ import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
 import { BugLabels } from '../cmps/bug/BugLabels.jsx'
+import { commentService } from '../services/comment.service.js'
+import { BugComments } from '../cmps/bug/BugComments.jsx'
 
 export function BugDetails() {
     const { loggedinUser } = useContext(LoginContext)
     const [bug, setBug] = useState(null)
+    const [comments, setComments] = useState(null)
     const { bugId } = useParams()
     const navigate = useNavigate()
 
@@ -40,7 +43,9 @@ export function BugDetails() {
     async function loadBug() {
         try {
             const bug = await bugService.getById(bugId)
+            const comments = await commentService.query({ bugId })
             setBug(bug)
+            setComments(comments.data)
         } catch (err) {
             console.error(err)
             showErrorMsg(err.response.data)
@@ -78,7 +83,7 @@ export function BugDetails() {
         ]
     }
 
-    if (!bug) return <h1>Loading....</h1>
+    if (!bug || !comments) return <h1>Loading....</h1>
     return (
         <div className="bug-details">
             <div className="header">
@@ -104,6 +109,8 @@ export function BugDetails() {
                         </button>
                     </div>
                 )}
+
+                <BugComments comments={comments} />
             </div>
         </div>
     )
