@@ -1,4 +1,5 @@
 .bug-details {
+    overflow: auto;
     .header {
         @include sub-header();
     }

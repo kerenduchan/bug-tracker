@@ -59,4 +59,6 @@ footer {
 
 .app-main {
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
