@@ -16,25 +16,52 @@ const BASE_URL = getBaseUrl() + 'user/'
 
 async function query(filter = {}, sort = {}, pageIdx, pageSize) {
     const params = { ...filter, ...sort, pageIdx, pageSize }
-    const { data: res } = await axios.get(BASE_URL, { params })
-    return res
+
+    try {
+        const { data } = await axios.get(BASE_URL, { params })
+        return data
+    } catch (err) {
+        console.error(err)
+        console.error(err.response.data.error)
+        throw err
+    }
 }
 
 async function getById(id) {
     const url = BASE_URL + id
 
-    var { data } = await axios.get(url)
-    return data
+    try {
+        const { data } = await axios.get(url)
+        return data
+    } catch (err) {
+        console.error(err)
+        console.error(err.response.data.error)
+        throw err
+    }
 }
 
 async function remove(id) {
     const url = BASE_URL + id
-    var { data } = await axios.delete(url)
-    return data
+
+    try {
+        const { data } = await axios.delete(url)
+        return data
+    } catch (err) {
+        console.error(err)
+        console.error(err.response.data.error)
+        throw err
+    }
 }
 
 async function save(entity) {
     const method = entity._id ? 'put' : 'post'
-    const { data } = await axios[method](BASE_URL, entity)
-    return data
+
+    try {
+        const { data } = await axios[method](BASE_URL, entity)
+        return data
+    } catch (err) {
+        console.error(err)
+        console.error(err.response.data.error)
+        throw err
+    }
 }
