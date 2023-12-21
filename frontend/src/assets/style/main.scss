@@ -36,12 +36,15 @@
 @import 'cmps/app/LoginSignup';
 
 /* bug */
-@import 'cmps/bug/BugComment';
-@import 'cmps/bug/BugComments';
 @import 'cmps/bug/BugIndexTopbar';
 @import 'cmps/bug/BugLabels';
 @import 'cmps/bug/BugList';
 @import 'cmps/bug/BugPreview';
+
+// bug/comment
+
+@import 'cmps/bug/comment/BugComment';
+@import 'cmps/bug/comment/BugComments';
 
 /* user */
 @import 'cmps/user/UserIndexTopbar';

@@ -8,7 +8,7 @@ import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
 import { BugLabels } from '../cmps/bug/BugLabels.jsx'
 import { commentService } from '../services/comment.service.js'
-import { BugComments } from '../cmps/bug/BugComments.jsx'
+import { BugComments } from '../cmps/bug/comment/BugComments.jsx'
 
 export function BugDetails() {
     const { loggedinUser } = useContext(LoginContext)

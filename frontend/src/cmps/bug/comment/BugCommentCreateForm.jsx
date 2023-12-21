@@ -1,6 +1,6 @@
-import { useForm } from '../../customHooks/useForm'
+import { useForm } from '../../../customHooks/useForm'
 
-export function CreateCommentForm({ onCreateComment, onCancel }) {
+export function BugCommentCreateForm({ onCreateComment, onCancel }) {
     const [draft, handleChange] = useForm({ txt: '' })
 
     function onSubmit(e) {
@@ -8,7 +8,7 @@ export function CreateCommentForm({ onCreateComment, onCancel }) {
         onCreateComment(draft.txt)
     }
     return (
-        <form onSubmit={onSubmit}>
+        <form className="bug-comment-create-form" onSubmit={onSubmit}>
             <input
                 type="text"
                 id="txt"

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BugComment } from './BugComment'
-import { CreateCommentForm } from './CreateCommentForm'
+import { BugCommentCreateForm } from './BugCommentCreateForm'
 
 export function BugComments({ comments, onCreateComment }) {
     const [showCreateCommentForm, setShowCreateCommentForm] = useState(false)
@@ -15,7 +15,7 @@ export function BugComments({ comments, onCreateComment }) {
             <h2>Comments</h2>
 
             {showCreateCommentForm ? (
-                <CreateCommentForm
+                <BugCommentCreateForm
                     onCancel={() => setShowCreateCommentForm(false)}
                     onCreateComment={onCreateCommentInternal}
                 />
