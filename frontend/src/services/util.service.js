@@ -7,6 +7,7 @@ export const utilService = {
     getSortDirOptions,
     saveToStorage,
     loadFromStorage,
+    formatDateTimeFull,
     formatDateTime,
     parseSearchParams,
     buildSearchParams,
@@ -88,6 +89,11 @@ function saveToStorage(key, value) {
 function loadFromStorage(key) {
     const data = localStorage.getItem(key)
     return data ? JSON.parse(data) : undefined
+}
+
+function formatDateTimeFull(timestamp) {
+    const m = moment(timestamp)
+    return `${m.format('DD/MM/YYYY [at] HH:mm')} (${m.fromNow()})`
 }
 
 function formatDateTime(timestamp) {

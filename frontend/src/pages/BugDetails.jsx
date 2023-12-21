@@ -94,7 +94,7 @@ export function BugDetails() {
             },
             {
                 label: 'Created at',
-                value: utilService.formatDateTime(bug.createdAt),
+                value: utilService.formatDateTimeFull(bug.createdAt),
             },
             {
                 label: 'Created by',
