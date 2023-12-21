@@ -156,22 +156,19 @@ async function _validateIsCreatorOrAdmin(commentId, loggedinUser) {
 }
 
 function _buildCriteria(filterBy) {
-    const criteria = {}
+    const { bugId, creatorUsername, creatorId, txt } = filterBy
+    const criteria = {
+        bugId,
+        'creator.username': creatorUsername,
+        'creator._id': creatorId,
+    }
+
+    console.log(filterBy)
 
     // txt
-    if (filterBy.txt && filterBy.txt.length > 0) {
-        criteria.txt = { $regex: filterBy.txt, $options: 'i' }
+    if (txt && txt.length > 0) {
+        criteria.txt = { $regex: txt, $options: 'i' }
     }
 
-    // creator username
-    if (filterBy.creatorUsername) {
-        criteria['creator.username'] = filterBy.creatorUsername
-    }
-
-    // creator id
-    if (filterBy.creatorId) {
-        criteria['creator._id'] = filterBy.creatorId
-    }
-
-    return criteria
+    return utilService.removeNullAndUndefined(criteria)
 }

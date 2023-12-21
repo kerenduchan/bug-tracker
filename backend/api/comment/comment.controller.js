@@ -87,12 +87,13 @@ export async function updateComment(req, res) {
 }
 
 function _buildFilter(query) {
-    const { txt, creatorUsername, creatorId } = query
+    const { txt, creatorUsername, creatorId, bugId } = query
 
     const filter = {
         txt: txt === '' ? undefined : txt,
         creatorUsername: creatorUsername === '' ? undefined : creatorUsername,
         creatorId: creatorId === '' ? undefined : creatorId,
+        bugId: bugId === '' ? undefined : bugId,
     }
 
     return utilService.removeNullAndUndefined(filter)
