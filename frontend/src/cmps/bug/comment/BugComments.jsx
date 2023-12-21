@@ -2,9 +2,9 @@ import { useContext, useState } from 'react'
 import { commentService } from '../../../services/comment.service'
 import { LoginContext } from '../../../contexts/LoginContext'
 import { BugComment } from './BugComment'
-import { BugCommentCreateForm } from './BugCommentCreateForm'
+import { BugCommentEdit } from './BugCommentEdit'
 
-export function BugComments({ comments, onCreate, onDelete }) {
+export function BugComments({ comments, onCreate, onDelete, onEdit }) {
     const [showCreateCommentForm, setShowCreateCommentForm] = useState(false)
     const { loggedinUser } = useContext(LoginContext)
 
@@ -22,9 +22,9 @@ export function BugComments({ comments, onCreate, onDelete }) {
 
             {isCreateCommentAllowed() &&
                 (showCreateCommentForm ? (
-                    <BugCommentCreateForm
+                    <BugCommentEdit
                         onCancel={() => setShowCreateCommentForm(false)}
-                        onCreate={onCreateInternal}
+                        onSave={onCreateInternal}
                     />
                 ) : (
                     <button
@@ -41,6 +41,7 @@ export function BugComments({ comments, onCreate, onDelete }) {
                         <BugComment
                             comment={comment}
                             onDelete={() => onDelete(comment._id)}
+                            onEdit={onEdit}
                         />
                     </li>
                 ))}

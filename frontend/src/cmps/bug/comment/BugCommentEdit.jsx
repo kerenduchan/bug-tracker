@@ -1,15 +1,23 @@
 import { useForm } from '../../../customHooks/useForm'
 
-export function BugCommentCreateForm({ onCreate, onCancel }) {
-    const [draft, handleChange] = useForm({ txt: '' })
+export function BugCommentEdit({ comment, onSave, onCancel }) {
+    const [draft, handleChange] = useForm(comment || { txt: '' })
+
+    console.log(draft)
 
     function onSubmit(e) {
         e.preventDefault()
-        onCreate(draft.txt)
+        onSave(draft)
     }
     return (
-        <form className="bug-comment-create-form" onSubmit={onSubmit}>
-            <textarea id="txt" name="txt" onChange={handleChange} autoFocus />
+        <form className="bug-comment-edit" onSubmit={onSubmit}>
+            <textarea
+                id="txt"
+                name="txt"
+                value={draft.txt}
+                onChange={handleChange}
+                autoFocus
+            />
             <div className="actions">
                 <button
                     type="submit"

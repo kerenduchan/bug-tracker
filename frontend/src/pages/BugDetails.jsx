@@ -36,8 +36,8 @@ export function BugDetails() {
         }
     }
 
-    async function onCreateComment(txt) {
-        const comment = { txt, bugId }
+    async function onCreateComment(comment) {
+        comment.bugId = bugId
         try {
             await commentService.save(comment)
             loadBug()
@@ -49,6 +49,15 @@ export function BugDetails() {
     async function onDeleteComment(commentId) {
         try {
             await commentService.remove(commentId)
+            loadBug()
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    async function onEditComment(comment) {
+        try {
+            await commentService.save(comment)
             loadBug()
         } catch (err) {
             console.error(err)
@@ -137,6 +146,7 @@ export function BugDetails() {
                     comments={comments}
                     onCreate={onCreateComment}
                     onDelete={onDeleteComment}
+                    onEdit={onEditComment}
                 />
             </div>
         </div>
