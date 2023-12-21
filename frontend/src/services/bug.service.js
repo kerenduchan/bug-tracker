@@ -29,7 +29,7 @@ function getDefaultFilter() {
 function getDefaultSort() {
     return {
         sortBy: 'createdAt',
-        sortDir: '1',
+        sortDir: '-1',
     }
 }
 
