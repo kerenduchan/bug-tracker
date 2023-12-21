@@ -96,6 +96,8 @@ async function create(bug, loggedinUser) {
     utilService.validateMandatoryFields(bug, mandatoryFields)
 
     bug.creator = loggedinUser
+    bug.createdAt = Date.now()
+
     // default values for optional fields
     if (bug.description === undefined) {
         bug.description = ''

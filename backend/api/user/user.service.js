@@ -107,6 +107,7 @@ async function create(user) {
     utilService.validateMandatoryFields(user, mandatoryFields)
 
     user.isAdmin = false
+    user.createdAt = Date.now()
 
     // default values for optional fields
     if (user.score === undefined) {
