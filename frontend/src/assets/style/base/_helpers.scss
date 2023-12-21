@@ -52,3 +52,11 @@
     color: var(--text-error);
     font-size: 12px;
 }
+
+.required-field-marker {
+    color: var(--text-error);
+
+    &:after {
+        content: '*';
+    }
+}

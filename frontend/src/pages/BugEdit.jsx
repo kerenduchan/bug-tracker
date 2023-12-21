@@ -64,18 +64,15 @@ export function BugEdit() {
     }
 
     function isAuthorized() {
-        if (!loggedinUser) {
-            // must be logged in to create/edit
-            return false
+        if (bugId) {
+            // edit bug
+            return bugService.isDeleteOrEditBugAllowed(
+                loggedinUser,
+                initialValues
+            )
         }
-        if (!bugId) {
-            // create bug - everyone is authorized
-            return true
-        }
-        // only admin or bug creator can edit a bug
-        return (
-            loggedinUser.isAdmin || loggedinUser._id === initialValues.creatorId
-        )
+        // create bug
+        return bugService.isCreateBugAllowed(loggedinUser)
     }
 
     if (!initialValues) return <h1>loading....</h1>
@@ -100,23 +97,26 @@ export function BugEdit() {
                     {({ isValid }) => (
                         <Form>
                             <FormikInput
-                                label="Title:"
+                                label="Title"
                                 name="title"
                                 type="text"
+                                required
                             />
                             <FormikTextArea
-                                label="Description:"
+                                label="Description"
                                 name="description"
+                                required
                             />
 
                             <FormikSelect
-                                label="Severity:"
+                                label="Severity"
                                 name="severity"
                                 options={severityOptions}
+                                required
                             />
 
                             <FormikInput
-                                label="Labels (comma-separated):"
+                                label="Labels (comma-separated)"
                                 name="labels"
                                 type="text"
                             />

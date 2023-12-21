@@ -4,7 +4,7 @@ import { authService } from '../api/auth/auth.service.js'
 export function requireAuth(req, res, next) {
     const { loginToken } = req.cookies
     const loggedinUser = authService.validateToken(loginToken)
-    if (!loggedinUser) return res.status(401).send('Not logged in')
+    if (!loggedinUser) return res.status(401).send({ error: 'Not logged in' })
     req.loggedinUser = loggedinUser
     next()
 }
@@ -12,13 +12,13 @@ export function requireAuth(req, res, next) {
 export function requireAdmin(req, res, next) {
     const { loginToken } = req.cookies
     const loggedinUser = authService.validateToken(loginToken)
-    if (!loggedinUser) return res.status(401).send('Not logged in')
+    if (!loggedinUser) return res.status(401).send({ error: 'Not logged in' })
 
     if (!loggedinUser.isAdmin) {
         loggerService.warn(
             `${loggedinUser.username} tried to perform admin action`
         )
-        return res.status(403).send('Not authorized')
+        return res.status(403).send({ error: 'Not authorized' })
     }
     req.loggedinUser = loggedinUser
     next()
@@ -27,13 +27,13 @@ export function requireAdmin(req, res, next) {
 export function requireAdminOrSelf(req, res, next) {
     const { loginToken } = req.cookies
     const loggedinUser = authService.validateToken(loginToken)
-    if (!loggedinUser) return res.status(401).send('Not logged in')
+    if (!loggedinUser) return res.status(401).send({ error: 'Not logged in' })
 
-    if (!loggedinUser.isAdmin && !loggedinUser._id === req.params.userId) {
+    if (!loggedinUser.isAdmin && loggedinUser._id !== req.params.userId) {
         loggerService.warn(
             `${loggedinUser.username} tried to perform admin action`
         )
-        return res.status(403).send('Not authorized')
+        return res.status(403).send({ error: 'Not authorized' })
     }
     req.loggedinUser = loggedinUser
     next()

@@ -5,25 +5,31 @@ import { bugService } from './bug.service.js'
 // List
 export async function getBugs(req, res) {
     try {
-        const filterBy = {
-            txt: req.query.txt || '',
-            minSeverity: +req.query.minSeverity || 0,
-            labels:
-                req.query.labels === ''
-                    ? []
-                    : req.query.labels?.split(',') || undefined,
-            creatorUsername: req.query.creatorUsername || undefined,
-        }
+        const filterBy = _buildFilter(req.query)
+        const { sortBy, sortDir, pageIdx, pageSize } = req.query
         const data = await bugService.query(
             filterBy,
-            req.query.sortBy,
-            utilService.toNumber(req.query.sortDir),
-            utilService.toNumber(req.query.pageIdx),
-            utilService.toNumber(req.query.pageSize)
+            sortBy,
+            utilService.toNumber(sortDir),
+            utilService.toNumber(pageIdx),
+            utilService.toNumber(pageSize)
         )
         res.send(data)
     } catch (err) {
-        res.status(400).send(`Couldn't get bugs`)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
+    }
+}
+
+// count
+export async function getBugCount(req, res) {
+    try {
+        const filterBy = _buildFilter(req.query)
+        const count = await bugService.count(filterBy)
+        res.send({ count })
+    } catch (err) {
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -47,7 +53,8 @@ export async function getBug(req, res) {
         })
         res.send(bug)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -56,28 +63,45 @@ export async function removeBug(req, res) {
     const { bugId } = req.params
 
     try {
-        await bugService.remove(bugId, req.loggedinUser._id)
-        res.send('Deleted OK')
+        const result = await bugService.remove(bugId, req.loggedinUser)
+        res.send(result)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
 // // Save
 export async function createBug(req, res) {
     try {
-        const savedBug = await bugService.create(req.body, req.loggedinUser._id)
+        const savedBug = await bugService.create(req.body, req.loggedinUser)
         res.send(savedBug)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
 export async function updateBug(req, res) {
     try {
-        const savedBug = await bugService.update(req.body, req.loggedinUser._id)
+        const savedBug = await bugService.update(req.body, req.loggedinUser)
         res.send(savedBug)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
+}
+
+function _buildFilter(query) {
+    const { txt, minSeverity, labels, creatorUsername, creatorId } = query
+
+    const filter = {
+        txt: txt === '' ? undefined : txt,
+        minSeverity: utilService.toNumber(minSeverity),
+        labels: labels?.length ? labels.split(',') : undefined,
+        creatorUsername: creatorUsername === '' ? undefined : creatorUsername,
+        creatorId: creatorId === '' ? undefined : creatorId,
+    }
+
+    return utilService.removeNullAndUndefined(filter)
 }

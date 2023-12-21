@@ -5,20 +5,20 @@ import { userService } from './user.service.js'
 // List
 export async function getUsers(req, res) {
     try {
-        const filterBy = {
-            txt: req.query.txt || '',
-            minScore: +req.query.minScore || 0,
-        }
+        const filterBy = _buildFilter(req.query)
+        const { sortBy, sortDir, pageIdx, pageSize } = req.query
+
         const users = await userService.query(
             filterBy,
-            req.query.sortBy,
-            utilService.toNumber(req.query.sortDir),
-            utilService.toNumber(req.query.pageIdx),
-            utilService.toNumber(req.query.pageSize)
+            sortBy,
+            utilService.toNumber(sortDir),
+            utilService.toNumber(pageIdx),
+            utilService.toNumber(pageSize)
         )
         res.send(users)
     } catch (err) {
-        res.status(400).send(`Couldn't get users`)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -29,7 +29,8 @@ export async function getUser(req, res) {
         const user = await userService.getById(userId)
         res.send(user)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -42,10 +43,11 @@ export async function removeUser(req, res) {
         if (userId === req.loggedinUser._id) {
             throw 'Cannot delete the logged in user'
         }
-        await userService.remove(userId)
-        res.send('Deleted OK')
+        const result = await userService.remove(userId)
+        res.send(result)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -55,7 +57,8 @@ export async function createUser(req, res) {
         const savedUser = await userService.create(req.body)
         res.send(savedUser)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
 }
 
@@ -64,6 +67,17 @@ export async function updateUser(req, res) {
         const savedUser = await userService.update(req.body)
         res.send(savedUser)
     } catch (err) {
-        res.status(400).send(err)
+        if (err.stack) console.error(err.stack)
+        res.status(400).send({ error: err })
     }
+}
+
+function _buildFilter(query) {
+    const { txt, minScore } = query
+    const filterBy = {
+        txt: txt === '' ? undefined : txt,
+        minScore: utilService.toNumber(minScore),
+    }
+
+    return utilService.removeNullAndUndefined(filterBy)
 }

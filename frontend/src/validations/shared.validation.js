@@ -3,7 +3,8 @@ import { number, string } from 'yup'
 export { username, password, fullname, score }
 
 const username = string()
-    .max(20, 'Must be 20 characters or less')
+    .min(4, 'Must be 4-20 characters long')
+    .max(20, 'Must be 4-20 characters long')
     .required('Required')
 
 const password = string()

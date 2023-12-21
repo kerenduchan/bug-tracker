@@ -28,7 +28,7 @@ export function UserDetails() {
             showSuccessMsg('User deleted')
         } catch (err) {
             console.error('Error:', err)
-            showErrorMsg('Failed to delete user')
+            showErrorMsg('Failed to delete user: ' + err.response.data.error)
         }
     }
 
@@ -58,12 +58,10 @@ export function UserDetails() {
     }
 
     function getBugsFieldValue() {
-        return user.bugs.length ? (
+        return (
             <Link to={`/bug?creatorUsername=${user.username}`}>
-                {user.bugs.length}
+                See bugs created by this user
             </Link>
-        ) : (
-            0
         )
     }
 
