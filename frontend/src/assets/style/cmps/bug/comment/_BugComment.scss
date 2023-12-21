@@ -3,6 +3,7 @@
     grid-template-columns: auto 1fr;
     column-gap: 10px;
     row-gap: 3px;
+    margin-bottom: 16px;
 
     .created-by {
         grid-area: 1 / 1;
@@ -18,5 +19,18 @@
     .txt {
         grid-area: 2 / 1 / span 1 / -1;
         @include bug-comment-txt();
+    }
+
+    .bug-comment-actions {
+        display: flex;
+        gap: 10px;
+        padding-top: 4px;
+
+        .bug-comment-action {
+            text-decoration: underline;
+            color: var(--text-subtle);
+            cursor: pointer;
+            font-size: 14px;
+        }
     }
 }

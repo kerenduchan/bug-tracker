@@ -46,6 +46,15 @@ export function BugDetails() {
         }
     }
 
+    async function onDeleteComment(commentId) {
+        try {
+            await commentService.remove(commentId)
+            loadBug()
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     function isDeleteOrEditBugAllowed() {
         return bugService.isDeleteOrEditBugAllowed(loggedinUser, bug)
     }
@@ -126,7 +135,8 @@ export function BugDetails() {
 
                 <BugComments
                     comments={comments}
-                    onCreateComment={onCreateComment}
+                    onCreate={onCreateComment}
+                    onDelete={onDeleteComment}
                 />
             </div>
         </div>

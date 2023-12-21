@@ -4,12 +4,12 @@ import { LoginContext } from '../../../contexts/LoginContext'
 import { BugComment } from './BugComment'
 import { BugCommentCreateForm } from './BugCommentCreateForm'
 
-export function BugComments({ comments, onCreateComment }) {
+export function BugComments({ comments, onCreate, onDelete }) {
     const [showCreateCommentForm, setShowCreateCommentForm] = useState(false)
     const { loggedinUser } = useContext(LoginContext)
 
-    function onCreateCommentInternal(txt) {
-        onCreateComment(txt)
+    function onCreateInternal(txt) {
+        onCreate(txt)
         setShowCreateCommentForm(false)
     }
 
@@ -24,7 +24,7 @@ export function BugComments({ comments, onCreateComment }) {
                 (showCreateCommentForm ? (
                     <BugCommentCreateForm
                         onCancel={() => setShowCreateCommentForm(false)}
-                        onCreateComment={onCreateCommentInternal}
+                        onCreate={onCreateInternal}
                     />
                 ) : (
                     <button
@@ -38,7 +38,10 @@ export function BugComments({ comments, onCreateComment }) {
             <ul className="comments-list">
                 {comments.map((comment) => (
                     <li key={comment._id}>
-                        <BugComment comment={comment} />
+                        <BugComment
+                            comment={comment}
+                            onDelete={() => onDelete(comment._id)}
+                        />
                     </li>
                 ))}
             </ul>

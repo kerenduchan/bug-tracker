@@ -6,6 +6,8 @@
 
     .btn-create-comment {
         @include bug-comment-txt();
+        margin-bottom: 16px;
+
         @include btn-bg-3();
     }
 }

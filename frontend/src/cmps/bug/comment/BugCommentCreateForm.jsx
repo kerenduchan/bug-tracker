@@ -1,11 +1,11 @@
 import { useForm } from '../../../customHooks/useForm'
 
-export function BugCommentCreateForm({ onCreateComment, onCancel }) {
+export function BugCommentCreateForm({ onCreate, onCancel }) {
     const [draft, handleChange] = useForm({ txt: '' })
 
     function onSubmit(e) {
         e.preventDefault()
-        onCreateComment(draft.txt)
+        onCreate(draft.txt)
     }
     return (
         <form className="bug-comment-create-form" onSubmit={onSubmit}>

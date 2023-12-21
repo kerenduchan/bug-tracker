@@ -6,6 +6,7 @@ export const commentAxiosService = {
     // getById,
     // remove,
     save,
+    remove,
 }
 
 var axios = Axios.create({
@@ -32,6 +33,19 @@ async function save(entity) {
 
     try {
         const { data } = await axios[method](BASE_URL, entity)
+        return data
+    } catch (err) {
+        console.error(err)
+        console.error(err.response.data.error)
+        throw err
+    }
+}
+
+async function remove(id) {
+    const url = BASE_URL + id
+
+    try {
+        const { data } = await axios.delete(url)
         return data
     } catch (err) {
         console.error(err)
