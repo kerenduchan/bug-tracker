@@ -1,11 +1,14 @@
 .bug-details {
-    overflow: auto;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
     .header {
         @include sub-header();
     }
 
     .main {
         @include main-padding-x();
+        overflow: auto;
 
         & > .actions {
             padding-top: 30px;
