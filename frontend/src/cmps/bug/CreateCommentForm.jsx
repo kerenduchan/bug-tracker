@@ -9,7 +9,13 @@ export function CreateCommentForm({ onCreateComment, onCancel }) {
     }
     return (
         <form onSubmit={onSubmit}>
-            <input type="text" id="txt" name="txt" onChange={handleChange} />
+            <input
+                type="text"
+                id="txt"
+                name="txt"
+                onChange={handleChange}
+                autoFocus
+            />
             <button type="submit">Save</button>
             <button type="button" onClick={onCancel}>
                 Cancel

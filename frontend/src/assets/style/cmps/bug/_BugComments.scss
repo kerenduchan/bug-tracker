@@ -2,6 +2,10 @@
     .comments-list {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+    }
+
+    .btn-create-comment {
+        @include bug-comment-txt();
+        @include btn-bg-3();
     }
 }

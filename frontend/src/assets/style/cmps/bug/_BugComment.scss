@@ -17,8 +17,6 @@
 
     .txt {
         grid-area: 2 / 1 / span 1 / -1;
-        background-color: var(--bg-3);
-        box-shadow: 0 2px 2px #00000040;
-        padding: 8px 12px;
+        @include bug-comment-txt();
     }
 }
