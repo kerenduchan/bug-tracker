@@ -81,11 +81,11 @@ async function getByUsername(username) {
 }
 
 async function remove(userId) {
-    // TODO don't allow removing a user that has bugs
-    // const userBugs = await bugService.getByCreatorId(userId)
-    // if (userBugs.length > 0) {
-    //     throw 'Cannot delete a user that has bugs'
-    // }
+    // don't allow removing a user that has bugs
+    const userBugsCount = await bugService.count({ creatorId: userId })
+    if (userBugsCount > 0) {
+        throw 'Cannot delete a user that has bugs'
+    }
 
     try {
         const _id = utilService.createObjectId(userId)

@@ -5,15 +5,7 @@ import { bugService } from './bug.service.js'
 // List
 export async function getBugs(req, res) {
     try {
-        const filterBy = {
-            txt: req.query.txt || '',
-            minSeverity: +req.query.minSeverity || 0,
-            labels:
-                req.query.labels === ''
-                    ? []
-                    : req.query.labels?.split(',') || undefined,
-            creatorUsername: req.query.creatorUsername || undefined,
-        }
+        const filterBy = _buildFilter(req)
         const data = await bugService.query(
             filterBy,
             req.query.sortBy,
@@ -22,6 +14,17 @@ export async function getBugs(req, res) {
             utilService.toNumber(req.query.pageSize)
         )
         res.send(data)
+    } catch (err) {
+        res.status(400).send({ error: err })
+    }
+}
+
+// count
+export async function getBugCount(req, res) {
+    try {
+        const filterBy = _buildFilter(req)
+        const count = await bugService.count(filterBy)
+        res.send({ count })
     } catch (err) {
         res.status(400).send({ error: err })
     }
@@ -79,4 +82,33 @@ export async function updateBug(req, res) {
     } catch (err) {
         res.status(400).send({ error: err })
     }
+}
+
+function _buildFilter(req) {
+    let filter = {}
+
+    const { txt, minSeverity, labels, creatorUsername, creatorId } = req.query
+
+    if (txt?.length) {
+        filter.txt = txt
+    }
+
+    const minSeverityNum = utilService.toNumber(minSeverity)
+    if (minSeverityNum) {
+        filter.minSeverity = minSeverityNum
+    }
+
+    if (labels?.length) {
+        filter.labels = labels.split(',')
+    }
+
+    if (creatorUsername?.length) {
+        filter.creatorUsername = creatorUsername
+    }
+
+    if (creatorId?.length) {
+        filter.creatorId = creatorId
+    }
+
+    return filter
 }

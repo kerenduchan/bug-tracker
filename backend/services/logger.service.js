@@ -39,7 +39,7 @@ function doLog(level, ...args) {
     line = `${getTime()} - ${level} - ${line}\n`
     if (level === 'ERROR') {
         const err = args.find((arg) => isError(arg))
-        console.error(err.stack)
+        if (err) console.error(err.stack)
     }
     console.log(line)
     fs.appendFile('./logs/backend.log', line, (err) => {

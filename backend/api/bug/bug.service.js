@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { loggerService } from '../../services/logger.service.js'
 
 export const bugService = {
+    count,
     query,
     getById,
     remove,
@@ -21,6 +22,18 @@ const VALID_TITLE_LENGTH = { min: 1, max: 100 }
 const VALID_DESCRIPTION_LENGTH = { min: 1, max: 1000 }
 const VALID_SEVERITY_RANGE = { min: 1, max: 5 }
 
+async function count(filterBy) {
+    try {
+        const criteria = _buildCriteria(filterBy)
+        const collection = await dbService.getCollection(ENTITY_TYPE)
+        const count = await collection.countDocuments(criteria)
+        return count
+    } catch (err) {
+        loggerService.error(err)
+        throw err
+    }
+}
+
 async function query(
     filterBy,
     sortBy,
@@ -31,7 +44,9 @@ async function query(
     try {
         const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection(ENTITY_TYPE)
-        let cursor = await collection.find(criteria).sort({ [sortBy]: sortDir })
+        const cursor = await collection
+            .find(criteria)
+            .sort({ [sortBy]: sortDir })
 
         if (pageIdx !== undefined) {
             const startIdx = pageIdx * pageSize
@@ -205,6 +220,11 @@ function _buildCriteria(filterBy) {
     // creator username
     if (filterBy.creatorUsername) {
         criteria['creator.username'] = filterBy.creatorUsername
+    }
+
+    // creator id
+    if (filterBy.creatorId) {
+        criteria['creator._id'] = filterBy.creatorId
     }
 
     // labels
