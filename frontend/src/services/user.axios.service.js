@@ -56,6 +56,14 @@ async function remove(id) {
 async function save(entity) {
     const method = entity._id ? 'put' : 'post'
 
+    // convert score to number
+    entity.score = +entity.score
+
+    // don't send password if empty
+    if (entity.password === '') {
+        delete entity.password
+    }
+
     try {
         const { data } = await axios[method](BASE_URL, entity)
         return data
