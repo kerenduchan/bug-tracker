@@ -163,8 +163,6 @@ function _buildCriteria(filterBy) {
         'creator._id': creatorId,
     }
 
-    console.log(filterBy)
-
     // txt
     if (txt && txt.length > 0) {
         criteria.txt = { $regex: txt, $options: 'i' }
