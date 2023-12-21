@@ -22,10 +22,12 @@ app.use(cookieParser())
 import { bugRoutes } from './api/bug/bug.routes.js'
 import { userRoutes } from './api/user/user.routes.js'
 import { authRoutes } from './api/auth/auth.routes.js'
+import { commentRoutes } from './api/comment/comment.routes.js'
 
 app.use('/api/bug', bugRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/comment', commentRoutes)
 
 // fallback route
 app.get('/**', (req, res) => {
