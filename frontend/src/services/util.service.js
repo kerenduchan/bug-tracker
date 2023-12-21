@@ -91,7 +91,7 @@ function loadFromStorage(key) {
 }
 
 function formatDateTime(timestamp) {
-    return moment(timestamp).format('DD/MM/YYYY hh:mm')
+    return moment(timestamp).fromNow()
 }
 
 function buildSearchParams(
