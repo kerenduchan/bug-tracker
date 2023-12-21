@@ -97,23 +97,26 @@ export function BugEdit() {
                     {({ isValid }) => (
                         <Form>
                             <FormikInput
-                                label="Title:"
+                                label="Title"
                                 name="title"
                                 type="text"
+                                required
                             />
                             <FormikTextArea
-                                label="Description:"
+                                label="Description"
                                 name="description"
+                                required
                             />
 
                             <FormikSelect
-                                label="Severity:"
+                                label="Severity"
                                 name="severity"
                                 options={severityOptions}
+                                required
                             />
 
                             <FormikInput
-                                label="Labels (comma-separated):"
+                                label="Labels (comma-separated)"
                                 name="labels"
                                 type="text"
                             />

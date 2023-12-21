@@ -101,12 +101,14 @@ export function UserEdit() {
                                         label="Full Name"
                                         name="fullname"
                                         type="text"
+                                        required
                                     />
 
                                     <FormikInput
                                         label="Username"
                                         name="username"
                                         type="text"
+                                        required
                                     />
                                 </>
                             )}
@@ -114,6 +116,7 @@ export function UserEdit() {
                                 label="Password"
                                 name="password"
                                 type="password"
+                                required={!userId}
                             />
                             <FormikInput
                                 label="Score"
