@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import mongoose from 'mongoose'
+import { dbConfig } from './dbConfig/dbConfig.js'
 
 import { loggerService } from './services/logger.service.js'
 
@@ -33,6 +35,9 @@ app.use('/api/comment', commentRoutes)
 app.get('/**', (req, res) => {
     res.sendFile(path.resolve('public/index.html'))
 })
+
+// connect to the DB
+mongoose.connect(dbConfig.dbURL)
 
 // start the server on port 3030
 app.listen(port, () => {

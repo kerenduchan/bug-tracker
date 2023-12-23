@@ -1,4 +1,5 @@
 // User CRUDL API
+import { loggerService } from '../../services/logger.service.js'
 import { utilService } from '../../services/util.service.js'
 import { userService } from './user.service.js'
 
@@ -17,8 +18,7 @@ export async function getUsers(req, res) {
         )
         res.send(users)
     } catch (err) {
-        if (err.stack) console.error(err.stack)
-        res.status(400).send({ error: err })
+        _handleError(res, err)
     }
 }
 
@@ -29,8 +29,7 @@ export async function getUser(req, res) {
         const user = await userService.getById(userId)
         res.send(user)
     } catch (err) {
-        if (err.stack) console.error(err.stack)
-        res.status(400).send({ error: err })
+        _handleError(res, err)
     }
 }
 
@@ -46,8 +45,7 @@ export async function removeUser(req, res) {
         const result = await userService.remove(userId)
         res.send(result)
     } catch (err) {
-        if (err.stack) console.error(err.stack)
-        res.status(400).send({ error: err })
+        _handleError(res, err)
     }
 }
 
@@ -57,18 +55,16 @@ export async function createUser(req, res) {
         const savedUser = await userService.create(req.body)
         res.send(savedUser)
     } catch (err) {
-        if (err.stack) console.error(err.stack)
-        res.status(400).send({ error: err })
+        _handleError(res, err)
     }
 }
 
 export async function updateUser(req, res) {
     try {
-        const savedUser = await userService.update(req.body)
+        const savedUser = await userService.update(req.params.userId, req.body)
         res.send(savedUser)
     } catch (err) {
-        if (err.stack) console.error(err.stack)
-        res.status(400).send({ error: err })
+        _handleError(res, err)
     }
 }
 
@@ -80,4 +76,11 @@ function _buildFilter(query) {
     }
 
     return utilService.removeNullAndUndefined(filterBy)
+}
+
+function _handleError(res, err) {
+    err = typeof err === 'string' ? { error: err } : err
+
+    loggerService.error(err)
+    res.status(400).send(err)
 }

@@ -11,6 +11,7 @@ export const utilService = {
     validateStringLength,
     validateNumber,
     removeNullAndUndefined,
+    handleDbError,
 }
 
 function createObjectId(id) {
@@ -101,4 +102,32 @@ function removeNullAndUndefined(obj) {
         }
     }
     return res
+}
+
+function handleDbError(err) {
+    if (err.name === 'CastError') {
+        if (err.kind === 'ObjectId') {
+            throw `Invalid ID: ${err.value}`
+        }
+        if (err.kind === 'Number') {
+            throw `${err.path} must be a valid number`
+        }
+    }
+    if (err.name === 'ValidationError') {
+        let errors = {}
+
+        for (const [key, value] of Object.entries(err.errors)) {
+            if (value.name === 'ValidatorError') {
+                errors[key] = value.message
+            } else if (value.name === 'CastError') {
+                if (value.kind === 'ObjectId') {
+                    errors[key] = `Invalid ID: ${value.value}`
+                } else if (value.kind === 'Number')
+                    errors[key] = `${key} must be a valid number`
+            }
+        }
+
+        throw { error: 'Validation failed', errors }
+    }
+    throw err
 }

@@ -63,7 +63,7 @@ export async function removeBug(req, res) {
     const { bugId } = req.params
 
     try {
-        const result = await bugService.remove(bugId, req.loggedinUser)
+        const result = await bugService.remove(bugId)
         res.send(result)
     } catch (err) {
         if (err.stack) console.error(err.stack)
@@ -74,7 +74,8 @@ export async function removeBug(req, res) {
 // // Save
 export async function createBug(req, res) {
     try {
-        const savedBug = await bugService.create(req.body, req.loggedinUser)
+        const bug = { ...req.body, creator: req.loggedinUser._id }
+        const savedBug = await bugService.create(bug)
         res.send(savedBug)
     } catch (err) {
         if (err.stack) console.error(err.stack)
@@ -84,7 +85,7 @@ export async function createBug(req, res) {
 
 export async function updateBug(req, res) {
     try {
-        const savedBug = await bugService.update(req.body, req.loggedinUser)
+        const savedBug = await bugService.update(req.params.bugId, req.body)
         res.send(savedBug)
     } catch (err) {
         if (err.stack) console.error(err.stack)

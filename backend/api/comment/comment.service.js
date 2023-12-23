@@ -1,8 +1,5 @@
 import { utilService } from '../../services/util.service.js'
-import { userService } from '../user/user.service.js'
-import { dbService } from '../../services/db.service.js'
-import { loggerService } from '../../services/logger.service.js'
-import { bugService } from '../bug/bug.service.js'
+import Comment from '../../db/model/Comment.js'
 
 export const commentService = {
     query,
@@ -12,19 +9,14 @@ export const commentService = {
     update,
 }
 
-const ENTITY_TYPE = 'comment'
+// bug fields that can be set upon creation
+const CREATE_FIELDS = ['text', 'creator', 'bug']
 
-// fields that can be set when the comment is created
-const CREATE_FIELDS = ['bugId', 'txt']
+// bug fields that can be updated
+const UPDATE_FIELDS = ['text']
 
-// mandatory fields that must be set when the comment is created
-const MANDATORY_CREATE_FIELDS = ['bugId', 'txt']
-
-// fields that can be set when the comment is updated
-const UPDATE_FIELDS = ['txt']
-
-const VALID_TXT_LENGTH = { min: 1, max: 300 }
-
+// query comments (with filter, sort, pagination) and populate the creator of each
+// comment
 async function query(
     filterBy,
     sortBy,
@@ -32,140 +24,139 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
-    try {
-        const criteria = _buildCriteria(filterBy)
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const cursor = await collection
-            .find(criteria)
-            .sort({ [sortBy]: sortDir })
+    const criteria = _buildCriteria(filterBy)
+    const totalCount = await Comment.countDocuments(criteria)
 
-        if (pageIdx !== undefined) {
-            const startIdx = pageIdx * pageSize
-            cursor.skip(startIdx).limit(pageSize)
-        }
-        const comments = await cursor.toArray()
-        const totalCount = await collection.countDocuments(criteria)
+    // lookup, project, and filter
+    const pipeline = [
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'creator',
+                foreignField: '_id',
+                as: 'creator',
+            },
+        },
+        {
+            $unwind: '$creator',
+        },
+        {
+            $project: {
+                text: 1,
+                bug: 1,
+                'creator._id': 1,
+                'creator.username': 1,
+                'creator.fullname': 1,
+            },
+        },
+        {
+            $match: criteria,
+        },
+    ]
+
+    // sort
+    if (sortBy) {
+        pipeline.push({ [sortBy]: sortDir })
+    }
+
+    // pagination
+    if (pageIdx !== undefined) {
+        pipeline.push(
+            { $skip: (pageNumber - 1) * pageSize },
+            { $limit: pageSize }
+        )
+    }
+
+    try {
+        const comments = await Comment.aggregate(pipeline).exec()
         return { data: comments, totalCount }
     } catch (err) {
-        loggerService.error(err)
         throw err
     }
 }
 
+// get comment by ID and populate the creator of the comment
 async function getById(commentId) {
     try {
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const _id = utilService.createObjectId(commentId)
-        const comment = await collection.findOne({ _id })
-        if (!comment) throw `Failed to find comment with ID ${_id}`
-        return comment
+        const dbComment = await Comment.findById(commentId)
+            .populate({ path: 'creator', select: 'username fullname' })
+            .exec()
+        if (!dbComment) {
+            throw `Comment not found`
+        }
+        return _toObject(dbComment)
     } catch (err) {
-        loggerService.error(err)
-        throw err
+        _handleError(err)
     }
 }
 
-async function remove(commentId, loggedinUser) {
-    await _validateIsCreatorOrAdmin(commentId, loggedinUser)
-
+async function remove(commentId) {
     try {
-        const _id = utilService.createObjectId(commentId)
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const { deletedCount } = await collection.deleteOne({ _id })
+        const { deletedCount } = await Comment.deleteOne({ _id: commentId })
         return { deletedCount }
     } catch (err) {
-        loggerService.error(err)
-        throw err
+        _handleError(err)
     }
 }
 
-async function create(comment, loggedinUser) {
+async function create(comment) {
     // disregard unexpected fields
     comment = utilService.extractFields(comment, CREATE_FIELDS)
-    utilService.validateMandatoryFields(comment, MANDATORY_CREATE_FIELDS)
-
-    // Store as little as possible because this data is duplicated in the DB.
-    // Changing these fields on the user would require changing them on all the
-    // user's comments.
-    comment.creator = {
-        _id: loggedinUser._id,
-        username: loggedinUser.username,
-        fullname: loggedinUser.fullname,
-    }
-
-    comment.createdAt = Date.now()
 
     try {
-        await _validateComment(comment)
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const result = await collection.insertOne(comment)
-        return { _id: result.insertedId, ...comment }
+        const dbComment = await Comment.create(comment)
+        return _toObject(dbComment)
     } catch (err) {
-        loggerService.error(err)
-        throw err
+        _handleError(err)
     }
 }
 
-async function update(comment, loggedinUser) {
-    await _validateIsCreatorOrAdmin(comment._id, loggedinUser)
-
-    let _id = comment._id
-
+async function update(commentId, comment) {
     // disregard unexpected fields
     comment = utilService.extractFields(comment, UPDATE_FIELDS)
+    const options = { new: true, runValidators: true }
 
     try {
-        await _validateComment(comment, _id)
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const result = await collection.updateOne(
-            { _id: utilService.createObjectId(_id) },
-            { $set: comment }
+        const updatedComment = await Comment.findOneAndUpdate(
+            { _id: commentId },
+            comment,
+            options
         )
-
-        if (result.matchedCount === 0) {
-            throw `Comment with ID ${_id} does not exist`
-        }
-        return { msg: 'Updated OK' }
+            .populate({ path: 'creator', select: 'username fullname' })
+            .exec()
+        return _toObject(updatedComment)
     } catch (err) {
-        loggerService.error(`Failed to update comment with ID ${_id}`, err)
-        throw err
+        _handleError(err)
     }
 }
 
-async function _validateComment(comment) {
-    const { txt, bugId } = comment
+function _toObject(dbComment) {
+    const obj = dbComment.toObject({
+        virtuals: true,
+        versionKey: false,
+    })
 
-    // title
-    utilService.validateStringLength('txt', txt, VALID_TXT_LENGTH)
-
-    // bugId (make sure it exists)
-    if (bugId) {
-        await bugService.getById(bugId)
-    }
+    delete obj.id
+    delete obj.creator.createdAt
+    delete obj.creator.id
+    return obj
 }
 
-async function _validateIsCreatorOrAdmin(commentId, loggedinUser) {
-    if (!commentId) {
-        throw 'missing comment ID'
-    }
-    const comment = await getById(commentId)
-    const user = await userService.getById(loggedinUser._id)
-    if (!user.isAdmin && loggedinUser._id !== comment.creator._id) {
-        throw 'Not authorized'
-    }
+function _handleError(err) {
+    utilService.handleDbError(err)
 }
 
 function _buildCriteria(filterBy) {
-    const { bugId, creatorUsername, creatorId, txt } = filterBy
+    const { bugId, creatorUsername, creatorId, text } = filterBy
     const criteria = {
         bugId,
         'creator.username': creatorUsername,
         'creator._id': creatorId,
     }
 
-    // txt
-    if (txt && txt.length > 0) {
-        criteria.txt = { $regex: txt, $options: 'i' }
+    // text
+    if (text && text.length > 0) {
+        criteria.txt = { $regex: text, $options: 'i' }
     }
 
     return utilService.removeNullAndUndefined(criteria)

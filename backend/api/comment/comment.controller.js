@@ -76,8 +76,8 @@ export async function createComment(req, res) {
 export async function updateComment(req, res) {
     try {
         const savedComment = await commentService.update(
-            req.body,
-            req.loggedinUser
+            req.params.commentId,
+            req.body
         )
         res.send(savedComment)
     } catch (err) {

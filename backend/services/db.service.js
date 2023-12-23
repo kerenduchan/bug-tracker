@@ -1,3 +1,5 @@
+import mongoose from 'mongoose'
+
 import mongoDB from 'mongodb'
 const { MongoClient } = mongoDB
 
@@ -29,6 +31,7 @@ async function getCollection(collectionName) {
 async function _connect() {
     if (dbConn) return dbConn
     try {
+
         const client = await MongoClient.connect(dbConfig.dbURL)
         dbConn = client.db(dbConfig.dbName)
         return dbConn
