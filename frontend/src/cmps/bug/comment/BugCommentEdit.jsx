@@ -1,9 +1,7 @@
 import { useForm } from '../../../customHooks/useForm'
 
 export function BugCommentEdit({ comment, onSave, onCancel }) {
-    const [draft, handleChange] = useForm(comment || { txt: '' })
-
-    console.log(draft)
+    const [draft, handleChange] = useForm(comment || { text: '' })
 
     function onSubmit(e) {
         e.preventDefault()
@@ -12,9 +10,9 @@ export function BugCommentEdit({ comment, onSave, onCancel }) {
     return (
         <form className="bug-comment-edit" onSubmit={onSubmit}>
             <textarea
-                id="txt"
-                name="txt"
-                value={draft.txt}
+                id="text"
+                name="text"
+                value={draft.text}
                 onChange={handleChange}
                 autoFocus
             />
@@ -22,7 +20,7 @@ export function BugCommentEdit({ comment, onSave, onCancel }) {
                 <button
                     type="submit"
                     className="btn-primary"
-                    disabled={draft.txt === ''}
+                    disabled={draft.text === ''}
                 >
                     Save
                 </button>

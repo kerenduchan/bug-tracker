@@ -58,15 +58,13 @@ async function query(
 
     // sort
     if (sortBy) {
-        pipeline.push({ [sortBy]: sortDir })
+        pipeline.push({ $sort: { [sortBy]: sortDir } })
     }
 
     // pagination
     if (pageIdx !== undefined) {
-        pipeline.push(
-            { $skip: (pageNumber - 1) * pageSize },
-            { $limit: pageSize }
-        )
+        const startIdx = pageIdx * pageSize
+        pipeline.push({ $skip: startIdx }, { $limit: pageSize })
     }
 
     try {
@@ -135,7 +133,14 @@ async function update(bugId, bug) {
             bug,
             options
         )
-            .populate(POPULATE_PARAMS)
+            .populate({
+                path: 'creator',
+                select: 'username fullname',
+            })
+            .populate({
+                path: 'comments',
+                select: 'text',
+            })
             .exec()
         return _toObject(updatedBug)
     } catch (err) {

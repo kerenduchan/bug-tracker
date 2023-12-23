@@ -36,7 +36,7 @@ export function BugComment({ comment, onDelete, onEdit }) {
             </div>
             <div className="created-by">{comment.creator.fullname}</div>
             <div className="txt">
-                <pre>{comment.txt}</pre>
+                <pre>{comment.text}</pre>
             </div>
             {isActionsAllowed() && (
                 <div className="bug-comment-actions">
