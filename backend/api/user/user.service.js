@@ -2,6 +2,7 @@ import { utilService } from '../../services/util.service.js'
 import { loggerService } from '../../services/logger.service.js'
 import User from '../../db/model/User.js'
 import Bug from '../../db/model/Bug.js'
+import Comment from '../../db/model/Comment.js'
 
 export const userService = {
     query,
