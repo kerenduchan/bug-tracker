@@ -102,10 +102,6 @@ async function create(user) {
 }
 
 async function update(userId, user) {
-    if (!userId) {
-        throw 'Missing _id'
-    }
-
     // disregard unexpected fields
     user = utilService.extractFields(user, FIELDS)
 

@@ -119,10 +119,6 @@ async function create(bug) {
 }
 
 async function update(bugId, bug) {
-    if (!bugId) {
-        throw 'Missing _id'
-    }
-
     // disregard unexpected fields
     bug = utilService.extractFields(bug, UPDATE_FIELDS)
     const options = { new: true, runValidators: true }
