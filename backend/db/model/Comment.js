@@ -7,35 +7,34 @@ const commentSchema = new Schema({
         type: String,
         required: [true, 'text is required'],
     },
-    creator: {
+    creatorId: {
         type: SchemaTypes.ObjectId,
         ref: 'User',
-        required: [true, 'creator is required'],
+        required: [true, 'creatorId is required'],
         validate: {
             validator: async function (userId) {
                 const user = await User.findById(userId)
                 return !!user
             },
-            message: 'Invalid creator. User does not exist.',
+            message: 'Invalid creatorId. User does not exist.',
         },
     },
-    bug: {
+    bugId: {
         type: SchemaTypes.ObjectId,
         ref: 'Bug',
-        required: [true, 'bug is required'],
+        required: [true, 'bugId is required'],
         validate: {
             validator: async function (bugId) {
                 const bug = await Bug.findById(bugId)
                 return !!bug
             },
-            message: 'Invalid bug. Bug does not exist.',
+            message: 'Invalid bugId. Bug does not exist.',
         },
     },
-})
-
-// virtual 'createdAt' field based on the ObjectId timestamp
-commentSchema.virtual('createdAt').get(function () {
-    return this._id.getTimestamp()
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 })
 
 const Comment = model('Comment', commentSchema)

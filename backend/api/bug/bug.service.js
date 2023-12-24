@@ -10,10 +10,16 @@ export const bugService = {
 }
 
 // bug fields that can be set upon creation
-const CREATE_FIELDS = ['title', 'severity', 'description', 'labels', 'creator']
+const CREATE_FIELDS = [
+    'title',
+    'severity',
+    'description',
+    'labels',
+    'creatorId',
+]
 
 // bug fields that can be updated
-const UPDATE_FIELDS = CREATE_FIELDS.filter((field) => field !== 'creator')
+const fUPDATE_FIELDS = CREATE_FIELDS.filter((field) => field !== 'creatorId')
 
 // query bugs (with filter, sort, pagination) and populate the creator of each
 // bug
@@ -32,7 +38,7 @@ async function query(
         {
             $lookup: {
                 from: 'users',
-                localField: 'creator',
+                localField: 'creatorId',
                 foreignField: '_id',
                 as: 'creator',
             },
@@ -46,6 +52,7 @@ async function query(
                 description: 1,
                 severity: 1,
                 labels: 1,
+                createdAt: 1,
                 'creator._id': 1,
                 'creator.username': 1,
                 'creator.fullname': 1,
@@ -75,17 +82,13 @@ async function query(
     }
 }
 
-// get bug by ID and populate the creator and the comments of the bug
+// get bug by ID and populate the creator of the bug
 async function getById(bugId) {
     try {
         const dbBug = await Bug.findById(bugId)
             .populate({
-                path: 'creator',
+                path: 'creatorId',
                 select: 'username fullname',
-            })
-            .populate({
-                path: 'comments',
-                select: 'text',
             })
             .exec()
         if (!dbBug) {
@@ -130,12 +133,8 @@ async function update(bugId, bug) {
             options
         )
             .populate({
-                path: 'creator',
+                path: 'creatorId',
                 select: 'username fullname',
-            })
-            .populate({
-                path: 'comments',
-                select: 'text',
             })
             .exec()
         return _toObject(updatedBug)
@@ -185,17 +184,23 @@ function _buildCriteria(filterBy) {
     return criteria
 }
 
-// return the bug as an object, excluding the version field, and
-// including the virtual createdAt field
+// return the bug as an object, excluding the version field
 function _toObject(dbBug) {
     const obj = dbBug.toObject({
-        virtuals: true,
         versionKey: false,
     })
 
+    if (typeof obj.creatorId === 'object') {
+        // move the populated creatorId into the creator field
+        obj.creator = obj.creatorId
+        obj.creatorId = obj.creator._id
+    }
+
+    if (obj.creator) {
+        delete obj.creator.createdAt
+        delete obj.creator.id
+    }
     delete obj.id
-    delete obj.creator.createdAt
-    delete obj.creator.id
     return obj
 }
 

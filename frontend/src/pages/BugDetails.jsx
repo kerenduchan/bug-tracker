@@ -37,7 +37,7 @@ export function BugDetails() {
     }
 
     async function onCreateComment(comment) {
-        comment.bug = bugId
+        comment.bugId = bugId
         try {
             await commentService.save(comment)
             loadBug()
@@ -73,7 +73,7 @@ export function BugDetails() {
             const bug = await bugService.getById(bugId)
 
             const comments = await commentService.query(
-                { bug: bugId },
+                { bugId: bugId },
                 { sortBy: 'createdAt', sortDir: -1 }
             )
             setBug(bug)

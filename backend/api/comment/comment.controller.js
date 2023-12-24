@@ -61,8 +61,7 @@ export async function removeComment(req, res) {
 
 // // Save
 export async function createComment(req, res) {
-    const comment = { ...req.body, creator: req.loggedinUser._id }
-
+    const comment = { ...req.body, creatorId: req.loggedinUser._id }
     try {
         const savedComment = await commentService.create(comment)
         res.send(savedComment)

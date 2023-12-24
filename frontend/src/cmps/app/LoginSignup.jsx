@@ -8,6 +8,7 @@ import {
     signupValidation,
 } from '../../validations/loginSignup.validation'
 import { LoginSignupForm } from './LoginSignupForm'
+import { utilService } from '../../services/util.service'
 
 export function LoginSignup({ isLogin }) {
     const { setLoggedinUser } = useContext(LoginContext)
@@ -32,7 +33,7 @@ export function LoginSignup({ isLogin }) {
             navigate('/bug')
         } catch (err) {
             console.error(err)
-            setError(err.response.data.error)
+            setError(utilService.getErrorMessage())
         }
         setSubmitting(false)
     }

@@ -65,7 +65,7 @@ function parseSearchParams(searchParams) {
 function isDeleteOrEditBugAllowed(loggedinUser, bug) {
     return (
         loggedinUser &&
-        (loggedinUser.isAdmin || loggedinUser._id === bug.creator._id)
+        (loggedinUser.isAdmin || loggedinUser._id === bug.creatorId)
     )
 }
 

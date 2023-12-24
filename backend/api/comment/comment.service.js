@@ -1,5 +1,6 @@
 import { utilService } from '../../services/util.service.js'
 import Comment from '../../db/model/Comment.js'
+import { ObjectId } from 'bson'
 
 export const commentService = {
     query,
@@ -10,7 +11,7 @@ export const commentService = {
 }
 
 // bug fields that can be set upon creation
-const CREATE_FIELDS = ['text', 'creator', 'bug']
+const CREATE_FIELDS = ['text', 'creatorId', 'bugId']
 
 // bug fields that can be updated
 const UPDATE_FIELDS = ['text']
@@ -32,7 +33,7 @@ async function query(
         {
             $lookup: {
                 from: 'users',
-                localField: 'creator',
+                localField: 'creatorId',
                 foreignField: '_id',
                 as: 'creator',
             },
@@ -43,7 +44,9 @@ async function query(
         {
             $project: {
                 text: 1,
-                bug: 1,
+                bugId: 1,
+                creatorId: 1,
+                createdAt: 1,
                 'creator._id': 1,
                 'creator.username': 1,
                 'creator.fullname': 1,
@@ -77,7 +80,7 @@ async function query(
 async function getById(commentId) {
     try {
         const dbComment = await Comment.findById(commentId)
-            .populate({ path: 'creator', select: 'username fullname' })
+            .populate({ path: 'creatorId', select: 'username fullname' })
             .exec()
         if (!dbComment) {
             throw `Comment not found`
@@ -120,8 +123,9 @@ async function update(commentId, comment) {
             comment,
             options
         )
-            .populate({ path: 'creator', select: 'username fullname' })
+            .populate({ path: 'creatorId', select: 'username fullname' })
             .exec()
+
         return _toObject(updatedComment)
     } catch (err) {
         _handleError(err)
@@ -130,13 +134,20 @@ async function update(commentId, comment) {
 
 function _toObject(dbComment) {
     const obj = dbComment.toObject({
-        virtuals: true,
         versionKey: false,
     })
 
+    if (typeof obj.creatorId === 'object') {
+        // move the populated creatorId into the creator field
+        obj.creator = obj.creatorId
+        obj.creatorId = obj.creator._id
+    }
+
+    if (obj.creator) {
+        delete obj.creator.createdAt
+        delete obj.creator.id
+    }
     delete obj.id
-    delete obj.creator.createdAt
-    delete obj.creator.id
     return obj
 }
 
@@ -147,14 +158,14 @@ function _handleError(err) {
 function _buildCriteria(filterBy) {
     const { bugId, creatorUsername, creatorId, text } = filterBy
     const criteria = {
-        bugId,
+        bugId: new ObjectId(bugId),
         'creator.username': creatorUsername,
         'creator._id': creatorId,
     }
 
     // text
     if (text && text.length > 0) {
-        criteria.txt = { $regex: text, $options: 'i' }
+        criteria.text = { $regex: text, $options: 'i' }
     }
 
     return utilService.removeNullAndUndefined(criteria)

@@ -3,6 +3,7 @@ export const utilAxiosService = {
     getById,
     save,
     remove,
+    getErrorMessage,
 }
 
 async function query(
@@ -19,9 +20,7 @@ async function query(
         const { data } = await axios.get(baseUrl, { params })
         return data
     } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
+        handleAxiosError(err)
     }
 }
 
@@ -32,9 +31,7 @@ async function getById(axios, baseUrl, id) {
         const { data } = await axios.get(url)
         return data
     } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
+        handleAxiosError(err)
     }
 }
 
@@ -49,10 +46,26 @@ async function save(axios, baseUrl, entity) {
         const { data } = await axios[method](baseUrl, entity)
         return data
     } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
+        handleAxiosError(err)
     }
+}
+
+function handleAxiosError(err) {
+    console.error(err)
+    console.error(getErrorMessage(err))
+    throw err
+}
+
+function getErrorMessage(err) {
+    const errorObj = err.response.data?.error
+    if (!errorObj) {
+        return undefined
+    }
+    let res = errorObj.error
+    if (errorObj.errors) {
+        res += ': ' + Object.values(errorObj.errors).join('. ')
+    }
+    return res
 }
 
 async function remove(axios, baseUrl, id) {
@@ -62,8 +75,6 @@ async function remove(axios, baseUrl, id) {
         const { data } = await axios.delete(url)
         return data
     } catch (err) {
-        console.error(err)
-        console.error(err.response.data.error)
-        throw err
+        handleAxiosError(err)
     }
 }

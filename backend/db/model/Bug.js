@@ -22,31 +22,22 @@ const bugSchema = new Schema({
         type: [String],
         default: [],
     },
-    creator: {
+    creatorId: {
         type: SchemaTypes.ObjectId,
         ref: 'User',
-        required: [true, 'creator is required'],
+        required: [true, 'creatorId is required'],
         validate: {
             validator: async function (userId) {
                 const user = await User.findById(userId)
                 return !!user
             },
-            message: 'Invalid creator. User does not exist.',
+            message: 'Invalid creatorId. User does not exist.',
         },
     },
-    comments: {
-        type: [
-            {
-                type: SchemaTypes.ObjectId,
-                ref: 'Comment',
-            },
-        ],
+    createdAt: {
+        type: Date,
+        default: Date.now,
     },
-})
-
-// virtual 'createdAt' field based on the ObjectId timestamp
-bugSchema.virtual('createdAt').get(function () {
-    return this._id.getTimestamp()
 })
 
 // sanitize the labels before create, if given

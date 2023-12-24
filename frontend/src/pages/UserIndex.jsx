@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useNavigate } from 'react-router'
 import { useIndex } from '../customHooks/useIndex.js'
 import { LoginContext } from '../contexts/LoginContext.js'
 import { userService } from '../services/user.service'
@@ -7,6 +6,7 @@ import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { UserList } from '../cmps/user/UserList.jsx'
 import { UserIndexTopbar } from '../cmps/user/UserIndexTopbar.jsx'
 import { PaginationFooter } from '../cmps/general/PaginationFooter.jsx'
+import { utilService } from '../services/util.service.js'
 
 export function UserIndex() {
     const { loggedinUser } = useContext(LoginContext)
@@ -33,7 +33,7 @@ export function UserIndex() {
             showSuccessMsg('User deleted')
         } catch (err) {
             console.error('Error:', err)
-            showErrorMsg('Failed to delete user: ' + err.response.data.error)
+            showErrorMsg(utilService.getErrorMessage())
         }
     }
 

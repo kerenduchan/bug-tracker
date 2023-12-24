@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
+import { utilService } from '../services/util.service.js'
 
 export function UserDetails() {
     const { loggedinUser } = useContext(LoginContext)
@@ -28,7 +29,7 @@ export function UserDetails() {
             showSuccessMsg('User deleted')
         } catch (err) {
             console.error('Error:', err)
-            showErrorMsg('Failed to delete user: ' + err.response.data.error)
+            showErrorMsg(utilService.getErrorMessage())
         }
     }
 

@@ -73,11 +73,21 @@ async function getByUsername(username) {
 async function remove(userId) {
     try {
         // don't allow removing a user that has bugs
-        const bugsCount = await Bug.countDocuments({ creator: userId })
+        const bugsCount = await Bug.countDocuments({ creatorId: userId })
 
         if (bugsCount > 0) {
             throw `User cannot be removed. ${bugsCount} bug(s) are associated with the user.`
         }
+
+        // don't allow removing a user that has comments
+        const commentsCount = await Comment.countDocuments({
+            creatorId: userId,
+        })
+
+        if (commentsCount > 0) {
+            throw `User cannot be removed. ${commentsCount} comments(s) are associated with the user.`
+        }
+
         const { deletedCount } = await User.deleteOne({ _id: userId })
         return { deletedCount }
     } catch (err) {
@@ -141,11 +151,9 @@ function _buildCriteria(filterBy) {
     return criteria
 }
 
-// return the user as an object, excluding the password and version fields, and
-// including the virtual createdAt field
+// return the user as an object, excluding the password and version fields
 function _toObject(dbUser, deletePassword = true) {
     const obj = dbUser.toObject({
-        virtuals: true,
         versionKey: false,
     })
 

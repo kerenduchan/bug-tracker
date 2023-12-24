@@ -70,7 +70,7 @@ export async function authorizeBugUpdateOrRemove(req, res, next) {
         const bug = await bugService.getById(req.params.bugId)
         if (
             !loggedinUser.isAdmin &&
-            loggedinUser._id !== bug.creator._id.toString()
+            loggedinUser._id !== bug.creatorId.toString()
         ) {
             loggerService.warn(
                 `${loggedinUser.username} tried to perform admin action`
@@ -95,7 +95,7 @@ export async function authorizeCommentUpdateOrRemove(req, res, next) {
         const comment = await commentService.getById(req.params.commentId)
         if (
             !loggedinUser.isAdmin &&
-            loggedinUser._id !== comment.creator._id.toString()
+            loggedinUser._id !== comment.creatorId?.toString()
         ) {
             loggerService.warn(
                 `${loggedinUser.username} tried to perform admin action`

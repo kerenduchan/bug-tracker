@@ -74,7 +74,7 @@ export async function removeBug(req, res) {
 // // Save
 export async function createBug(req, res) {
     try {
-        const bug = { ...req.body, creator: req.loggedinUser._id }
+        const bug = { ...req.body, creatorId: req.loggedinUser._id }
         const savedBug = await bugService.create(bug)
         res.send(savedBug)
     } catch (err) {

@@ -28,11 +28,10 @@ const userSchema = new Schema({
         default: 0,
         validate: dbUtil.getNumberRangeValidate('score', 0, 100),
     },
-})
-
-// virtual 'createdAt' field based on the ObjectId timestamp
-userSchema.virtual('createdAt').get(function () {
-    return this._id.getTimestamp()
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 })
 
 // hash the password before create
