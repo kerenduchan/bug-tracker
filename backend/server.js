@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
-import { dbConfig } from './dbConfig/dbConfig.js'
+import { getDbUrl } from './db/config/config.js'
 
 import { loggerService } from './services/logger.service.js'
 
@@ -37,7 +37,7 @@ app.get('/**', (req, res) => {
 })
 
 // connect to the DB
-mongoose.connect(dbConfig.dbURL)
+mongoose.connect(getDbUrl())
 
 // start the server on port 3030
 app.listen(port, () => {
