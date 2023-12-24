@@ -1,5 +1,6 @@
 import { utilService } from '../../services/util.service.js'
 import Bug from '../../db/model/Bug.js'
+import Comment from '../../db/model/Comment.js'
 
 export const bugService = {
     query,
@@ -102,6 +103,8 @@ async function getById(bugId) {
 
 async function remove(bugId) {
     try {
+        // remove all the comments of the bug before removing the bug
+        await Comment.deleteMany({ bugId })
         const { deletedCount } = await Bug.deleteOne({ _id: bugId })
         return { deletedCount }
     } catch (err) {
