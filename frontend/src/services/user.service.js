@@ -17,12 +17,7 @@ export const userService = {
     isDeleteUserAllowed,
 }
 
-function getEmptyUser(
-    fullname = '',
-    username = '',
-    password = '',
-    score = 100
-) {
+function getEmptyUser(fullname = '', username = '', password = '', score = 0) {
     return { fullname, username, password, score }
 }
 
