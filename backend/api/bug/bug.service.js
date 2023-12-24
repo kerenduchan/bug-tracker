@@ -8,6 +8,7 @@ export const bugService = {
     remove,
     create,
     update,
+    sanitizeLabels,
 }
 
 // bug fields that can be set upon creation
@@ -179,7 +180,7 @@ function _buildCriteria(filterBy) {
 
     // labels
     if (filterBy.labels?.length) {
-        const labels = _sanitizeLabels(filterBy.labels)
+        const labels = sanitizeLabels(filterBy.labels)
 
         criteria.labels = { $in: labels }
     }
@@ -210,4 +211,16 @@ function _toObject(dbBug) {
 // don't expose the DB - formulate our own error messages
 function _handleError(err) {
     utilService.handleDbError(err)
+}
+
+function sanitizeLabels(labels) {
+    if (labels === undefined) {
+        return labels
+    }
+
+    // trim the labels
+    labels = labels.map((l) => l.trim())
+
+    // remove duplicate labels and empty labels
+    return [...new Set(labels)].filter((l) => l.length > 0)
 }

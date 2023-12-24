@@ -32,8 +32,10 @@ export function LoginSignup({ isLogin }) {
             setLoggedinUser(user)
             navigate('/bug')
         } catch (err) {
+            const errMsg = utilService.getErrorMessage(err)
             console.error(err)
-            setError(utilService.getErrorMessage(err))
+            console.error(errMsg)
+            setError(errMsg)
         }
         setSubmitting(false)
     }

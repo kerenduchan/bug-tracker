@@ -1,6 +1,7 @@
 import { Schema, model, SchemaTypes } from 'mongoose'
 import { dbUtil } from '../dbUtil.js'
 import User from './User.js'
+import { bugService } from '../../api/bug/bug.service.js'
 
 const bugSchema = new Schema({
     title: {
@@ -42,27 +43,15 @@ const bugSchema = new Schema({
 
 // sanitize the labels before create, if given
 bugSchema.pre('save', function (next) {
-    this.labels = _sanitizeLabels(this.labels)
+    this.labels = bugService.sanitizeLabels(this.labels)
     next()
 })
 
 // sanitize the labels before update, if labels changed
 bugSchema.pre('findOneAndUpdate', function (next) {
-    this._update.labels = _sanitizeLabels(this._update.labels)
+    this._update.labels = bugService.sanitizeLabels(this._update.labels)
     next()
 })
-
-function _sanitizeLabels(labels) {
-    if (labels === undefined) {
-        return labels
-    }
-
-    // trim the labels
-    labels = labels.map((l) => l.trim())
-
-    // remove duplicate labels and empty labels
-    return [...new Set(labels)].filter((l) => l.length > 0)
-}
 
 const Bug = model('Bug', bugSchema)
 export default Bug
