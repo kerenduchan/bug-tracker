@@ -33,7 +33,7 @@ export function LoginSignup({ isLogin }) {
             navigate('/bug')
         } catch (err) {
             console.error(err)
-            setError(utilService.getErrorMessage())
+            setError(utilService.getErrorMessage(err))
         }
         setSubmitting(false)
     }

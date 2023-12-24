@@ -49,7 +49,7 @@ async function getById(userId) {
     try {
         const dbUser = await User.findById(userId).exec()
         if (!dbUser) {
-            throw `User not found`
+            return null
         }
         return _toObject(dbUser)
     } catch (err) {
@@ -61,7 +61,7 @@ async function getByUsername(username) {
     try {
         const dbUser = await User.findOne({ username }).exec()
         if (!dbUser) {
-            throw `User not found`
+            return null
         }
         return _toObject(dbUser, false)
     } catch (err) {

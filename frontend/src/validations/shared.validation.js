@@ -1,6 +1,8 @@
 import { number, string } from 'yup'
 
-export { username, password, fullname, score }
+export { requiredString, username, password, fullname, score }
+
+const requiredString = string().required('Required')
 
 const username = string()
     .min(4, 'Must be 4-20 characters long')

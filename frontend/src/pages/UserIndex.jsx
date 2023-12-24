@@ -33,7 +33,7 @@ export function UserIndex() {
             showSuccessMsg('User deleted')
         } catch (err) {
             console.error('Error:', err)
-            showErrorMsg(utilService.getErrorMessage())
+            showErrorMsg(utilService.getErrorMessage(err))
         }
     }
 
