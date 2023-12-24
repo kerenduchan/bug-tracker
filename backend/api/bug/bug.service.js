@@ -20,7 +20,7 @@ const CREATE_FIELDS = [
 ]
 
 // bug fields that can be updated
-const fUPDATE_FIELDS = CREATE_FIELDS.filter((field) => field !== 'creatorId')
+const UPDATE_FIELDS = CREATE_FIELDS.filter((field) => field !== 'creatorId')
 
 // query bugs (with filter, sort, pagination) and populate the creator of each
 // bug
