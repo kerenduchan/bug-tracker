@@ -8,6 +8,7 @@ Deployed on render.com at: https://bug-tracker-q3tt.onrender.com
 
 ## Frameworks used
 **Backend**: nodejs, express, REST, mongodb, mongoose
+
 **Frontend**: react, axios, formik
 
 ## Features
