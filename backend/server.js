@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
-import { getDbUrl } from './db/config/config.js'
+import { getDbUrl } from './db/config.js'
 
 import { loggerService } from './services/logger.service.js'
 
