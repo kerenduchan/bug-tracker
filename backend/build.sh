@@ -2,8 +2,8 @@
 echo "Building frontend..."
 cd ../frontend
 pwd
-ls node_modules/.bin/
 npm i
+ls node_modules/.bin/
 npm run build
 
 # Build backend
