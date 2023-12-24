@@ -5,7 +5,10 @@ This is a small demo fullstack project for managing bugs and users.
 ## See it live
 
 Deployed on render.com at: https://bug-tracker-88ny.onrender.com/
+
 (takes some time to start up since it's hosted for free)
+
+Uses mongodb hosted on Atlas.
 
 ## Frameworks used
 
