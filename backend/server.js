@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -30,6 +31,11 @@ app.use('/api/bug', bugRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/comment', commentRoutes)
+
+// fallback route
+app.get('/**', (req, res) => {
+    res.sendFile(path.resolve('public/index.html'))
+})
 
 // connect to the DB
 mongoose.connect(getDbUrl())
