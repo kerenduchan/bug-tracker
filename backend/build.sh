@@ -2,7 +2,7 @@
 echo "Building frontend..."
 cd ../frontend
 pwd
-npm install
+npm install --legacy-peer-deps
 echo "ls node_modules/"
 ls node_modules/
 echo "ls node_modules/.bin"
