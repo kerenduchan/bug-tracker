@@ -1,9 +1,10 @@
+import { utilService } from './util.service'
+
 export const utilAxiosService = {
     query,
     getById,
     save,
     remove,
-    getErrorMessage,
 }
 
 async function query(
@@ -52,29 +53,13 @@ async function save(axios, baseUrl, entity) {
 
 function handleAxiosError(err) {
     console.error(err)
-    console.error(getErrorMessage(err))
+    const msg = utilService.getErrorMessage(err)
+    if (msg) console.error()
     throw err
-}
-
-function getErrorMessage(err) {
-    const errorObj = err.response.data?.error
-    if (!errorObj) {
-        return undefined
-    }
-    let res = errorObj.error
-    if (errorObj.errors) {
-        res += ': ' + Object.values(errorObj.errors).join('. ')
-    }
-    return res
 }
 
 async function remove(axios, baseUrl, id) {
     const url = baseUrl + id
-
-    try {
-        const { data } = await axios.delete(url)
-        return data
-    } catch (err) {
-        handleAxiosError(err)
-    }
+    const { data } = await axios.delete(url)
+    return data
 }

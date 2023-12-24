@@ -9,6 +9,7 @@ export const utilService = {
     formatDateTime,
     parseSearchParams,
     buildSearchParams,
+    getErrorMessage,
 }
 
 function makeId(length = 6) {
@@ -102,4 +103,16 @@ function parseSearchParams(searchParams, defaultFilter, defaultSort) {
         curPageIdx,
         pageSize,
     }
+}
+
+function getErrorMessage(err) {
+    const data = err?.response?.data
+    if (!data) {
+        return undefined
+    }
+    let res = data.error
+    if (data.errors) {
+        res += ': ' + Object.values(data.errors).join('. ')
+    }
+    return res
 }
