@@ -7,16 +7,22 @@ import {
     updateUser,
 } from './user.controller.js'
 import {
-    requireAdmin,
-    requireAdminOrSelf,
+    authenticateAdmin,
+    authenticateAdminOrSelf,
+    authorizeCreateOrUpdateUser,
 } from '../../middleware/auth.middleware.js'
 
 const router = express.Router()
 
-router.get('/', requireAdmin, getUsers)
-router.get('/:userId', requireAdminOrSelf, getUser)
-router.delete('/:userId', requireAdmin, removeUser)
-router.post('/', requireAdmin, createUser)
-router.put('/', requireAdmin, updateUser)
+router.get('/', authenticateAdmin, getUsers)
+router.get('/:userId', authenticateAdminOrSelf, getUser)
+router.delete('/:userId', authenticateAdmin, removeUser)
+router.post('/', authenticateAdmin, createUser)
+router.put(
+    '/:userId',
+    authenticateAdminOrSelf,
+    authorizeCreateOrUpdateUser,
+    updateUser
+)
 
 export const userRoutes = router

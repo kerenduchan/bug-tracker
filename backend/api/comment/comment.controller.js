@@ -61,11 +61,10 @@ export async function removeComment(req, res) {
 
 // // Save
 export async function createComment(req, res) {
+    const comment = { ...req.body, creator: req.loggedinUser._id }
+
     try {
-        const savedComment = await commentService.create(
-            req.body,
-            req.loggedinUser
-        )
+        const savedComment = await commentService.create(comment)
         res.send(savedComment)
     } catch (err) {
         if (err.stack) console.error(err.stack)
@@ -76,8 +75,8 @@ export async function createComment(req, res) {
 export async function updateComment(req, res) {
     try {
         const savedComment = await commentService.update(
-            req.body,
-            req.loggedinUser
+            req.params.commentId,
+            req.body
         )
         res.send(savedComment)
     } catch (err) {

@@ -1,8 +1,7 @@
 import { utilService } from '../../services/util.service.js'
-import bcrypt from 'bcrypt'
-import { bugService } from '../bug/bug.service.js'
-import { dbService } from '../../services/db.service.js'
 import { loggerService } from '../../services/logger.service.js'
+import User from '../../db/model/User.js'
+import Bug from '../../db/model/Bug.js'
 
 export const userService = {
     query,
@@ -13,24 +12,8 @@ export const userService = {
     update,
 }
 
-const HASH_SALT_ROUNDS = 10
-
-const ENTITY_TYPE = 'user'
-
-// user fields that can be set when the user is created
-const CREATE_FIELDS = ['username', 'fullname', 'password', 'score']
-
-// mandatory fields that must be set when the user is created
-const MANDATORY_CREATE_FIELDS = ['username', 'fullname', 'password']
-
-// user fields that can be set when the user is updated
-const UPDATE_FIELDS = ['password', 'score']
-
-const VALID_PASSWORD_LENGTH = { min: 4 }
-const VALID_FULLNAME_LENGTH = { min: 1, max: 40 }
-const VALID_USERNAME_LENGTH = { min: 4, max: 20 }
-const VALID_SCORE_RANGE = { min: 0, max: 100 }
-const PROJECTION = ['username', 'fullname', 'score', 'isAdmin']
+// user fields that can be set/updated
+const FIELDS = ['username', 'fullname', 'score', 'password', 'isAdmin']
 
 async function query(
     filterBy,
@@ -39,49 +22,48 @@ async function query(
     pageIdx = undefined,
     pageSize = 5
 ) {
-    try {
-        const criteria = _buildCriteria(filterBy)
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const cursor = await collection
-            .find(criteria, {
-                projection: PROJECTION,
-            })
-            .sort({ [sortBy]: sortDir })
+    const criteria = _buildCriteria(filterBy)
+    const totalCount = await User.countDocuments(criteria)
 
-        if (pageIdx !== undefined) {
-            const startIdx = pageIdx * pageSize
-            cursor.skip(startIdx).limit(pageSize)
-        }
-        const users = await cursor.toArray()
-        const totalCount = await collection.countDocuments(criteria)
+    let queryChain = User.find(criteria)
+
+    if (sortBy) {
+        queryChain = queryChain.sort({ [sortBy]: sortDir })
+    }
+
+    if (pageIdx !== undefined) {
+        const startIdx = pageIdx * pageSize
+        queryChain = queryChain.skip(startIdx).limit(pageSize)
+    }
+
+    try {
+        let users = await queryChain.exec()
+        users = users.map((user) => _toObject(user))
         return { data: users, totalCount }
     } catch (err) {
-        loggerService.error(err)
         throw err
     }
 }
 
 async function getById(userId) {
     try {
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const _id = utilService.createObjectId(userId)
-        const user = await collection.findOne(
-            { _id },
-            { projection: PROJECTION }
-        )
-        if (!user) throw `Failed to find user with ID ${_id}`
-        return user
+        const dbUser = await User.findById(userId).exec()
+        if (!dbUser) {
+            throw `User not found`
+        }
+        return _toObject(dbUser)
     } catch (err) {
-        loggerService.error(err)
-        throw err
+        _handleError(err)
     }
 }
 
 async function getByUsername(username) {
     try {
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const user = await collection.findOne({ username })
-        return user
+        const dbUser = await User.findOne({ username }).exec()
+        if (!dbUser) {
+            throw `User not found`
+        }
+        return _toObject(dbUser, false)
     } catch (err) {
         loggerService.error(err)
         throw err
@@ -89,112 +71,58 @@ async function getByUsername(username) {
 }
 
 async function remove(userId) {
-    // don't allow removing a user that has bugs
-    const userBugsCount = await bugService.count({ creatorId: userId })
-    if (userBugsCount > 0) {
-        throw 'Cannot delete a user that has bugs'
-    }
-
     try {
-        const _id = utilService.createObjectId(userId)
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const { deletedCount } = await collection.deleteOne({ _id })
+        // don't allow removing a user that has bugs
+        const bugsCount = await Bug.countDocuments({ creator: userId })
+
+        if (bugsCount > 0) {
+            throw `User cannot be removed. ${bugsCount} bug(s) are associated with the user.`
+        }
+        const { deletedCount } = await User.deleteOne({ _id: userId })
         return { deletedCount }
     } catch (err) {
-        loggerService.error(err)
-        throw err
+        _handleError(err)
     }
 }
 
 async function create(user) {
-    // disregard unexpected fields
-    user = utilService.extractFields(user, CREATE_FIELDS)
-    utilService.validateMandatoryFields(user, MANDATORY_CREATE_FIELDS)
-
-    user.isAdmin = false
-    user.createdAt = Date.now()
-
-    // default values for optional fields
-    if (user.score === undefined) {
-        user.score = 100
+    if (typeof user.password !== 'string') {
+        throw 'password must be a string'
     }
 
-    await _validateUser(user)
-
-    // password hash
-    user.password = await bcrypt.hash(user.password, HASH_SALT_ROUNDS)
+    // disregard unexpected fields
+    user = utilService.extractFields(user, FIELDS)
 
     try {
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const result = await collection.insertOne(user)
-        delete user.password
-        return { _id: result.insertedId, ...user }
+        const dbUser = await User.create(user)
+        return _toObject(dbUser)
     } catch (err) {
-        loggerService.error(err)
-        throw err
+        _handleError(err)
     }
 }
 
-async function update(user) {
-    let _id = user._id
+async function update(userId, user) {
+    if (!userId) {
+        throw 'Missing _id'
+    }
 
     // disregard unexpected fields
-    user = utilService.extractFields(user, UPDATE_FIELDS)
+    user = utilService.extractFields(user, FIELDS)
 
-    await _validateUser(user, _id)
-
-    // password hash
-    if (user.password) {
-        user.password = await bcrypt.hash(user.password, HASH_SALT_ROUNDS)
+    if (user.password !== undefined && typeof user.password !== 'string') {
+        throw 'password must be a string'
     }
 
+    const options = { new: true, runValidators: true }
     try {
-        const collection = await dbService.getCollection(ENTITY_TYPE)
-        const result = await collection.updateOne(
-            { _id: utilService.createObjectId(_id) },
-            { $set: user }
-        )
-
-        if (result.matchedCount === 0) {
-            throw `User with ID ${_id} does not exist`
-        }
-        return { msg: 'Updated OK' }
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            user,
+            options
+        ).exec()
+        return _toObject(updatedUser)
     } catch (err) {
-        loggerService.error(`Failed to update user with ID ${_id}`, err)
-        throw err
-    }
-}
-
-async function _validateUser(user, _id = null) {
-    const { score, password, fullname, username } = user
-
-    // score
-    utilService.validateNumber('score', score, VALID_SCORE_RANGE)
-
-    // password
-    utilService.validateStringLength(
-        'password',
-        password,
-        VALID_PASSWORD_LENGTH
-    )
-
-    // full name
-    utilService.validateStringLength(
-        'fullname',
-        fullname,
-        VALID_FULLNAME_LENGTH
-    )
-
-    // username
-    utilService.validateStringLength(
-        'username',
-        username,
-        VALID_USERNAME_LENGTH
-    )
-
-    const existingUser = await getByUsername(username, _id)
-    if (existingUser && (!_id || existingUser._id.toString() !== _id)) {
-        throw `Username ${username} is taken`
+        _handleError(err)
     }
 }
 
@@ -215,4 +143,26 @@ function _buildCriteria(filterBy) {
         ]
     }
     return criteria
+}
+
+// return the user as an object, excluding the password and version fields, and
+// including the virtual createdAt field
+function _toObject(dbUser, deletePassword = true) {
+    const obj = dbUser.toObject({
+        virtuals: true,
+        versionKey: false,
+    })
+
+    if (deletePassword) delete obj.password
+    delete obj.id
+    return obj
+}
+
+// don't expose the DB - formulate our own error messages
+function _handleError(err) {
+    if (err.code === 11000 && err.keyPattern.username) {
+        throw `Username already taken`
+    }
+
+    utilService.handleDbError(err)
 }

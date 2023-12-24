@@ -6,14 +6,17 @@ import {
     removeComment,
     updateComment,
 } from './comment.controller.js'
-import { requireAuth } from '../../middleware/auth.middleware.js'
+import {
+    authenticate,
+    authorizeCommentUpdateOrRemove,
+} from '../../middleware/auth.middleware.js'
 
 const router = express.Router()
 
 router.get('/', getComments)
 router.get('/:commentId', getComment)
-router.delete('/:commentId', requireAuth, removeComment)
-router.post('/', requireAuth, createComment)
-router.put('/', requireAuth, updateComment)
+router.delete('/:commentId', authorizeCommentUpdateOrRemove, removeComment)
+router.post('/', authenticate, createComment)
+router.put('/:commentId', authorizeCommentUpdateOrRemove, updateComment)
 
 export const commentRoutes = router

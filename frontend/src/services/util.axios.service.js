@@ -41,6 +41,10 @@ async function getById(axios, baseUrl, id) {
 async function save(axios, baseUrl, entity) {
     const method = entity._id ? 'put' : 'post'
 
+    if (method === 'put') {
+        baseUrl += entity._id
+    }
+
     try {
         const { data } = await axios[method](baseUrl, entity)
         return data
