@@ -2,12 +2,15 @@
 echo "Building frontend..."
 cd ../frontend
 pwd
-npm i
-ls node_modules/.bin/
+npm install
+echo "ls node_modules/"
+ls node_modules/
+echo "ls node_modules/.bin"
+ls node_modules/.bin
 npm run build
 
 # Build backend
 echo "Building backend..."
 cd ../backend
 pwd
-npm i
+npm install
