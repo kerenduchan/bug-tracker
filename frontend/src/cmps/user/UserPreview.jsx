@@ -32,6 +32,8 @@ export function UserPreview({ user, onRemoveUser }) {
             <h4 className="fullname">{user.fullname}</h4>
             <div className="username">{user.username}</div>
             <div className="score">{user.score}</div>
+            <div className="bug-count">{user.bugCount}</div>
+            <div className="comment-count">{user.commentCount}</div>
 
             <Link to={`/user/${user._id}`} />
 

@@ -20,12 +20,16 @@
         gap: 5px;
     }
 
-    .bugs-count {
+    .bug-count {
         grid-area: 1 / 4;
     }
 
-    .actions {
+    .comment-count {
         grid-area: 1 / 5;
+    }
+
+    .actions {
+        grid-area: 1 / 6;
         justify-self: end;
         gap: 2px;
         padding-inline-end: 12px;
