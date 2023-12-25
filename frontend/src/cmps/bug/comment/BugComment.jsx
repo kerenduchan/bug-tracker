@@ -3,8 +3,10 @@ import { commentService } from '../../../services/comment.service'
 import { utilService } from '../../../services/util.service'
 import { LoginContext } from '../../../contexts/LoginContext'
 import { BugCommentEdit } from './BugCommentEdit'
+import { AreYouSureDialog } from '../../general/AreYouSureDialog'
 
 export function BugComment({ comment, onDelete, onEdit }) {
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showEditCommentForm, setShowEditCommentForm] = useState(false)
     const { loggedinUser } = useContext(LoginContext)
 
@@ -13,6 +15,11 @@ export function BugComment({ comment, onDelete, onEdit }) {
             loggedinUser,
             comment
         )
+    }
+
+    async function onDeleteConfirm() {
+        setShowDeleteDialog(false)
+        onDelete()
     }
 
     function onSave(comment) {
@@ -46,10 +53,22 @@ export function BugComment({ comment, onDelete, onEdit }) {
                     >
                         Edit
                     </div>
-                    <div className="bug-comment-action" onClick={onDelete}>
+                    <div
+                        className="bug-comment-action"
+                        onClick={() => setShowDeleteDialog(true)}
+                    >
                         Delete
                     </div>
                 </div>
+            )}
+            {showDeleteDialog && (
+                <AreYouSureDialog
+                    title="Delete Comment?"
+                    text="This cannot be undone."
+                    confirmText="Delete"
+                    onConfirm={onDeleteConfirm}
+                    onCancel={() => setShowDeleteDialog(false)}
+                />
             )}
         </div>
     )
