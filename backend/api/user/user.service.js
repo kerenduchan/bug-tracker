@@ -26,20 +26,54 @@ async function query(
     const criteria = _buildCriteria(filterBy)
     const totalCount = await User.countDocuments(criteria)
 
-    let queryChain = User.find(criteria)
+    // lookup, project, and filter
+    const pipeline = [
+        {
+            $match: criteria,
+        },
+        {
+            $lookup: {
+                from: 'bugs',
+                localField: '_id',
+                foreignField: 'creatorId',
+                as: 'bugs',
+            },
+        },
+        {
+            $lookup: {
+                from: 'comments',
+                localField: '_id',
+                foreignField: 'creatorId',
+                as: 'comments',
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                username: 1,
+                fullname: 1,
+                isAdmin: 1,
+                score: 1,
+                createdAt: 1,
+                bugCount: { $size: '$bugs' },
+                commentCount: { $size: '$comments' },
+            },
+        },
+    ]
 
+    // sort
     if (sortBy) {
-        queryChain = queryChain.sort({ [sortBy]: sortDir })
+        pipeline.push({ $sort: { [sortBy]: sortDir } })
     }
 
+    // pagination
     if (pageIdx !== undefined) {
         const startIdx = pageIdx * pageSize
-        queryChain = queryChain.skip(startIdx).limit(pageSize)
+        pipeline.push({ $skip: startIdx }, { $limit: pageSize })
     }
 
     try {
-        let users = await queryChain.exec()
-        users = users.map((user) => _toObject(user))
+        const users = await User.aggregate(pipeline).exec()
         return { data: users, totalCount }
     } catch (err) {
         throw err
