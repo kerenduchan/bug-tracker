@@ -1,0 +1,21 @@
+.are-you-sure-dialog {
+    background-color: var(--bg-1);
+    padding: 16px;
+    width: 400px;
+    min-height: 150px;
+    box-shadow: 0 2px 2px #00000040;
+    border-radius: 3px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+
+    .title {
+        font-weight: bold;
+        text-align: center;
+        padding-bottom: 24px;
+    }
+
+    & > .actions {
+        display: flex;
+        justify-content: space-between;
+    }
+}

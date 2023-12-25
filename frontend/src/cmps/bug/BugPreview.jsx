@@ -5,13 +5,29 @@ import { utilService } from '../../services/util.service'
 import { Icon } from '../general/Icon'
 import { bugService } from '../../services/bug.service'
 import { BugLabels } from './BugLabels'
+import { useState } from 'react'
+import { AreYouSureDialog } from '../general/AreYouSureDialog'
 
 export function BugPreview({ bug, onRemoveBug }) {
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const { loggedinUser } = useContext(LoginContext)
     const navigate = useNavigate()
 
     function onEdit() {
         navigate(`/bug/edit/${bug._id}`)
+    }
+
+    function onDelete() {
+        setShowDeleteDialog(true)
+    }
+
+    function onDeleteConfirm() {
+        setShowDeleteDialog(false)
+        onRemoveBug(bug._id)
+    }
+
+    function onDeleteCancel() {
+        setShowDeleteDialog(false)
     }
 
     function isDeleteOrEditBugAllowed() {
@@ -36,7 +52,7 @@ export function BugPreview({ bug, onRemoveBug }) {
                 <div className="actions">
                     <button
                         className="btn-icon-round"
-                        onClick={() => onRemoveBug(bug._id)}
+                        onClick={() => onDelete(bug._id)}
                     >
                         <Icon type="delete" />
                     </button>
@@ -44,6 +60,16 @@ export function BugPreview({ bug, onRemoveBug }) {
                         <Icon type="edit" />
                     </button>
                 </div>
+            )}
+
+            {showDeleteDialog && (
+                <AreYouSureDialog
+                    title="Delete Bug?"
+                    text="This cannot be undone."
+                    confirmText="Delete"
+                    onConfirm={onDeleteConfirm}
+                    onCancel={onDeleteCancel}
+                />
             )}
         </article>
     )

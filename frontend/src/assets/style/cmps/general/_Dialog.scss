@@ -1,0 +1,12 @@
+.dialog-overlay {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    inset: 0;
+    background-color: var(--overlay-dark);
+
+    .dialog {
+        height: 100%;
+        @include flex-center-center();
+    }
+}

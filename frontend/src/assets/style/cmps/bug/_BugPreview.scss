@@ -33,7 +33,7 @@
         @include ellipsis();
     }
 
-    .actions {
+    & > .actions {
         grid-area: 1 / 7;
         justify-self: end;
         gap: 2px;
