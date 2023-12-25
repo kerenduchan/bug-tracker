@@ -83,10 +83,15 @@ async function query(
 async function getById(userId) {
     try {
         const dbUser = await User.findById(userId).exec()
+
+        // Count bugs and comments for the user
+        const bugCount = await Bug.countDocuments({ creatorId: userId })
+        const commentCount = await Comment.countDocuments({ creatorId: userId })
+
         if (!dbUser) {
             return null
         }
-        return _toObject(dbUser)
+        return { ..._toObject(dbUser), bugCount, commentCount }
     } catch (err) {
         _handleError(err)
     }

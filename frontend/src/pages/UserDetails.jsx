@@ -65,7 +65,7 @@ export function UserDetails() {
     function getBugsFieldValue() {
         return (
             <Link to={`/bug?creatorUsername=${user.username}`}>
-                See bugs created by this user
+                {user.bugCount}
             </Link>
         )
     }
@@ -82,6 +82,7 @@ export function UserDetails() {
                 label: 'Bugs',
                 value: getBugsFieldValue(),
             },
+            { label: 'Comments', value: user.commentCount },
         ]
     }
 
