@@ -17,17 +17,9 @@ export function BugPreview({ bug, onRemoveBug }) {
         navigate(`/bug/edit/${bug._id}`)
     }
 
-    function onDelete() {
-        setShowDeleteDialog(true)
-    }
-
     function onDeleteConfirm() {
         setShowDeleteDialog(false)
         onRemoveBug(bug._id)
-    }
-
-    function onDeleteCancel() {
-        setShowDeleteDialog(false)
     }
 
     function isDeleteOrEditBugAllowed() {
@@ -52,7 +44,7 @@ export function BugPreview({ bug, onRemoveBug }) {
                 <div className="actions">
                     <button
                         className="btn-icon-round"
-                        onClick={() => onDelete(bug._id)}
+                        onClick={() => setShowDeleteDialog(true)}
                     >
                         <Icon type="delete" />
                     </button>
@@ -68,7 +60,7 @@ export function BugPreview({ bug, onRemoveBug }) {
                     text="This cannot be undone."
                     confirmText="Delete"
                     onConfirm={onDeleteConfirm}
-                    onCancel={onDeleteCancel}
+                    onCancel={() => setShowDeleteDialog(false)}
                 />
             )}
         </article>

@@ -14,17 +14,9 @@ export function UserPreview({ user, onRemoveUser }) {
         navigate(`/user/edit/${user._id}`)
     }
 
-    function onDelete() {
-        setShowDeleteDialog(true)
-    }
-
     async function onDeleteConfirm() {
         setShowDeleteDialog(false)
         onRemoveUser(user._id)
-    }
-
-    function onDeleteCancel() {
-        setShowDeleteDialog(false)
     }
 
     function isEditAllowed() {
@@ -51,7 +43,10 @@ export function UserPreview({ user, onRemoveUser }) {
                 )}
 
                 {isDeleteAllowed() && (
-                    <button className="btn-icon-round" onClick={onDelete}>
+                    <button
+                        className="btn-icon-round"
+                        onClick={() => setShowDeleteDialog(true)}
+                    >
                         <Icon type="delete" />
                     </button>
                 )}
@@ -62,7 +57,7 @@ export function UserPreview({ user, onRemoveUser }) {
                     text="This cannot be undone."
                     confirmText="Delete"
                     onConfirm={onDeleteConfirm}
-                    onCancel={onDeleteCancel}
+                    onCancel={() => setShowDeleteDialog(false)}
                 />
             )}
         </article>

@@ -27,10 +27,6 @@ export function BugDetails() {
         navigate(`/bug/edit/${bugId}`)
     }
 
-    function onDelete() {
-        setShowDeleteDialog(true)
-    }
-
     async function onDeleteConfirm() {
         setShowDeleteDialog(false)
 
@@ -42,10 +38,6 @@ export function BugDetails() {
             console.error('Error from onRemoveBug ->', err)
             showErrorMsg('Cannot remove bug')
         }
-    }
-
-    function onDeleteCancel() {
-        setShowDeleteDialog(false)
     }
 
     async function onCreateComment(comment) {
@@ -147,7 +139,7 @@ export function BugDetails() {
                         </button>
                         <button
                             className="btn-secondary btn-delete"
-                            onClick={onDelete}
+                            onClick={() => setShowDeleteDialog(true)}
                         >
                             Delete
                         </button>
@@ -168,7 +160,7 @@ export function BugDetails() {
                     text="This cannot be undone."
                     confirmText="Delete"
                     onConfirm={onDeleteConfirm}
-                    onCancel={onDeleteCancel}
+                    onCancel={() => setShowDeleteDialog(false)}
                 />
             )}
         </div>

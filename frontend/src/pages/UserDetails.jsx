@@ -24,10 +24,6 @@ export function UserDetails() {
         navigate(`/user/edit/${user._id}`)
     }
 
-    function onDelete() {
-        setShowDeleteDialog(true)
-    }
-
     async function onDeleteConfirm() {
         setShowDeleteDialog(false)
 
@@ -39,10 +35,6 @@ export function UserDetails() {
             console.error('Error:', err)
             showErrorMsg(utilService.getErrorMessage(err))
         }
-    }
-
-    function onDeleteCancel() {
-        setShowDeleteDialog(false)
     }
 
     async function loadUser() {
@@ -122,7 +114,7 @@ export function UserDetails() {
                     {isDeleteAllowed() && (
                         <button
                             className="btn-secondary btn-delete"
-                            onClick={onDelete}
+                            onClick={() => setShowDeleteDialog(true)}
                         >
                             Delete
                         </button>
@@ -136,7 +128,7 @@ export function UserDetails() {
                     text="This cannot be undone."
                     confirmText="Delete"
                     onConfirm={onDeleteConfirm}
-                    onCancel={onDeleteCancel}
+                    onCancel={() => setShowDeleteDialog(false)}
                 />
             )}
         </div>
