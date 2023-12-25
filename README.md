@@ -26,6 +26,7 @@ CRUDL for bugs, users, and comments.
 -   View user/bug details
 -   Edit/delete a user/bug
 -   Add/edit/delete a comment on a bug
+-   "Are you sure?" dialog confirmation before deleting a user/comment/bug
 
 ### Authentication
 
@@ -72,4 +73,3 @@ Extensive authorization in the backend and the frontend. Detailed below.
     Make sure to reflect this in the current session or require to login again.
 -   Show all comments (Comments index)
 -   Show for each user how many comments and how many bugs they have created.
--   Show a popup asking "Are you sure?" before deletion.
