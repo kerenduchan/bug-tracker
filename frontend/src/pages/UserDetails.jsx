@@ -7,8 +7,10 @@ import { Link } from 'react-router-dom'
 import { LoginContext } from '../contexts/LoginContext.js'
 import { FieldList } from '../cmps/general/FieldList.jsx'
 import { utilService } from '../services/util.service.js'
+import { AreYouSureDialog } from '../cmps/general/AreYouSureDialog.jsx'
 
 export function UserDetails() {
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const { loggedinUser } = useContext(LoginContext)
     const [user, setUser] = useState(null)
     const { userId, viewType } = useParams()
@@ -22,7 +24,13 @@ export function UserDetails() {
         navigate(`/user/edit/${user._id}`)
     }
 
-    async function onDelete() {
+    function onDelete() {
+        setShowDeleteDialog(true)
+    }
+
+    async function onDeleteConfirm() {
+        setShowDeleteDialog(false)
+
         try {
             await userService.remove(userId)
             navigate('/user')
@@ -31,6 +39,10 @@ export function UserDetails() {
             console.error('Error:', err)
             showErrorMsg(utilService.getErrorMessage(err))
         }
+    }
+
+    function onDeleteCancel() {
+        setShowDeleteDialog(false)
     }
 
     async function loadUser() {
@@ -117,6 +129,16 @@ export function UserDetails() {
                     )}
                 </div>
             </div>
+
+            {showDeleteDialog && (
+                <AreYouSureDialog
+                    title="Delete User?"
+                    text="This cannot be undone."
+                    confirmText="Delete"
+                    onConfirm={onDeleteConfirm}
+                    onCancel={onDeleteCancel}
+                />
+            )}
         </div>
     )
 }

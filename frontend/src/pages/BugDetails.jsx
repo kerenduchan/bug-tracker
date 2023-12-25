@@ -9,8 +9,10 @@ import { FieldList } from '../cmps/general/FieldList.jsx'
 import { BugLabels } from '../cmps/bug/BugLabels.jsx'
 import { commentService } from '../services/comment.service.js'
 import { BugComments } from '../cmps/bug/comment/BugComments.jsx'
+import { AreYouSureDialog } from '../cmps/general/AreYouSureDialog.jsx'
 
 export function BugDetails() {
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const { loggedinUser } = useContext(LoginContext)
     const [bug, setBug] = useState(null)
     const [comments, setComments] = useState(null)
@@ -25,7 +27,13 @@ export function BugDetails() {
         navigate(`/bug/edit/${bugId}`)
     }
 
-    async function onDelete() {
+    function onDelete() {
+        setShowDeleteDialog(true)
+    }
+
+    async function onDeleteConfirm() {
+        setShowDeleteDialog(false)
+
         try {
             await bugService.remove(bugId)
             navigate(`/bug`)
@@ -34,6 +42,10 @@ export function BugDetails() {
             console.error('Error from onRemoveBug ->', err)
             showErrorMsg('Cannot remove bug')
         }
+    }
+
+    function onDeleteCancel() {
+        setShowDeleteDialog(false)
     }
 
     async function onCreateComment(comment) {
@@ -149,6 +161,16 @@ export function BugDetails() {
                     onEdit={onEditComment}
                 />
             </div>
+
+            {showDeleteDialog && (
+                <AreYouSureDialog
+                    title="Delete Bug?"
+                    text="This cannot be undone."
+                    confirmText="Delete"
+                    onConfirm={onDeleteConfirm}
+                    onCancel={onDeleteCancel}
+                />
+            )}
         </div>
     )
 }
