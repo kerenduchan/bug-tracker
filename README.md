@@ -26,7 +26,6 @@ CRUDL for bugs, users, and comments.
 -   View user/bug details
 -   Edit/delete a user/bug
 -   Add/edit/delete a comment on a bug
--   "Are you sure?" dialog confirmation before deleting a user/comment/bug
 
 ### Authentication
 
@@ -65,6 +64,11 @@ Extensive authorization in the backend and the frontend. Detailed below.
 -   Creating a comment - can be performed only by a logged-in user.
 -   Editing/deleting a comment - can be performed only by an admin or by the user who created the comment.
 
+### Misc
+-   "Are you sure?" dialog confirmation before deleting a user/comment/bug
+-   Show for each user how many comments and how many bugs they have created in the user preview/details.
+-   Debounce for filter in index pages
+
 ## Ideas for future development
 
 -   Allow an admin to edit a user's username + password and to change a user's
@@ -72,4 +76,3 @@ Extensive authorization in the backend and the frontend. Detailed below.
 -   Allow a non-admin user to edit their own username, password, full name.
     Make sure to reflect this in the current session or require to login again.
 -   Show all comments (Comments index)
--   Show for each user how many comments and how many bugs they have created.
