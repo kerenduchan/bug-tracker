@@ -22,19 +22,23 @@
         @include ellipsis();
     }
 
-    .created-by {
+    .comment-count {
         grid-area: 1 / 5;
+    }
+
+    .created-by {
+        grid-area: 1 / 6;
         @include ellipsis();
     }
 
     .created-at {
-        grid-area: 1 / 6;
+        grid-area: 1 / 7;
         font-size: 12px;
         @include ellipsis();
     }
 
     & > .actions {
-        grid-area: 1 / 7;
+        grid-area: 1 / 8;
         justify-self: end;
         gap: 2px;
         padding-inline-end: 12px;

@@ -38,6 +38,7 @@ export function BugPreview({ bug, onRemoveBug }) {
             <div className="title">{bug.title}</div>
             <div className="description">{bug.description}</div>
             <BugLabels labels={bug.labels} />
+            <div className="comment-count">{bug.commentCount}</div>
 
             <Link to={`/bug/${bug._id}`} />
             {isDeleteOrEditBugAllowed() && (

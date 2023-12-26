@@ -49,6 +49,14 @@ async function query(
             $unwind: '$creator',
         },
         {
+            $lookup: {
+                from: 'comments',
+                localField: '_id',
+                foreignField: 'bugId',
+                as: 'comments',
+            },
+        },
+        {
             $project: {
                 title: 1,
                 description: 1,
@@ -58,6 +66,7 @@ async function query(
                 'creator._id': 1,
                 'creator.username': 1,
                 'creator.fullname': 1,
+                commentCount: { $size: '$comments' },
             },
         },
         {
