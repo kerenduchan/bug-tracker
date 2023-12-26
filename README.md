@@ -38,7 +38,8 @@ CRUDL for bugs, users, and comments.
 -   required fields (user, bug comment)
 -   string field lengths (username, fullname, etc)
 -   number field ranges (severity, score)
--   sanitization of the labels field on a bug (trimming, no duplicates, no empty labels)
+-   sanitization of the labels field on a bug (trimming, no duplicates, no empty
+    labels)
 
 ### Authorization
 
@@ -47,27 +48,37 @@ Extensive authorization in the backend and the frontend. Detailed below.
 #### User
 
 -   Viewing the list of users - can be performed only by an admin
--   Viewing a user's details - can be performed only by an admin or by the user themselves
--   Deleting a user - can be performed only by an admin, and only if the user has no bugs or comments associated with them.
+-   Viewing a user's details - can be performed only by an admin or by the user
+    themselves
+-   Deleting a user - can be performed only by an admin, and only if the user
+    has no bugs or comments associated with them.
 -   Editing a user - can be performed only by an admin
 
 #### Bug
 
--   Viewing the list of bugs and a bug's details - can be performed even if not logged in.
+-   Viewing the list of bugs and a bug's details - can be performed even if not
+    logged in.
 -   Creating a bug - can be performed only by a logged-in user.
--   Editing/deleting a bug - can be performed only by an admin or by the user who created the bug.
+-   Editing/deleting a bug - can be performed only by an admin or by the user
+    who created the bug.
 -   Deleting a bug deletes all of its associated comments.
 
 #### Comment
 
--   Viewing the list of comments for a bug - can be performed even if not logged in.
+-   Viewing the list of comments for a bug - can be performed even if not logged
+    in.
 -   Creating a comment - can be performed only by a logged-in user.
--   Editing/deleting a comment - can be performed only by an admin or by the user who created the comment.
+-   Editing/deleting a comment - can be performed only by an admin or by the
+    user who created the comment.
 
 ### Misc
+
 -   "Are you sure?" dialog confirmation before deleting a user/comment/bug
--   Show for each user how many comments and how many bugs they have created in the user preview/details.
+-   Show for each user how many comments and how many bugs they have created in
+    the user preview/details.
 -   Debounce for filter in index pages
+-   Back and Forward in the browser work seamlessly. Try changing filter/sort
+    params in the bug/user index, then click on back/forward.
 
 ## Ideas for future development
 
