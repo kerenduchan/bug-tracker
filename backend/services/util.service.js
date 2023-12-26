@@ -1,10 +1,6 @@
-import fs from 'fs'
-import http from 'http'
-import https from 'https'
 import { ObjectId } from 'mongodb'
 
 export const utilService = {
-    createObjectId,
     toNumber,
     validateMandatoryFields,
     extractFields,
@@ -12,14 +8,6 @@ export const utilService = {
     validateNumber,
     removeNullAndUndefined,
     handleDbError,
-}
-
-function createObjectId(id) {
-    try {
-        return new ObjectId(id)
-    } catch (err) {
-        throw `Invalid ID: ${id}`
-    }
 }
 
 function toNumber(s) {
