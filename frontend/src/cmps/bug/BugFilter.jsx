@@ -15,7 +15,7 @@ export function BugFilter({ filter, setFilter }) {
 
     useEffect(() => {
         setDraft(filter)
-    }, [])
+    }, [filter])
 
     useEffect(() => {
         setFilter(debouncedDraft)

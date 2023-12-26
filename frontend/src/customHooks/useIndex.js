@@ -1,50 +1,58 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { utilService } from '../services/util.service'
 
 export function useIndex(service) {
     const [entities, setEntities] = useState(null)
-    const [totalCount, setTotalCount] = useState(null)
-    const [filter, setFilter] = useState(null)
-    const [sort, setSort] = useState(service.getDefaultSort())
-    const [curPageIdx, setCurPageIdx] = useState(0)
-    const [maxPageIdx, setMaxPageIdx] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
     const [searchParams, setSearchParams] = useSearchParams()
+    const [view, setView] = useState(null)
+    const [totalCount, setTotalCount] = useState(null)
+    const [maxPageIdx, setMaxPageIdx] = useState(0)
+
+    // search params must be the single source of truth in order for
+    // "back" to work
+    useEffect(() => {
+        const updatedView = service.parseSearchParams(searchParams)
+        setView(updatedView)
+    }, [searchParams])
 
     useEffect(() => {
-        const parsedParams = service.parseSearchParams(searchParams)
-        setFilter(parsedParams.filter)
-        setSort(parsedParams.sort)
-        setCurPageIdx(parsedParams.curPageIdx)
-        setPageSize(parsedParams.pageSize)
-    }, [])
-
-    useEffect(() => {
-        setSearchParams((prev) => {
-            if (curPageIdx === 0) {
-                delete prev.curPageIdx
-            } else {
-                return { ...prev, curPageIdx }
-            }
-        })
+        if (!view) return
         loadEntities()
-    }, [curPageIdx])
+    }, [view])
 
-    useEffect(() => {
-        if (!filter) {
+    function setFilter(filter) {
+        onViewFieldChange('filter', filter)
+    }
+
+    function setSort(sort) {
+        onViewFieldChange('sort', sort)
+    }
+
+    function setCurPageIdx(curPageIdx) {
+        onViewFieldChange('curPageIdx', curPageIdx)
+    }
+
+    function setPageSize(pageSize) {
+        onViewFieldChange('pageSize', pageSize)
+    }
+
+    // update the view indirectly, through the search params
+    function onViewFieldChange(field, value) {
+        if (utilService.simpleIsEqual(value, view[field])) {
             return
         }
-        setSearchParams(
-            service.buildSearchParams(filter, sort, curPageIdx, pageSize)
+        const updatedView = { ...view, [field]: value }
+        const updatedSearchParams = service.buildSearchParams(
+            updatedView,
+            service.getDefaultFilter(),
+            service.getDefaultSort()
         )
-        if (curPageIdx !== 0) {
-            setCurPageIdx(0)
-        } else {
-            loadEntities()
-        }
-    }, [filter, sort, pageSize])
+        setSearchParams(updatedSearchParams)
+    }
 
     async function loadEntities() {
+        const { filter, sort, curPageIdx, pageSize } = view
         const res = await service.query(filter, sort, curPageIdx, pageSize)
         const { data, totalCount } = res
         setEntities(data)
@@ -53,18 +61,14 @@ export function useIndex(service) {
     }
 
     return {
-        filter,
+        view,
         setFilter,
-        sort,
         setSort,
-        totalCount,
-        entities,
-        loadEntities,
-        curPageIdx,
         setCurPageIdx,
-        maxPageIdx,
-        pageSize,
         setPageSize,
         entities,
+        totalCount,
+        maxPageIdx,
+        loadEntities,
     }
 }

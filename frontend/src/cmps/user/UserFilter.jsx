@@ -8,7 +8,7 @@ export function UserFilter({ filter, setFilter }) {
 
     useEffect(() => {
         setDraft(filter)
-    }, [])
+    }, [filter])
 
     useEffect(() => {
         setFilter(debouncedDraft)

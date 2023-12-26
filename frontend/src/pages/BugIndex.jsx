@@ -12,18 +12,15 @@ export function BugIndex() {
     const { loggedinUser } = useContext(LoginContext)
     const navigate = useNavigate()
     const {
-        loadEntities,
-        filter,
+        view,
         setFilter,
-        sort,
         setSort,
-        totalCount,
-        curPageIdx,
         setCurPageIdx,
-        maxPageIdx,
-        pageSize,
         setPageSize,
         entities: bugs,
+        totalCount,
+        maxPageIdx,
+        loadEntities,
     } = useIndex(bugService)
 
     async function onRemoveBug(bugId) {
@@ -42,15 +39,15 @@ export function BugIndex() {
         }
     }
 
-    if (!filter || !bugs) return <div>Loading...</div>
+    if (!view || !bugs) return <div>Loading...</div>
 
     return (
         <main className="bug-index entity-index">
             <h1>Bugs</h1>
             <BugIndexTopbar
-                filter={filter}
+                filter={view.filter}
                 setFilter={setFilter}
-                sort={sort}
+                sort={view.sort}
                 setSort={setSort}
             />
 
@@ -59,10 +56,10 @@ export function BugIndex() {
             <PaginationFooter
                 totalCount={totalCount}
                 itemType="bugs"
-                curPageIdx={curPageIdx}
+                curPageIdx={view.curPageIdx}
                 setCurPageIdx={setCurPageIdx}
                 maxPageIdx={maxPageIdx}
-                pageSize={pageSize}
+                pageSize={view.pageSize}
                 setPageSize={setPageSize}
             />
         </main>

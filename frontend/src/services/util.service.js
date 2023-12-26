@@ -10,6 +10,7 @@ export const utilService = {
     parseSearchParams,
     buildSearchParams,
     getErrorMessage,
+    simpleIsEqual,
 }
 
 function makeId(length = 6) {
@@ -50,14 +51,9 @@ function formatDateTime(timestamp) {
     return moment(timestamp).fromNow()
 }
 
-function buildSearchParams(
-    filter,
-    sort,
-    curPageIdx,
-    pageSize,
-    defaultFilter,
-    defaultSort
-) {
+function buildSearchParams(view, defaultFilter, defaultSort) {
+    const { filter, sort, curPageIdx, pageSize } = view
+
     const params = {}
 
     Object.keys(defaultFilter).forEach((key) => {
@@ -115,4 +111,9 @@ function getErrorMessage(err) {
         res += ': ' + Object.values(data.errors).join('. ')
     }
     return res
+}
+
+function simpleIsEqual(obj1, obj2) {
+    const found = Object.keys(obj1).find((key) => obj1[key] !== obj2[key])
+    return found === undefined
 }

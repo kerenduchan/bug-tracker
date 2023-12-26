@@ -12,18 +12,15 @@ export function UserIndex() {
     const { loggedinUser } = useContext(LoginContext)
 
     const {
-        loadEntities,
-        filter,
+        view,
         setFilter,
-        sort,
         setSort,
-        totalCount,
-        curPageIdx,
         setCurPageIdx,
-        maxPageIdx,
-        pageSize,
         setPageSize,
         entities: users,
+        totalCount,
+        maxPageIdx,
+        loadEntities,
     } = useIndex(userService)
 
     async function onRemoveUser(userId) {
@@ -41,15 +38,15 @@ export function UserIndex() {
         return <h1>Not authorized</h1>
     }
 
-    if (!filter || !users) return <div>Loading...</div>
+    if (!view || !users) return <div>Loading...</div>
 
     return (
         <main className="user-index entity-index">
             <h1>Users</h1>
             <UserIndexTopbar
-                filter={filter}
+                filter={view.filter}
                 setFilter={setFilter}
-                sort={sort}
+                sort={view.sort}
                 setSort={setSort}
             />
 
@@ -58,10 +55,10 @@ export function UserIndex() {
             <PaginationFooter
                 totalCount={totalCount}
                 itemType="users"
-                curPageIdx={curPageIdx}
+                curPageIdx={view.curPageIdx}
                 setCurPageIdx={setCurPageIdx}
                 maxPageIdx={maxPageIdx}
-                pageSize={pageSize}
+                pageSize={view.pageSize}
                 setPageSize={setPageSize}
             />
         </main>
