@@ -110,7 +110,7 @@ export function BugDetails() {
             },
             {
                 label: 'Description',
-                value: bug.description,
+                value: <pre>{bug.description}</pre>,
             },
             {
                 label: 'Labels',
